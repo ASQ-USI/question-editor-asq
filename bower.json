@@ -1,0 +1,22 @@
+{
+  "name": "editor-project",
+  "authors": [
+    "Marco Ravazzini"
+  ],
+  "description": "question editor for ASQ wab app",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "app/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.3.1"
+  }
+}

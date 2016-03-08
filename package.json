@@ -1,0 +1,15 @@
+{
+  "name": "editor-project",
+  "version": "1.0.0",
+  "description": "question editor for ASQ wab app",
+  "main": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Marco Ravazzini",
+  "license": "ISC",
+  "devDependencies": {
+    "browser-sync": "^2.11.1",
+    "gulp": "^3.9.1"
+  }
+}
