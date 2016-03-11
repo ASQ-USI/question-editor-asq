@@ -1,0 +1,69 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+
+<dom-module id="slide-builder">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      .container{
+        width: 100%;
+        height: 100%;
+        position: relative;
+        padding: 10px
+      }
+      paper-material{
+        box-sizing: border-box;
+        padding: 10px;
+        margin: auto;
+        width: 800px;
+        height: 620px;
+      }
+
+    </style>
+    <div class="container">
+      <paper-material id='slide' elevation="4">
+        <paper-button raised on-tap="injectElement">click me to dinamically inject asq-text-input-q</paper-button>
+        <paper-checkbox on-change="changePath">check if you are using electron</paper-checkbox>
+      </paper-material>
+    </div>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'slide-builder',
+      properties: {
+        path: {
+          value: '../..'
+        }
+      },
+      injectElement: function(){
+        if (!this.$$('asq-text-input-q')) {
+          Polymer.Base.importHref(this.path+'/bower_components/asq-text-input-q/asq-text-input-q.html', ()=>{
+            var dynamicEl = document.createElement('asq-text-input-q');
+            Polymer.dom(this.$.slide).appendChild(dynamicEl);
+            this.message('asq-text-input-q inserted')
+          })
+        }
+
+      },
+      changePath: function(){
+        console.log(this.path);
+        if (this.$$('paper-checkbox').checked){
+          this.path = '.'
+        }else {
+          this.path = '../..'
+        }
+      },
+
+      message: function(message){
+        this.fire('fireToast', {text: message})
+      }
+
+
+    });
+  </script>
+</dom-module>

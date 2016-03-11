@@ -1,4 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../questions-list/questions-list.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../slide-builder/slide-builder.html">
 
 <dom-module id="main-app">
   <template>
@@ -6,15 +10,62 @@
       :host {
         display: block;
       }
+      #toast{
+      }
+
+      #slide-container{
+        position: absolute;
+        top: 64px;
+        left: 0;
+        bottom: 0;
+        right: 300px;
+      }
+      #nav-container{
+        background: #fafafa;
+        border-left: 1px solid #999;
+        position: fixed;
+        width: 300px;
+        top: 0;
+        right: 0;
+        bottom: 0;
+      }
+
     </style>
 
-    <top-bar></top-bar>
+    <paper-toolbar>
+      <span class="title">ASQ-question-editor</span>
+    </paper-toolbar>
+
+    <section id="slide-container">
+      <slide-builder></slide-builder>
+    </section>
+
+    <nav id="nav-container">
+      <questions-list></questions-list>
+    </nav>
+
+
+    <paper-toast id="toast" text={{toastMessage}} duration='3000' ></paper-toast>
 
   </template>
   <script>
     Polymer({
       is: 'main-app',
+      listeners:{
+        "fireToast": "openToast"
+      },
 
+      properties: {
+        toastMessage: {
+          type: String,
+          value: ''
+        }
+      },
+
+      openToast: function (host, messageData) {
+        this.toastMessage = messageData.text;
+        this.$.toast.open();
+      }
     });
   </script>
 </dom-module>

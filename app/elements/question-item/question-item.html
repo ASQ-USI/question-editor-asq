@@ -1,0 +1,39 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="question-item">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      .item{
+        margin: 2px 0;
+        width: 100%;
+        padding: 10px;
+        border-radius: 4px;
+        border: 1px solid #bbb;
+        background: white;
+        box-sizing: border-box;
+        user-select: none;
+      }
+      .item:hover{
+        cursor: move;
+      }
+    </style>
+    <div class="item">
+      <span>[[value.name]]</span>
+    </div>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'question-item',
+      properties: {
+        value: {
+          type: Object
+        }
+      }
+
+    });
+  </script>
+</dom-module>
