@@ -1,4 +1,4 @@
-# ASQ-question-editor
+# question-editor-asq
 
 Proof of concept for a question editor developed for the [ASQ](http://asq.inf.usi.ch/) web-app
 
