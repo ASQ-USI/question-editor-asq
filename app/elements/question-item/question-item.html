@@ -6,7 +6,7 @@
       :host {
         display: block;
       }
-      .item{
+      .draggableItem{
         margin: 2px 0;
         width: 100%;
         padding: 10px;
@@ -15,12 +15,16 @@
         background: white;
         box-sizing: border-box;
       }
+      .isDragging{
+        opacity: 0.5;
+      }
 
-      .item:hover{
+      .draggableItem:hover{
         cursor: move;
       }
     </style>
-    <div class="item">
+    <div class$="draggableItem {{isDragging}}" on-track="draggingHandler"
+      draggable='true' ondragstart="return false;" ondrop="return false;" >
       <span>[[value.name]]</span>
     </div>
 
@@ -31,8 +35,49 @@
       properties: {
         value: {
           type: Object
+        },
+        isDragging:{
+          type: String,
+          value: ''
+        },
+        canDrop: {
+          type: Boolean,
+          value: false
         }
-      }
+      },
+
+      draggingHandler: function (e){
+        switch(e.detail.state) {
+          case 'start':
+            this._startDragging();
+            break;
+          case 'track':
+            this._currentlyDragging(e.detail);
+            break;
+          case 'end':
+            this._stopDragging(e.detail);
+            break;
+        }
+      },
+
+      _startDragging: function(){
+        this.isDragging = 'isDragging';
+        this.fire('dragStart')
+      },
+
+      _currentlyDragging: function(dragDetail){
+        // console.log(dragDetail);
+      },
+
+      _stopDragging: function(dragDetail){
+        var elemDet = {name: this.value.name, detail: dragDetail}
+        this.fire('dragStop', elemDet);
+        this.isDragging = '';
+      },
+
+
+
+
 
     });
   </script>

@@ -22,11 +22,16 @@
         width: 800px;
         height: 620px;
       }
+      .readyForDrop{
+        border: dashed 3px blue;
+      }
+
 
     </style>
     <div class="container">
-      <paper-material id='slide' elevation="4">
-        <paper-button raised on-tap="injectElement">click me to dinamically inject asq-text-input-q</paper-button>
+      <paper-material id='slide' elevation="4" on-mouseover='_allowDrop' on-mouseout='_denyDrop'>
+        <span class="">drag an element here</span>
+        <paper-button raised on-tap='codeInspector'>log code</paper-button>
         <paper-checkbox on-change="changePath">check if you are using electron</paper-checkbox>
       </paper-material>
     </div>
@@ -38,19 +43,39 @@
       properties: {
         path: {
           value: '../..'
+        },
+        isDragging:{
+          type: Boolean,
+          observer: '_disableBorder'
+        },
+        droppedElem:{
+          type: Object,
+          observer: 'renderDropped'
+        },
+        canDrop: {
+          type: Boolean,
+          value: false
         }
       },
-      injectElement: function(){
-        if (!this.$$('asq-text-input-q')) {
-          Polymer.Base.importHref(this.path+'/bower_components/asq-text-input-q/asq-text-input-q.html', ()=>{
-            var dynamicEl = document.createElement('asq-text-input-q');
-            Polymer.dom(this.$.slide).appendChild(dynamicEl);
-            this.message('asq-text-input-q inserted')
+      _injectElement: function(idTarget, elementName){
+        // check if the element is already been imported
+        if (!this.$$(elementName)){
+          Polymer.Base.importHref(this.path+'/bower_components/'+elementName+'/'+elementName+'.html', ()=>{
+            var dynamicEl = document.createElement(elementName);
+            Polymer.dom(this.$[idTarget]).appendChild(dynamicEl);
+            this.message( elementName+' inserted')
           })
+        }else {
+          var dynamicEl = document.createElement(elementName);
+          Polymer.dom(this.$[idTarget]).appendChild(dynamicEl);
+          this.message( elementName+' inserted')
         }
+
 
       },
       changePath: function(){
+        // used to normalized the behavior using electron
+        // TODO substitute this function with a more effective solution
         if (this.$$('paper-checkbox').checked){
           this.path = '.'
         }else {
@@ -60,6 +85,37 @@
 
       message: function(message){
         this.fire('fireToast', {text: message})
+      },
+
+      renderDropped: function(droppedElem){
+        // render the element dropped
+        if (this.canDrop) {
+          this._injectElement('slide', droppedElem.name)
+        }
+      },
+
+      codeInspector: function(){
+        console.log(this.$.slide);
+      },
+
+      _allowDrop: function(){
+        if (this.canDrop) { return}
+        this.canDrop = true
+        if (this.isDragging){
+          this.toggleClass('readyForDrop', true, this.$.slide)
+        }
+      },
+
+      _denyDrop: function(){
+        if (!this.canDrop) { return}
+        this.canDrop = false
+        this.toggleClass('readyForDrop', false, this.$.slide)
+      },
+
+      _disableBorder:function(value){
+        if (!value) {
+          this.toggleClass('readyForDrop', false, this.$.slide)
+        }
       }
 
 

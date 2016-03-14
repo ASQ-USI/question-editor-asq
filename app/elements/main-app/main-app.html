@@ -37,11 +37,14 @@
     </paper-toolbar>
 
     <section id="slide-container">
-      <slide-builder></slide-builder>
+      <slide-builder id="slide-builder"
+        dropped-elem={{dropped}}
+        is-dragging={{isDragging}}>
+      </slide-builder>
     </section>
 
     <nav id="nav-container">
-      <questions-list></questions-list>
+      <questions-list id="questions-list"></questions-list>
     </nav>
 
     <paper-toast id="toast" text={{toastMessage}} duration='3000' ></paper-toast>
@@ -51,19 +54,41 @@
     Polymer({
       is: 'main-app',
       listeners:{
-        "fireToast": "openToast"
+        "fireToast": "openToast",
+        "dragStart": "_dragStart",
+        "dragStop" : "_dragStop"
       },
 
       properties: {
         toastMessage: {
           type: String,
           value: ''
+        },
+        isDragging: {
+          type: Boolean,
+          value: false
+        },
+        dropped: {
+          type: Object,
+          notify: true
         }
       },
 
       openToast: function (host, messageData) {
         this.toastMessage = messageData.text;
         this.$.toast.open();
+      },
+      _dragStart: function(host){
+        this.isDragging = true;
+      },
+      _dragStop: function (host, droppedElem) {
+
+        this.isDragging = false;
+        if (droppedElem) {
+          // render the dropped element
+          this.dropped = droppedElem;
+        }
+
       }
     });
   </script>
