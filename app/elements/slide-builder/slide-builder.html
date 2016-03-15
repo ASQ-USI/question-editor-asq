@@ -32,7 +32,6 @@
       <paper-material id='slide' elevation="4" on-mouseover='_allowDrop' on-mouseout='_denyDrop'>
         <span class="">drag an element here</span>
         <paper-button raised on-tap='codeInspector'>log code</paper-button>
-        <paper-checkbox on-change="changePath">check if you are using electron</paper-checkbox>
       </paper-material>
     </div>
 
@@ -58,6 +57,15 @@
         }
       },
       _injectElement: function(idTarget, elementName){
+        // if __dirname exist, it means that we are using electron and
+        // __dirname is the global path to the app folder
+        if (typeof __dirname !== "undefined"){
+          this.path = __dirname;
+        } else {
+          // otherwise set the local path to point to the app folder
+          this.path = '../..'
+        }
+
         // check if the element is already been imported
         if (!this.$$(elementName)){
           Polymer.Base.importHref(this.path+'/bower_components/'+elementName+'/'+elementName+'.html', ()=>{
@@ -69,17 +77,6 @@
           var dynamicEl = document.createElement(elementName);
           Polymer.dom(this.$[idTarget]).appendChild(dynamicEl);
           this.message( elementName+' inserted')
-        }
-
-
-      },
-      changePath: function(){
-        // used to normalized the behavior using electron
-        // TODO substitute this function with a more effective solution
-        if (this.$$('paper-checkbox').checked){
-          this.path = '.'
-        }else {
-          this.path = '../..'
         }
       },
 
