@@ -1,0 +1,35 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="wrapper-selector">
+  <template>
+    <style>
+      :host {
+        margin: auto;
+      }
+      .selected{
+        border: 2px dotted purple;
+        min-width: 20px;
+        min-height: 20px;
+      }
+
+    </style>
+    <div class="selected">
+      <content id="content"></content>
+    </div>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'wrapper-selector',
+      properties: {
+        content: {
+          type: Object
+        }
+      },
+      remove: function () {
+        Polymer.dom(this.parentNode).removeChild(this)
+      }
+
+    });
+  </script>
+</dom-module>

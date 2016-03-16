@@ -2,6 +2,8 @@
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../behaviors/select-behavior.html">
+<link rel="import" href="../wrapper-selector/wrapper-selector.html">
 
 <dom-module id="slide-builder">
   <template>
@@ -26,12 +28,19 @@
         border: dashed 3px blue;
       }
 
+      .selected{
+        border: 2px solid red;
+      }
+
 
     </style>
     <div class="container">
-      <paper-material id='slide' elevation="4" on-mouseover='_allowDrop' on-mouseout='_denyDrop'>
+      <paper-material id='slide' elevation="4" on-mouseover='_allowDrop'
+          on-mouseout='_denyDrop' on-dblclick='_select' >
         <span class="">drag an element here</span>
+
         <paper-button raised on-tap='codeInspector'>log code</paper-button>
+        <span>double tap to select</span>
       </paper-material>
     </div>
 
@@ -39,6 +48,8 @@
   <script>
     Polymer({
       is: 'slide-builder',
+      behaviors: [MyBehaviors.selectBehavior],
+
       properties: {
         path: {
           value: '../..'
@@ -70,12 +81,17 @@
         if (!this.$$(elementName)){
           Polymer.Base.importHref(this.path+'/bower_components/'+elementName+'/'+elementName+'.html', ()=>{
             var dynamicEl = document.createElement(elementName);
-            Polymer.dom(this.$[idTarget]).appendChild(dynamicEl);
+            dynamicEl.id = this._idGenerator()
+            this._changeSelection(dynamicEl.id)
+
+            Polymer.dom(this.$[idTarget]).appendChild(this.generateWrapper(dynamicEl));
             this.message( elementName+' inserted')
           })
         }else {
           var dynamicEl = document.createElement(elementName);
-          Polymer.dom(this.$[idTarget]).appendChild(dynamicEl);
+          dynamicEl.id = this._idGenerator()
+          this._changeSelection(dynamicEl.id)
+          Polymer.dom(this.$[idTarget]).appendChild(this.generateWrapper(dynamicEl));
           this.message( elementName+' inserted')
         }
       },
@@ -113,6 +129,41 @@
         if (!value) {
           this.toggleClass('readyForDrop', false, this.$.slide)
         }
+      },
+
+      _select: function(e){
+        var nodeDetail = this.findRootNode(e)
+        var mainNode = nodeDetail.element;
+
+        if (!this._changeSelection(mainNode.id)){return};
+
+        var placeToInsert = nodeDetail.parent;
+        var wrapped = this.generateWrapper(mainNode)
+        Polymer.dom(placeToInsert).appendChild(wrapped)
+      },
+
+      _changeSelection: function(mainNodeID){
+        if (this.$$('wrapper-selector')) {
+          if (Polymer.dom(this.$$('wrapper-selector').$.content).getDistributedNodes()[0].id === mainNodeID) {
+            // user has clicked on a already wrapped element
+            return false
+          }
+          var parent = Polymer.dom(this.$$('wrapper-selector')).parentNode;
+          var child = Polymer.dom(this.$$('wrapper-selector').$.content).getDistributedNodes()[0]
+
+          Polymer.dom(parent).appendChild(child)
+          this.$$('wrapper-selector').remove()
+        }
+
+        return true;
+
+      },
+
+      _idGenerator: function(){
+        var S4 = function() {
+          return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+        };
+        return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
       }
 
 
