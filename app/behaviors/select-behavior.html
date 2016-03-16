@@ -1,0 +1,30 @@
+<script>
+window.MyBehaviors = window.MyBehaviors || {};
+MyBehaviors.selectBehavior = {
+  properties: {
+
+  },
+
+  ready: function() {
+  },
+
+  findRootNode: function(e){
+    for (var i = 0; i < e.path.length; i++) {
+
+      if (e.path[i].tagName.indexOf('PAPER-MATERIAL') != -1 ||
+          e.path[i].tagName.indexOf('ASQ-') != -1 ) {
+        return {element:e.path[i], parent: e.path[i+1]}
+      }
+    }
+    return null;
+  },
+
+  generateWrapper:function (nodeToWrap) {
+    var wrapper = document.createElement("wrapper-selector");
+    Polymer.dom(wrapper).appendChild(nodeToWrap)
+
+    return wrapper;
+  }
+}
+
+</script>
