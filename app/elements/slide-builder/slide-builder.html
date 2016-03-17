@@ -48,7 +48,7 @@
         },
         droppedElem:{
           type: Object,
-          observer: 'renderDropped'
+          observer: '_notifyDrop'
         },
         canDrop: {
           type: Boolean,
@@ -61,7 +61,7 @@
           }
         }
       },
-      _injectElement: function(idTarget, elementName){
+      created: function() {
         // if __dirname exist, it means that we are using electron and
         // __dirname is the global path to the app folder
         if (typeof __dirname !== "undefined"){
@@ -70,30 +70,36 @@
           // otherwise set the local path to point to the app folder
           this.path = '../..'
         }
+      },
 
+      _notifyDrop: function(droppedElem){
+        // render the dropped element if possible
+        if (this.canDrop) {
+          this._injectDomElement(this.$.slide, droppedElem.name )
+        }
+      },
+
+      _importElement: function(elementName){
         // check if the element is already been imported
         if (!this.$$(elementName)){
-          Polymer.Base.importHref(this.path+'/bower_components/'+elementName+'/'+elementName+'.html', ()=>{
-            var dynamicEl = document.createElement(elementName);
-            Polymer.dom(this.$[idTarget]).appendChild(dynamicEl);
-            this.message( elementName+' inserted')
-          })
-        }else {
-          var dynamicEl = document.createElement(elementName);
-          Polymer.dom(this.$[idTarget]).appendChild(dynamicEl);
-          this.message( elementName+' inserted')
+          Polymer.Base.importHref(this.path+'/bower_components/'+elementName+'/'+elementName+'.html',
+           ()=>{ this.message(elementName + ' imported'); return 1},
+           ()=> {this.message('error while importing: '+ elementName); return 0}
+          )
         }
+        return 1;
+      },
+
+      _injectDomElement: function (target, elementName) {
+        var dynamicEl;
+        this._importElement(elementName);
+        dynamicEl = Polymer.Base.create(elementName,{});
+        Polymer.dom(target).appendChild(dynamicEl);
+        this._toggleDropBorder(false);
       },
 
       message: function(message){
         this.fire('fireToast', {text: message})
-      },
-
-      renderDropped: function(droppedElem){
-        // render the dropped element
-        if (this.canDrop) {
-          this._injectElement('slide', droppedElem.name)
-        }
       },
 
       codeInspector: function(){
