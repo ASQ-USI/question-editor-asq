@@ -79,10 +79,11 @@
         this.$.toast.open();
       },
       _dragStart: function(host){
+        // receive the event from question-item when drag start
         this.isDragging = true;
       },
       _dragStop: function (host, droppedElem) {
-
+        // receive the event from question-item when drag stop
         this.isDragging = false;
         if (droppedElem) {
           // render the dropped element
