@@ -82,6 +82,7 @@
           Polymer.Base.importHref(this.path+'/bower_components/'+elementName+'/'+elementName+'.html', ()=>{
             var dynamicEl = document.createElement(elementName);
             dynamicEl.id = this._idGenerator()
+            dynamicEl.childName = elementName;
             this._changeSelection(dynamicEl.id)
 
             Polymer.dom(this.$[idTarget]).appendChild(this.generateWrapper(dynamicEl));
@@ -90,6 +91,7 @@
         }else {
           var dynamicEl = document.createElement(elementName);
           dynamicEl.id = this._idGenerator()
+          dynamicEl.childName = elementName;
           this._changeSelection(dynamicEl.id)
           Polymer.dom(this.$[idTarget]).appendChild(this.generateWrapper(dynamicEl));
           this.message( elementName+' inserted')
@@ -134,7 +136,6 @@
       _select: function(e){
         var nodeDetail = this.findRootNode(e)
         var mainNode = nodeDetail.element;
-
         if (!this._changeSelection(mainNode.id)){return};
 
         var placeToInsert = nodeDetail.parent;
@@ -148,12 +149,19 @@
             // user has clicked on a already wrapped element
             return false
           }
+
           var parent = Polymer.dom(this.$$('wrapper-selector')).parentNode;
           var child = Polymer.dom(this.$$('wrapper-selector').$.content).getDistributedNodes()[0]
 
           Polymer.dom(parent).appendChild(child)
           this.$$('wrapper-selector').remove()
+          if (mainNodeID === 'slide') {
+            return false
+          }
+        }else if (!this.$$('wrapper-selector') && mainNodeID === 'slide') {
+          return false;
         }
+
 
         return true;
 
@@ -164,7 +172,13 @@
           return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
         };
         return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
+      },
+
+      checkCose: function () {
+        console.log(this.$$('wrapper-selector'));
       }
+
+
 
 
     });

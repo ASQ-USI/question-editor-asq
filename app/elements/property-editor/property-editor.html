@@ -1,0 +1,50 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="./attributes-editor.html">
+<link rel="import" href="./style-editor.html">
+
+<dom-module id="property-editor">
+  <template>
+    <style>
+      :host {
+        border-top: 2px solid black;
+        height: 50%;
+        display: block;
+      }
+      iron-pages{
+        padding: 5px;
+      }
+      paper-tabs{
+        --paper-tabs-selection-bar-color: indigo;
+      }
+      iron-pages{
+        height: 100%;
+      }
+    </style>
+    <paper-tabs selected="{{selected}}">
+      <paper-tab>properties</paper-tab>
+      <paper-tab>style</paper-tab>
+    </paper-tabs>
+
+    <iron-pages selected="{{selected}}">
+      <attributes-editor prop-array=[[props]]></attributes-editor>
+      <style-editor></style-editor>
+    </iron-pages>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'property-editor',
+      properties: {
+        selected: {
+          type: Number,
+          value: 0
+        },
+        props:{
+          type: Array
+        }
+      }
+    });
+  </script>
+</dom-module>
