@@ -20,7 +20,7 @@ MyBehaviors.selectBehavior = {
   },
 
   generateWrapper:function (nodeToWrap) {
-    var wrapper = document.createElement("wrapper-selector");
+    var wrapper = Polymer.Base.create("wrapper-selector",{childName: nodeToWrap.tagName});
     Polymer.dom(wrapper).appendChild(nodeToWrap)
 
     return wrapper;

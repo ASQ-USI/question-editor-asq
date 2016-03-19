@@ -80,16 +80,15 @@
         // check if the element is already been imported
         if (!this.$$(elementName)){
           Polymer.Base.importHref(this.path+'/bower_components/'+elementName+'/'+elementName+'.html', ()=>{
-            var dynamicEl = document.createElement(elementName);
+            var dynamicEl = Polymer.Base.create(elementName,{});
             dynamicEl.id = this._idGenerator()
-            dynamicEl.childName = elementName;
             this._changeSelection(dynamicEl.id)
 
             Polymer.dom(this.$[idTarget]).appendChild(this.generateWrapper(dynamicEl));
             this.message( elementName+' inserted')
           })
         }else {
-          var dynamicEl = document.createElement(elementName);
+          var dynamicEl = Polymer.Base.create(elementName,{});
           dynamicEl.id = this._idGenerator()
           dynamicEl.childName = elementName;
           this._changeSelection(dynamicEl.id)
