@@ -3,6 +3,8 @@
 <link rel="import" href="../questions-list/questions-list.html">
 <link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="../slide-builder/slide-builder.html">
+<link rel="import" href="../property-editor/property-editor.html">
+<link rel="import" href="../property-analyzer/property-analyzer.html">
 
 <dom-module id="main-app">
   <template>
@@ -32,12 +34,17 @@
 
     </style>
 
+    <property-analyzer id="hydro"
+      props={{_props}}
+      src=[[_src]]>
+    </property-analyzer>
+
     <paper-toolbar>
       <span class="title">question-editor-asq</span>
     </paper-toolbar>
 
     <section id="slide-container">
-      <slide-builder id="slide-builder"
+      <slide-builder id="slideBuilder"
         dropped-elem={{dropped}}
         is-dragging={{isDragging}}>
       </slide-builder>
@@ -45,6 +52,8 @@
 
     <nav id="nav-container">
       <questions-list id="questions-list"></questions-list>
+      <property-editor props=[[_props]]></property-editor>
+
     </nav>
 
     <paper-toast id="toast" text={{toastMessage}} duration='3000' ></paper-toast>
@@ -56,7 +65,9 @@
       listeners:{
         "fireToast": "openToast",
         "dragStart": "_dragStart",
-        "dragStop" : "_dragStop"
+        "dragStop" : "_dragStop",
+        "changeSelection": "_changeSrc",
+        "changeProp": "_changeProp"
       },
 
       properties: {
@@ -71,6 +82,13 @@
         dropped: {
           type: Object,
           notify: true
+        },
+        _src: {
+          type: String,
+          value:''
+        },
+        _props: {
+          type: Array
         }
       },
 
@@ -88,7 +106,19 @@
           // render the dropped element
           this.dropped = droppedElem;
         }
+      },
 
+      _changeSrc: function (host, newSrc) {
+        if (newSrc == '') {
+          this._src = '';
+        }else{
+          this._src = '../../bower_components/'+ newSrc +'/'+ newSrc + '.html';
+        }
+      },
+
+      _changeProp: function (host, prop) {
+        var scope = this.$.slideBuilder;
+        scope.$$('wrapper-selector').changeChildProp(prop);
       }
     });
   </script>

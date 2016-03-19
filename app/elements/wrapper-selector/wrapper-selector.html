@@ -7,7 +7,7 @@
         margin: auto;
       }
       .selected{
-        border: 2px dotted purple;
+        border: 2px dotted indigo;
         min-width: 20px;
         min-height: 20px;
       }
@@ -22,13 +22,33 @@
     Polymer({
       is: 'wrapper-selector',
       properties: {
-        content: {
-          type: Object
+        childName: {
+          type: String,
+          value: ''
         }
       },
+
+      attached: function() {
+        console.log(this.childName);
+        var childName = this.childName;
+        // console.log(childName.toLowerCase());
+        if (childName.toLowerCase()) {
+          this.fire('changeSelection', childName.toLowerCase())
+        }
+        console.log(childName.toLowerCase());
+      },
       remove: function () {
+        this.fire('changeSelection', '')
         Polymer.dom(this.parentNode).removeChild(this)
+      },
+
+      changeChildProp: function (prop) {
+        var child = Polymer.dom(this.$.content).getDistributedNodes()[0]
+        if (child) {
+          child[prop.name] = prop.value;
+        }
       }
+
 
     });
   </script>

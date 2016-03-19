@@ -1,0 +1,72 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/hydrolysis/hydrolysis-analyzer.html">
+
+<dom-module id="property-analyzer">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <hydrolysis-analyzer id='hydro'
+      src=[[src]]
+      analyzer={{_analyzer}}
+      transitive=[[recursivly]]
+      loading={{loading}}
+      clean>
+    </hydrolysis-analyzer>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'property-analyzer',
+      properties: {
+        src: {
+          type: String,
+          observer: '_forceUpdate'
+        },
+
+        _analyzer: {
+          type: Object,
+          observer: '_analyzerChange'
+        },
+
+        recursivly: {
+          type: Boolean,
+          value: false
+        },
+
+        loading: {
+          type: Boolean,
+          notify: true
+        },
+
+        props:{
+          type: Array,
+          notify: true
+        }
+
+      },
+      created: function() {
+
+      },
+
+      _analyzerChange: function (analyzedNode) {
+        this.extractProperties()
+      },
+
+      extractProperties: function () {
+        var prop = this._analyzer ? this._analyzer.elements[0].properties : [];
+        this.props = prop;
+        // console.log(this.props);
+      },
+
+      _forceUpdate: function () {
+        this.$.hydro.analyze();
+      }
+
+
+
+    });
+  </script>
+</dom-module>
