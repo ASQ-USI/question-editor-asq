@@ -29,13 +29,11 @@
       },
 
       attached: function() {
-        console.log(this.childName);
         var childName = this.childName;
         // console.log(childName.toLowerCase());
         if (childName.toLowerCase()) {
           this.fire('changeSelection', childName.toLowerCase())
         }
-        console.log(childName.toLowerCase());
       },
       remove: function () {
         this.fire('changeSelection', '')
