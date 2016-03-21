@@ -31,31 +31,43 @@
 
   </template>
   <script>
-    Polymer({
-      is: 'qea-canvas',
-      properties: {
-        path: {
-          value: '../..'
-        },
-        isDragging:{
-          type: Boolean
-        },
-        droppedElem:{
-          type: Object,
-          observer: '_notifyDrop'
-        },
-        canDrop: {
-          type: Boolean,
-          value: false
-        },
-        previousDropBorder:{
-          type: Object,
-          value: function (){
-            return { node: null}
+  (function () {
+    'use strict'
+
+    let MyBehavior = {};
+    class qeaCanvas {
+
+      get behaviors() {
+        return [];
+      }
+
+      beforeRegister(){
+        this.is = 'qea-canvas'
+        this.properties = {
+          path: {
+            value: '../..'
+          },
+          isDragging:{
+            type: Boolean
+          },
+          droppedElem:{
+            type: Object,
+            observer: '_notifyDrop'
+          },
+          canDrop: {
+            type: Boolean,
+            value: false
+          },
+          previousDropBorder:{
+            type: Object,
+            value: function (){
+              return { node: null}
+            }
           }
         }
-      },
-      created: function() {
+      }
+
+      ready() {
         // if __dirname exist, it means that we are using electron and
         // __dirname is the global path to the app folder
         if (typeof __dirname !== "undefined"){
@@ -64,58 +76,60 @@
           // otherwise set the local path to point to the app folder
           this.path = '../..'
         }
-      },
+      }
 
-      _notifyDrop: function(droppedElem){
+      _notifyDrop(droppedElem){
         // render the dropped element if possible
         // TODO use droppedElem.detail.hover() to get the target
         if (this.canDrop) {
           this._injectDomElement(this.$.canvas, droppedElem.name )
         }
-      },
+      }
 
-      _importElement: function(elementName){
-        // check if the element is already been imported
+      _importElement(elementName){
+      // check if the element is already been imported
         if (!this.$$(elementName)){
           Polymer.Base.importHref(this.path+'/bower_components/'+elementName+'/'+elementName+'.html',
-           ()=>{ this.message(elementName + ' imported'); return 1},
-           ()=> {this.message('error while importing: '+ elementName); return 0}
+            ()=>{ this.message(elementName + ' imported'); return 1},
+            ()=> {this.message('error while importing: '+ elementName); return 0}
           )
+        }else {
+          this.message(elementName + ' imported');
         }
         return 1;
-      },
+      }
 
-      _injectDomElement: function (target, elementName) {
+      _injectDomElement(target, elementName) {
         var dynamicEl;
         this._importElement(elementName);
         dynamicEl = Polymer.Base.create(elementName,{});
         Polymer.dom(target).appendChild(dynamicEl);
         this._toggleDropBorder(false);
-      },
+      }
 
-      message: function(message){
+      message(message){
         this.fire('fireToast', {text: message})
-      },
+      }
 
-      codeInspector: function(){
+      codeInspector(){
         console.log(this.$.canvas);
-      },
+      }
 
-      _allowDrop: function(e){
+      _allowDrop(e){
         // function called when mouse is over the canvas area
         this.canDrop = true
         if (this.isDragging){
           this._toggleDropBorder(true)
         }
-      },
+      }
 
-      _denyDrop: function(){
+      _denyDrop(){
         // function called when mouse leves the canvas area
         this.canDrop = false
         this._toggleDropBorder(false);
-      },
+      }
 
-      _toggleDropBorder: function (isActive, targetNode){
+      _toggleDropBorder(isActive, targetNode){
         // toggle the helper dotted blue borders around drop target element
         var isActive = isActive || false;
         var targetNode = targetNode || this.$.canvas;
@@ -132,7 +146,10 @@
         this.toggleClass('readyForDrop', isActive, targetNode)
       }
 
+    }
 
-    });
+    Polymer(qeaCanvas);
+  })()
+
   </script>
 </dom-module>

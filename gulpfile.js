@@ -2,7 +2,10 @@
 
 const gulp = require('gulp'),
   polylint = require('gulp-polylint'),
-  browserSync = require('browser-sync').create();
+  del = require('del'),
+  browserSync = require('browser-sync').create(),
+  reload = browserSync.reload;
+var $ = require('gulp-load-plugins')();
 
 
 gulp.task('default', ['serve-lint'], function() {
@@ -26,10 +29,30 @@ gulp.watch("app/**/*.html", ['polylint'])
 })
 
 // Auto reload server without linter for polymer (faster)
-gulp.task('serve-no-lint', function() {
+gulp.task('serve-no-lint',[], function() {
   browserSync.init({
       server: "./app",
       notify: false
   });
-gulp.watch("app/**/*.html").on('change', browserSync.reload)
+gulp.watch(["app/**/*.html"], [reload])
 })
+
+
+gulp.task('clean', function () {
+  return del(['app/es2015/**/*']).then(paths => {
+	// console.log('Deleted files and folders:\n', paths.join('\n'));
+});
+})
+
+
+gulp.task('js', function() {
+  return gulp.src(['app/**/*.{js,html}', '!app/bower_components/**/*'])
+  .pipe($.sourcemaps.init())
+  .pipe($.if('*.html', $.crisper({scriptInHead: false}))) // Extract JS from .html files
+  .pipe($.if('*.js', $.babel({
+    presets: ['es2015']
+  })))
+  .pipe($.sourcemaps.write('.'))
+  .pipe(gulp.dest('.tmp/'))
+  .pipe(gulp.dest('./app/es2015'));
+});
