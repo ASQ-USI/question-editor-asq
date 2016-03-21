@@ -1,10 +1,10 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
-<link rel="import" href="../questions-list/questions-list.html">
+<link rel="import" href="../qea-questions-list/qea-questions-list.html">
 <link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
-<link rel="import" href="../slide-builder/slide-builder.html">
+<link rel="import" href="../qea-canvas/qea-canvas.html">
 
-<dom-module id="main-app">
+<dom-module id="qea-main-app">
   <template>
     <style>
       :host {
@@ -37,14 +37,14 @@
     </paper-toolbar>
 
     <section id="slide-container">
-      <slide-builder id="slide-builder"
+      <qea-canvas id="slide-builder"
         dropped-elem={{dropped}}
         is-dragging={{isDragging}}>
-      </slide-builder>
+      </qea-canvas>
     </section>
 
     <nav id="nav-container">
-      <questions-list id="questions-list"></questions-list>
+      <qea-questions-list id="questions-list"></qea-questions-list>
     </nav>
 
     <paper-toast id="toast" text={{toastMessage}} duration='3000' ></paper-toast>
@@ -52,7 +52,7 @@
   </template>
   <script>
     Polymer({
-      is: 'main-app',
+      is: 'qea-main-app',
       listeners:{
         "fireToast": "openToast",
         "dragStart": "_dragStart",

@@ -1,8 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../question-item/question-item.html">
+<link rel="import" href="../qea-question-type/qea-question-type.html">
 <link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
 
-<dom-module id="questions-list">
+<dom-module id="qea-questions-list">
   <template>
     <style>
       :host {
@@ -20,7 +20,7 @@
     </paper-toolbar>
     <div id="scrollable">
       <template is="dom-repeat" items="[[questions]]">
-        <question-item value=[[item]]></question-item>
+        <qea-question-type value=[[item]]></qea-question-type>
       </template>
     </div>
 
@@ -28,7 +28,7 @@
   </template>
   <script>
     Polymer({
-      is: 'questions-list',
+      is: 'qea-questions-list',
       properties: {
         questions:{
           type: Array,
