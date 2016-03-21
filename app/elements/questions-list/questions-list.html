@@ -1,0 +1,48 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../question-item/question-item.html">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+
+<dom-module id="questions-list">
+  <template>
+    <style>
+      :host {
+        display: block;
+        height: 100%;
+      }
+      #scrollable{
+        height: 100%;
+        overflow: auto;
+      }
+    </style>
+
+    <paper-toolbar>
+      <span class="title">available questions</span>
+    </paper-toolbar>
+    <div id="scrollable">
+      <template is="dom-repeat" items="[[questions]]">
+        <question-item value=[[item]]></question-item>
+      </template>
+    </div>
+
+
+  </template>
+  <script>
+    Polymer({
+      is: 'questions-list',
+      properties: {
+        questions:{
+          type: Array,
+          value: function () {
+            return [
+              {name: "asq-text-input-q"},
+              {name: "asq-multi-choice-q"}
+            ]
+          }
+        }
+      },
+
+
+
+    });
+  </script>
+</dom-module>
