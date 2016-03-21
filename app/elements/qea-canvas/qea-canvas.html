@@ -8,31 +8,26 @@
     <style>
       :host {
         display: block;
+        height: 100%;
       }
-      .container{
+      #canvas{
+        padding: 5px;
+        box-sizing: border-box;
+        background: white;
         width: 100%;
         height: 100%;
         position: relative;
-        padding: 10px
       }
-      paper-material{
-        box-sizing: border-box;
-        padding: 10px;
-        margin: auto;
-        width: 800px;
-        height: 620px;
-      }
+
       .readyForDrop{
         border: dashed 3px blue;
       }
 
 
     </style>
-    <div class="container">
-      <paper-material id='slide' elevation="4" on-mouseover='_allowDrop' on-mouseout='_denyDrop'>
+    <div id="canvas" on-mouseover="_allowDrop" on-mouseout="_denyDrop">
         <span class="">drag an element here</span>
         <paper-button raised on-tap='codeInspector'>log code</paper-button>
-      </paper-material>
     </div>
 
   </template>
@@ -74,8 +69,9 @@
 
       _notifyDrop: function(droppedElem){
         // render the dropped element if possible
+        // TODO use droppedElem.detail.hover() to get the target
         if (this.canDrop) {
-          this._injectDomElement(this.$.slide, droppedElem.name )
+          this._injectDomElement(this.$.canvas, droppedElem.name )
         }
       },
 
@@ -103,11 +99,11 @@
       },
 
       codeInspector: function(){
-        console.log(this.$.slide);
+        console.log(this.$.canvas);
       },
 
       _allowDrop: function(e){
-        // function called when mouse is over the slide area (paper-material)
+        // function called when mouse is over the canvas area
         this.canDrop = true
         if (this.isDragging){
           this._toggleDropBorder(true)
@@ -115,7 +111,7 @@
       },
 
       _denyDrop: function(){
-        // function called when mouse leves the slide area (paper-material)
+        // function called when mouse leves the canvas area
         this.canDrop = false
         this._toggleDropBorder(false);
       },
@@ -123,10 +119,10 @@
       _toggleDropBorder: function (isActive, targetNode){
         // toggle the helper dotted blue borders around drop target element
         var isActive = isActive || false;
-        var targetNode = targetNode || this.$.slide;
+        var targetNode = targetNode || this.$.canvas;
 
         if (isActive) {
-          // check if there arlready is an helper border in the slide
+          // check if there arlready is an helper border in the canvas
           if (this.previousDropBorder.node) {
             this.toggleClass('readyForDrop', false, this.previousDropBorder.node);
           }
