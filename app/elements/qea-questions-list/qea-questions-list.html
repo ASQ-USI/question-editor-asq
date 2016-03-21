@@ -13,6 +13,17 @@
         height: 100%;
         overflow: auto;
       }
+      paper-toolbar{
+        --paper-toolbar-background: white;
+        --paper-toolbar-color: black;
+      }
+      paper-menu {
+        --paper-menu-background-color	: transparent;
+      }
+      .draggableItem:hover, paper-menu:hover{
+        cursor: move;
+      }
+
     </style>
 
     <paper-toolbar>
@@ -20,7 +31,11 @@
     </paper-toolbar>
     <div id="scrollable">
       <template is="dom-repeat" items="[[questions]]">
-        <qea-question-type value=[[item]]></qea-question-type>
+        <paper-menu class="menu-content ">
+
+          <qea-question-type value=[[item]]></qea-question-type>
+        </paper-menu>
+
       </template>
     </div>
 
@@ -34,6 +49,11 @@
           type: Array,
           value: function () {
             return [
+              // ex of sub menu
+              // {category: 'test', list: [
+              //   {name: "asq-text-input-q"},
+              //   {name: "asq-multi-choice-q"}
+              // ]},
               {name: "asq-text-input-q"},
               {name: "asq-multi-choice-q"}
             ]
