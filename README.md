@@ -26,7 +26,13 @@ bower install
 run on browser
 
 ```
-gulp serve
+gulp
+```
+If you already have a [polymer linter](https://github.com/PolymerLabs/polylint)
+in your editor you can use this command to have a faster reload
+
+```
+gulp serve-no-lint
 ```
 
 If you prefer to execute it as a standalone application you need one more thing
