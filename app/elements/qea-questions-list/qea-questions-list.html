@@ -42,27 +42,44 @@
 
   </template>
   <script>
-    Polymer({
-      is: 'qea-questions-list',
-      properties: {
-        questions:{
-          type: Array,
-          value: function () {
-            return [
-              // ex of sub menu
-              // {category: 'test', list: [
-              //   {name: "asq-text-input-q"},
-              //   {name: "asq-multi-choice-q"}
-              // ]},
-              {name: "asq-text-input-q"},
-              {name: "asq-multi-choice-q"}
-            ]
+  (function () {
+    'use strict'
+
+    let MyBehavior = {};
+
+    class qeaQuestionsList {
+      
+      get behaviors() {
+        return [];
+      }
+
+      beforeRegister(){
+        this.is = 'qea-questions-list';
+
+        this.properties = {
+          questions:{
+            type: Array,
+            value: function () {
+              return [
+                // ex of sub menu
+                // {category: 'test', list: [
+                //   {name: "asq-text-input-q"},
+                //   {name: "asq-multi-choice-q"}
+                // ]},
+                {name: "asq-text-input-q"},
+                {name: "asq-multi-choice-q"}
+              ]
+            }
           }
-        }
-      },
+        };
+
+      }
+
+    }
+    Polymer(qeaQuestionsList);
 
 
+  })()
 
-    });
   </script>
 </dom-module>

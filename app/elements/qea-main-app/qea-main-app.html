@@ -56,38 +56,45 @@
 
   </template>
   <script>
-    Polymer({
-      is: 'qea-main-app',
-      listeners:{
-        "fireToast": "openToast",
-        "dragStart": "_dragStart",
-        "dragStop" : "_dragStop"
-      },
+  (function() {
+    'use strict';
 
-      properties: {
-        toastMessage: {
-          type: String,
-          value: ''
+    class qeaMainApp {
+      beforeRegister() {
+        this.is = 'qea-main-app';
+
+        this.listeners = {
+          "fireToast": "openToast",
+          "dragStart": "_dragStart",
+          "dragStop" : "_dragStop"
         },
-        isDragging: {
-          type: Boolean,
-          value: false
-        },
-        dropped: {
-          type: Object,
-          notify: true
+
+        this.properties = {
+          toastMessage: {
+            type: String,
+            value: ''
+          },
+          isDragging: {
+            type: Boolean,
+            value: false
+          },
+          dropped: {
+            type: Object,
+            notify: true
+          }
         }
-      },
-
-      openToast: function (host, messageData) {
+      }
+      openToast(host, messageData) {
         this.toastMessage = messageData.text;
         this.$.toast.open();
-      },
-      _dragStart: function(host){
+      }
+
+      _dragStart(host){
         // receive the event from question-item when drag start
         this.isDragging = true;
-      },
-      _dragStop: function (host, droppedElem) {
+      }
+
+      _dragStop(host, droppedElem) {
         // receive the event from question-item when drag stop
         this.isDragging = false;
         if (droppedElem) {
@@ -96,6 +103,10 @@
         }
 
       }
-    });
+
+    }
+    Polymer(qeaMainApp);
+  })();
+
   </script>
 </dom-module>
