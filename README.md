@@ -23,18 +23,31 @@ npm install
 bower install
 ```
 
-run on browser
+
+## Development workflow
+
+### Serve / watch
+
+```
+gulp serve
+```
+This command will transpile your ES6 polymer components into ES5 and outputs an IP address you can use to locally test and another that can be used on devices connected to your network.
+
+
+
+### Build & Vulcanize
 
 ```
 gulp
-```
-If you already have a [polymer linter](https://github.com/PolymerLabs/polylint)
-in your editor you can use this command to have a faster reload
 
 ```
-gulp serve-no-lint
+if you would like to run a server from the dist folder
+```
+gulp serve:dist
 ```
 
+
+### Electron
 If you prefer to execute it as a standalone application you need one more thing
 
 ```
