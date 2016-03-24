@@ -1,0 +1,36 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<dom-module id="qea-style-editor">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    style
+  </template>
+  <script>
+  (function () {
+    'use strict'
+
+    let MyBehavior = {};
+    class qeaStyleEditor {
+
+      get behaviors() {
+        return [];
+      }
+
+      beforeRegister(){
+        this.is = 'qea-style-editor'
+        this.properties = {}
+      }
+
+      // function here
+
+
+    }
+
+    Polymer(qeaStyleEditor);
+  })()
+  </script>
+</dom-module>

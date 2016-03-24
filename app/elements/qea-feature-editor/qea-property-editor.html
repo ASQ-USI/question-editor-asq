@@ -1,0 +1,118 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
+<dom-module id="qea-property-editor">
+  <template>
+    <style>
+      :host {
+        height: 100%;
+        display: block;
+      }
+      .noPropertyToShow{
+        display: none;
+        padding-top: 20px;
+        text-align: center;
+        color: rgba(0, 0, 0, 0.5);
+      }
+      .visible{
+        display: block;
+      }
+      .propContainer{
+        height: 100%;
+        overflow-y: auto;
+      }
+      .property{
+        color: rgba(0, 0, 0, 0.7);
+        margin: 3px 0;
+      }
+      .label{
+      }
+      .setter{
+        padding-left: 15px;
+        max-width: 70%;
+      }
+
+    </style>
+
+    <div class="propContainer">
+      <div id='noProp' class="noPropertyToShow">
+        No properties to show,<br> double tap on a item
+      </div>
+
+      <template is="dom-repeat" items="{{propArray}}">
+        <div class="property">
+          <div class="label">
+            <span>[[item.name]]</span>
+            <paper-icon-button icon="info-outline" on-tap='_showInfo'></paper-icon-button>
+          </div>
+          <template is="dom-if" if="{{_isString(item.type)}}">
+            <div class="setter">
+              <paper-input label="Input label"
+                no-label-float data=[[item.name]]
+                on-change="_updateStringProp"></paper-input>
+            </div>
+          </template>
+          <template is="dom-if" if="{{_isBoolean(item.type)}}">
+            <div class="setter">
+              <paper-toggle-button on-change='_updateBoolProp' data=[[item.name]]></paper-toggle-button>
+            </div>
+          </template>
+
+        </div>
+
+      </template>
+
+
+
+    </div>
+
+
+
+
+  </template>
+  <script>
+  (function () {
+    'use strict'
+
+    let MyBehavior = {};
+    class qeaPropertyEditor {
+
+      get behaviors() {
+        return [];
+      }
+
+      beforeRegister(){
+        this.is = 'qea-property-editor'
+        this.properties = {
+          propArray: {
+            type: Array,
+            notify: true,
+            observer: '_checkLength'
+          }
+        }
+      }
+
+      // check if there are some properties to show
+      _checkLength(propArray){
+        this.toggleClass('visible', (propArray.length === 0), this.$.noProp)
+      }
+
+      // use to render the right template
+      _isString(value) {
+       return value === 'String'
+     }
+     
+     // use to render the right template
+     _isBoolean(value) {
+       return value === 'Boolean'
+     }
+
+
+    }
+
+    Polymer(qeaPropertyEditor);
+  })()
+  </script>
+</dom-module>

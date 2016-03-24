@@ -3,6 +3,7 @@
 <link rel="import" href="../qea-questions-list/qea-questions-list.html">
 <link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="../qea-canvas/qea-canvas.html">
+<link rel="import" href="../qea-feature-editor/qea-feature-editor.html">
 
 <dom-module id="qea-main-app">
   <template>
@@ -50,6 +51,7 @@
 
     <nav id="nav-container">
       <qea-questions-list id="questions-list"></qea-questions-list>
+      <qea-feature-editor></qea-feature-editor>
     </nav>
 
     <paper-toast id="toast" text={{toastMessage}} duration='3000' ></paper-toast>
