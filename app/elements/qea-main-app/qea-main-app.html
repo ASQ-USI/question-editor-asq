@@ -4,6 +4,10 @@
 <link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="../qea-canvas/qea-canvas.html">
 <link rel="import" href="../qea-feature-editor/qea-feature-editor.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
+<link rel="import" href="../qea-property-analyzer/qea-property-analyzer.html">
 
 <dom-module id="qea-main-app">
   <template>
@@ -17,6 +21,10 @@
       paper-toolbar{
         --paper-toolbar-background: white;
         --paper-toolbar-color: black;
+        --paper-toolbar-title: {
+          min-width: 230px;
+          flex-grow : 0;
+        }
       }
 
       #canvas-container{
@@ -35,15 +43,27 @@
         right: 0;
         bottom: 0;
       }
+      .tollbarIcon{
+        margin: 0 10px;
+        color: grey;
+      }
 
     </style>
 
-    <paper-toolbar>
-      <span class="title">question-editor-asq</span>
+    <qea-property-analyzer props='{{props}}'></qea-property-analyzer>
+
+    <paper-toolbar justify='start' >
+      <span class="title">question-editor-asq  </span>
+      <paper-icon-button icon="code" class="tollbarIcon" on-tap='logCode' id='code'></paper-icon-button>
+      <paper-tooltip for="code">log canvas code</paper-tooltip>
+
+      <!-- <paper-icon-button icon="save" class="tollbarIcon" id='save'></paper-icon-button>
+      <paper-tooltip for="save">save (not implemented)</paper-tooltip> -->
+
     </paper-toolbar>
 
     <section id="canvas-container">
-      <qea-canvas id="qea-canvas"
+      <qea-canvas id="qeaCanvas"
         dropped-elem={{dropped}}
         is-dragging={{isDragging}}>
       </qea-canvas>
@@ -51,7 +71,7 @@
 
     <nav id="nav-container">
       <qea-questions-list id="questions-list"></qea-questions-list>
-      <qea-feature-editor></qea-feature-editor>
+      <qea-feature-editor prop-array={{props}}></qea-feature-editor>
     </nav>
 
     <paper-toast id="toast" text={{toastMessage}} duration='3000' ></paper-toast>
@@ -83,6 +103,10 @@
           dropped: {
             type: Object,
             notify: true
+          },
+          props: {
+            type: Object,
+            notify: true
           }
         }
       }
@@ -105,6 +129,12 @@
         }
 
       }
+
+      logCode(){
+        console.log(this.$.qeaCanvas.$.canvas);
+        this.openToast(null, {text: 'open console'})
+      }
+
 
     }
     Polymer(qeaMainApp);

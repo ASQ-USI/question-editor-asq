@@ -2,7 +2,7 @@
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
-
+<link rel="import" href="../../behaviors/qea-inspect-behavior.html">
 <dom-module id="qea-canvas">
   <template>
     <style>
@@ -25,8 +25,6 @@
 
     </style>
     <div id="canvas" on-mouseover="_allowDrop" on-mouseout="_denyDrop">
-        <span class="">drag an element here</span>
-        <paper-button raised on-tap='codeInspector'>log code</paper-button>
     </div>
 
   </template>
@@ -38,15 +36,12 @@
     class qeaCanvas {
 
       get behaviors() {
-        return [];
+        return [qeaBehaviors.inspectBehavior];
       }
 
       beforeRegister(){
         this.is = 'qea-canvas'
         this.properties = {
-          path: {
-            value: '../..'
-          },
           isDragging:{
             type: Boolean
           },
@@ -66,21 +61,10 @@
           }
         }
       }
-
-      ready() {
-        // if __dirname exist, it means that we are using electron and
-        // __dirname is the global path to the app folder
-        if (typeof __dirname !== "undefined"){
-          this.path = __dirname;
-        } else {
-          // otherwise set the local path to point to the app folder
-          this.path = '../..'
-        }
-      }
-
+      
       _notifyDrop(droppedElem){
         // render the dropped element if possible
-        // TODO use droppedElem.detail.hover() to get the target
+        // TODO use droppedElem.detail.hover() to get the target instead the hard coded canvas
         if (this.canDrop) {
           this._injectDomElement(this.$.canvas, droppedElem.name )
         }
@@ -89,7 +73,7 @@
       _importElement(elementName){
       // check if the element is already been imported
         if (!this.$$(elementName)){
-          Polymer.Base.importHref(this.path+'/bower_components/'+elementName+'/'+elementName+'.html',
+          Polymer.Base.importHref(this.resolvePath(elementName),
             ()=>{ this.message(elementName + ' imported'); return 1},
             ()=> {this.message('error while importing: '+ elementName); return 0}
           )
@@ -109,10 +93,6 @@
 
       message(message){
         this.fire('fireToast', {text: message})
-      }
-
-      codeInspector(){
-        console.log(this.$.canvas);
       }
 
       _allowDrop(e){
