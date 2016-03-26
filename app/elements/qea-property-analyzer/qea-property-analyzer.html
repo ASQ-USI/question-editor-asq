@@ -63,6 +63,9 @@
       }
 
       _computeProps(analyzer){
+        if (Object.keys(analyzer).length === 0) {
+          return []
+        }
         return this.getProperties(analyzer);
       }
 
@@ -119,7 +122,11 @@
       }
 
 
-
+      reset(){
+        this.src = '';
+        // this.props = [];
+        this._analyzer = {};
+      }
 
 
 

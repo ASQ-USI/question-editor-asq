@@ -50,7 +50,8 @@
           <template is="dom-if" if="{{_isString(item.type)}}">
             <div class="setter">
               <paper-input label="Input label"
-                no-label-float data=[[item.name]]
+                no-label-float
+                data=[[item.name]]
                 on-change="_updateStringProp"></paper-input>
             </div>
           </template>
@@ -63,8 +64,6 @@
         </div>
 
       </template>
-
-
 
     </div>
 
@@ -101,14 +100,26 @@
 
       // use to render the right template
       _isString(value) {
-       return value === 'String'
-     }
-     
-     // use to render the right template
-     _isBoolean(value) {
-       return value === 'Boolean'
-     }
+        return value === 'String'
+      }
 
+      // use to render the right template
+      _isBoolean(value) {
+        return value === 'Boolean'
+      }
+
+      _showInfo(e) {
+        let item = e.model.item;
+        alert(item.desc)
+      }
+
+      _updateStringProp(e){
+        this.fire("changeProp", {name: e.currentTarget.data, value: e.currentTarget.value })
+      }
+
+      _updateBoolProp(e) {
+        this.fire("changeProp", {name: e.target.data, value:e.target.checked })
+      }
 
     }
 

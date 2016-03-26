@@ -21,10 +21,16 @@
       .readyForDrop{
         border: dashed 3px blue;
       }
+      .wrapper{
+
+      }
+      .qea-selected{
+        border: 2px dotted blue;
+      }
 
 
     </style>
-    <div id="canvas" on-mouseover="_allowDrop" on-mouseout="_denyDrop">
+    <div id="canvas" on-mouseover="_allowDrop" on-mouseout="_denyDrop" on-dblclick='_selected'>
     </div>
 
   </template>
@@ -58,10 +64,16 @@
             value: function (){
               return { node: null}
             }
+          },
+          propToChange: {
+            type: Object,
+            observer: 'updateProp'
           }
+
         }
       }
-      
+
+      // function called when user drops an item in the canvas
       _notifyDrop(droppedElem){
         // render the dropped element if possible
         // TODO use droppedElem.detail.hover() to get the target instead the hard coded canvas
@@ -70,47 +82,61 @@
         }
       }
 
-      _importElement(elementName){
+      _importElement(elementName, notyfyImport=true){
       // check if the element is already been imported
         if (!this.$$(elementName)){
           Polymer.Base.importHref(this.resolvePath(elementName),
-            ()=>{ this.message(elementName + ' imported'); return 1},
+            ()=>{ if (notyfyImport){this.message(elementName+ ' imported')} },
             ()=> {this.message('error while importing: '+ elementName); return 0}
           )
-        }else {
-          this.message(elementName + ' imported');
         }
         return 1;
       }
 
+      // function rensponsable to inject elements in the local DOM
       _injectDomElement(target, elementName) {
-        var dynamicEl;
+        let dynamicEl, wrapper;
         this._importElement(elementName);
-        dynamicEl = Polymer.Base.create(elementName,{});
-        Polymer.dom(target).appendChild(dynamicEl);
+        wrapper = this._createElement('div', false);
+        wrapper.id = this._idGenerator();
+        wrapper.className = 'wrapper';
+        dynamicEl = this._createElement(elementName);
+        wrapper.appendChild(dynamicEl)
+        Polymer.dom(target).appendChild(wrapper);
         this._toggleDropBorder(false);
+      }
+
+      // function rensponsable to generate DOM elements
+      _createElement(elementName, isPolymerElem=true, elemProperties={}) {
+        let elem;
+        if (isPolymerElem) {
+          elem = Polymer.Base.create(elementName, elemProperties);
+        }else {
+          elem = document.createElement(elementName)
+        }
+        return elem;
       }
 
       message(message){
         this.fire('fireToast', {text: message})
       }
 
+      // function called when mouse is over the canvas area
       _allowDrop(e){
-        // function called when mouse is over the canvas area
         this.canDrop = true
         if (this.isDragging){
           this._toggleDropBorder(true)
         }
       }
 
+      // function called when mouse leves the canvas area
       _denyDrop(){
-        // function called when mouse leves the canvas area
         this.canDrop = false
         this._toggleDropBorder(false);
       }
 
+      // toggle the helper dotted blue borders around drop target element
       _toggleDropBorder(isActive, targetNode){
-        // toggle the helper dotted blue borders around drop target element
         var isActive = isActive || false;
         var targetNode = targetNode || this.$.canvas;
 
@@ -125,6 +151,78 @@
         }
         this.toggleClass('readyForDrop', isActive, targetNode)
       }
+
+      // function called when user double click on a item;
+      _selected(e){
+        let wrapper = this._findClosesestWrapper(e.path);
+        this._editSelected();
+        if (wrapper == null) {
+          this._changeSelection();
+          return
+        }
+        this._changeSelection(wrapper);
+        this._editSelected(wrapper);
+      }
+
+      // find the first wrapper DIV in the upper tree DOM
+      _findClosesestWrapper(path){
+        for (var i = 0; i < path.length; i++) {
+          if (path[i].tagName == 'DIV' && path[i].className.indexOf('wrapper') != -1) {
+            return path[i];
+          }
+          if (path[i].tagName == 'QUE-CANVAS') {
+            return null
+          }
+        }
+        return null;
+      }
+
+      // cahnge the selected element by toggling 'qea-selected' class
+      _changeSelection(newSelection){
+        let previousSelection = this.querySelector('.qea-selected')
+        if (newSelection) {
+          this.classFollows('qea-selected', newSelection, previousSelection)
+        }else {
+          this.toggleClass('qea-selected', false, previousSelection)
+        }
+      }
+
+      // function that calls qea-property-analyzer in order to analyze the
+      // selected element and extract properties
+      _editSelected(selected){
+        if (!selected) {
+          this._analyzerRef.reset();
+          return;
+        }
+        let asqElem = selected.children[0];
+        this._analyzerRef.scanElement(asqElem.tagName.toLowerCase())
+          .then(
+            (analyzer)=>{
+              // executed when qea-property-analyzer finishes to analyze element
+            },
+            (e)=>{console.log('error', e)}
+          )
+      }
+
+      // generate a random id
+      _idGenerator(){
+        let S4 = function() {
+          return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+        };
+        return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
+      }
+
+      updateProp(prop){
+        if (prop != null ) {
+          let selected = this.querySelector('.qea-selected').children[0] || null
+          if (selected) {
+            selected[prop.name] = prop.value;
+          }
+        }
+
+      }
+
+
 
     }
 

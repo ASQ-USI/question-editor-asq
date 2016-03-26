@@ -65,6 +65,7 @@
     <section id="canvas-container">
       <qea-canvas id="qeaCanvas"
         dropped-elem={{dropped}}
+        prop-to-change=[[_propToChange]]
         is-dragging={{isDragging}}>
       </qea-canvas>
     </section>
@@ -88,7 +89,8 @@
         this.listeners = {
           "fireToast": "openToast",
           "dragStart": "_dragStart",
-          "dragStop" : "_dragStop"
+          "dragStop" : "_dragStop",
+          "changeProp": "_changeProp"
         },
 
         this.properties = {
@@ -103,6 +105,10 @@
           dropped: {
             type: Object,
             notify: true
+          },
+          _propToChange: {
+            type: Object,
+            value: ()=>null
           },
           props: {
             type: Object,
@@ -128,6 +134,10 @@
           this.dropped = droppedElem;
         }
 
+      }
+
+      _changeProp(host,editedProp){
+        this._propToChange = editedProp;
       }
 
       logCode(){

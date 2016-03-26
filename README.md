@@ -55,4 +55,6 @@ npm install electron-prebuilt -g
 ```
 
 and run with
-`electron .`
+```
+gulp && electron .
+```
