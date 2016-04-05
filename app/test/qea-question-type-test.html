@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script src="../../.tmp/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../.tmp/bower_components/web-component-tester/browser.js"></script>
+    <!-- import the element to test -->
+    <link rel="import" href="../../.tmp/elements/qea-question-type/qea-question-type.html">
+  </head>
+  <body>
+    <!-- use the document as a place to set up your fixtures -->
+    <test-fixture id="question-type-fixture">
+      <template>
+        <qea-question-type ></qea-question-type>
+      </template>
+    </test-fixture>
+    <script>
+      suite('question-type test', function() {
+        var myEl, listItems;
+
+        setup(function() {
+          myEl = fixture('question-type-fixture');
+        });
+
+
+        test('check render single element', function(done) {
+          myEl.value = {name : "im a single element"}
+
+          flush(function() {
+            listItems = Polymer.dom(myEl.root).querySelectorAll('paper-item');
+            assert.equal(listItems.length, 1);
+            done();
+          });
+        });
+
+        test('check value renedered in single element', function (done) {
+          myEl.value = {name : "im a single element"}
+
+          flush(function() {
+            listItems = Polymer.dom(myEl.root).querySelectorAll('paper-item');
+            assert(listItems[0].innerHTML.indexOf("im a single element") !== -1 )
+            done();
+          });
+        });
+
+        test('check render category element', function(done) {
+          myEl.value = {category: 'test', list: [{name : "im a child"}]}
+
+          flush(function() {
+            var subM = Polymer.dom(myEl.root).querySelectorAll('paper-submenu');
+            assert.equal(subM.length, 1);
+            listItems = Polymer.dom(myEl.root).querySelectorAll('paper-item');
+            assert.equal(listItems.length, 2);
+            done();
+          });
+        });
+
+        test('check values rendered in category element', function(done) {
+          myEl.value = {category: 'test', list: [{name : "im a child"}]}
+
+          flush(function() {
+            listItems = Polymer.dom(myEl.root).querySelectorAll('paper-item');
+            assert(listItems[0].innerHTML.indexOf("test") !== -1 );
+            assert(listItems[1].innerHTML.indexOf("im a child") !== -1 );
+            done();
+          });
+        });
+
+      });
+    </script>
+  </body>
+</html>
