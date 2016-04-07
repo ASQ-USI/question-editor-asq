@@ -1,13 +1,11 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
-<link rel="import" href="../qea-questions-list/qea-questions-list.html">
 <link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../qea-questions-list/qea-questions-list.html">
 <link rel="import" href="../qea-canvas/qea-canvas.html">
-<link rel="import" href="../qea-feature-editor/qea-feature-editor.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
 <link rel="import" href="../qea-property-analyzer/qea-property-analyzer.html">
+<link rel="import" href="../qea-landing-page/qea-landing-page.html">
 
 <dom-module id="qea-main-app">
   <template>
@@ -32,7 +30,15 @@
         top: 64px;
         left: 0;
         bottom: 0;
-        right: 300px;
+        right: 0;
+      }
+      iron-pages {
+        width: 100%;
+        height: 100%;
+      }
+      iron-pages > div{
+        width: 100%;
+        height: 100%;
       }
       #nav-container{
         background: #fafafa;
@@ -54,26 +60,32 @@
 
     <paper-toolbar justify='start' >
       <span class="title">question-editor-asq  </span>
-      <paper-icon-button icon="code" class="tollbarIcon" on-tap='logCode' id='code'></paper-icon-button>
-      <paper-tooltip for="code">log canvas code</paper-tooltip>
-
-      <!-- <paper-icon-button icon="save" class="tollbarIcon" id='save'></paper-icon-button>
-      <paper-tooltip for="save">save (not implemented)</paper-tooltip> -->
-
     </paper-toolbar>
 
-    <section id="canvas-container">
-      <qea-canvas id="qeaCanvas"
-        dropped-elem={{dropped}}
-        prop-to-change=[[_propToChange]]
-        is-dragging={{isDragging}}>
-      </qea-canvas>
-    </section>
 
-    <nav id="nav-container">
-      <qea-questions-list id="questions-list"></qea-questions-list>
-      <qea-feature-editor prop-array={{props}}></qea-feature-editor>
-    </nav>
+
+    <section id="canvas-container">
+
+      <!-- be sure to add the "page-name" attribute to all the new pages inserted -->
+      <iron-pages id='pageController' selected="landingPage" attr-For-Selected="page-name">
+
+        <div class="page page0" page-name='landingPage'>
+          <qea-landing-page></qea-landing-page>
+        </div>
+
+        <div class="page page1" page-name='canvas'>
+          <qea-canvas id="qeaCanvas"
+            dropped-elem={{dropped}}
+            prop-to-change=[[_propToChange]]
+            is-dragging={{isDragging}}>
+          </qea-canvas>
+          <nav id="nav-container">
+            <qea-questions-list id="questions-list"></qea-questions-list>
+          </nav>
+        </div>
+
+      </iron-pages>
+    </section>
 
     <paper-toast id="toast" text={{toastMessage}} duration='3000' ></paper-toast>
 
@@ -88,9 +100,10 @@
 
         this.listeners = {
           "fireToast": "openToast",
-          "dragStart": "_dragStart",
-          "dragStop" : "_dragStop",
-          "changeProp": "_changeProp"
+          "changePage": "changePage"
+          // "dragStart": "_dragStart",
+          // "dragStop" : "_dragStop",
+          // "changeProp": "_changeProp"
         },
 
         this.properties = {
@@ -118,31 +131,40 @@
       }
       openToast(host, messageData) {
         this.toastMessage = messageData.text;
+        if (messageData.type && messageData.type == 'error') {
+          this.$.toast.customStyle['--paper-toast-background-color'] = '#F44336';
+          this.$.toast.updateStyles();
+        }
         this.$.toast.open();
       }
 
-      _dragStart(host){
-        // receive the event from question-item when drag start
-        this.isDragging = true;
-      }
+      // _dragStart(host){
+      //   // receive the event from question-item when drag start
+      //   this.isDragging = true;
+      // }
+      //
+      // _dragStop(host, droppedElem) {
+      //   // receive the event from question-item when drag stop
+      //   this.isDragging = false;
+      //   if (droppedElem) {
+      //     // render the dropped element
+      //     this.dropped = droppedElem;
+      //   }
+      //
+      // }
+      //
+      // _changeProp(host,editedProp){
+      //   this._propToChange = editedProp;
+      // }
 
-      _dragStop(host, droppedElem) {
-        // receive the event from question-item when drag stop
-        this.isDragging = false;
-        if (droppedElem) {
-          // render the dropped element
-          this.dropped = droppedElem;
+      changePage(host, selectedPage=''){
+        for (var page of this.$.pageController.items) {
+          if (page.getAttribute('page-name') == selectedPage ){
+            this.$.pageController.selected = selectedPage;
+            return
+          }
         }
-
-      }
-
-      _changeProp(host,editedProp){
-        this._propToChange = editedProp;
-      }
-
-      logCode(){
-        console.log(this.$.qeaCanvas.$.canvas);
-        this.openToast(null, {text: 'open console'})
+        this.openToast(null, {text: `no page available with name: ${selectedPage}`, type: 'error'})
       }
 
 

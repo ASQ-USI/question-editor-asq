@@ -7,7 +7,7 @@
     <style>
       :host {
         display: block;
-        height: 50%;
+        height: 100%;
       }
       #scrollable{
         height: calc(100% - 64px);
@@ -30,13 +30,11 @@
       <span class="title">available questions</span>
     </paper-toolbar>
     <div id="scrollable">
-      <template is="dom-repeat" items="[[questions]]">
-        <paper-menu class="menu-content ">
-
-          <qea-question-type value=[[item]]></qea-question-type>
-        </paper-menu>
-
-      </template>
+      <paper-menu class="menu-content ">
+        <template is="dom-repeat" items="[[questions]]">
+            <qea-question-type value=[[item]]></qea-question-type>
+        </template>
+      </paper-menu>
     </div>
 
 
@@ -62,7 +60,7 @@
             value: function () {
               return [
                 // ex of sub menu
-                // {category: 'test', list: [
+                // {category: 'sub item', list: [
                 //   {name: "asq-text-input-q"},
                 //   {name: "asq-multi-choice-q"}
                 // ]},
