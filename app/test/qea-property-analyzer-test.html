@@ -62,7 +62,6 @@
             // succed
             (analyzer)=>{
               var res = myEl.getExampleCodeAndDesc(analyzer)
-              console.log(res.cd);
               assert.isDefined(res.code);
               assert.isDefined(res.description);
               assert(res.code.indexOf('<asq-text-input-q') != -1 && res.code.indexOf('</asq-text-input-q>') != -1)

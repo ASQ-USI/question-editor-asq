@@ -21,12 +21,35 @@
         myEl = fixture('qea-questions-list-fixture');
       });
 
+      test('check render no elements', function(done) {
+        myEl.questions = []
+
+        flush(function() {
+          listItems = Polymer.dom(myEl.root).querySelectorAll('qea-question-type');
+          assert.equal(listItems.length, 0);
+          done();
+        });
+      });
+
       test('check render single element', function(done) {
         myEl.questions = [{name : "im a single element"}]
 
         flush(function() {
           listItems = Polymer.dom(myEl.root).querySelectorAll('qea-question-type');
           assert.equal(listItems.length, 1);
+          assert.equal(listItems[0].value.name , "im a single element")
+          done();
+        });
+      });
+
+      test('check render multiple elements', function(done) {
+        myEl.questions = [{name : "im element1"}, {name : "im element2"}]
+
+        flush(function() {
+          listItems = Polymer.dom(myEl.root).querySelectorAll('qea-question-type');
+          assert.equal(listItems.length, 2);
+          assert.equal(listItems[0].value.name , "im element1")
+          assert.equal(listItems[1].value.name , "im element2")
           done();
         });
       });
