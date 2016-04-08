@@ -22,18 +22,50 @@
           myEl = fixture('qea-property-analyzer-fixture');
           stub('qea-property-analyzer', {
             resolvePath: function(tagName) {
-              return '../../.tmp/bower_components/paper-button/paper-button.html'
+              return '../../.tmp/bower_components/'+tagName+'/'+tagName+'.html'
             }
           });
         });
 
 
-        test('check analysis of a polyer elem', function(done) {
-          console.log(myEl);
-          myEl.scanElement('paper-button').then(
+        test('test scanElemen method', function(done) {
+
+            myEl.scanElement('asq-text-input-q').then(
+              // succed
+              (analyzer)=>{
+                assert(Object.keys(analyzer).length != 0)
+                done()
+              },
+              // fail
+              (e)=>{
+                assert.fail('can not analyze element')
+                done()
+              }
+            )
+
+        });
+
+
+
+        test('test reset method', function (done) {
+          myEl.src = 'test src';
+          myEl._analyzer = {hello:'world'};
+
+          myEl.reset();
+          assert.equal(myEl.src, '');
+          assert.equal(myEl._analyzer,null);
+          done()
+        });
+
+        test('test getExampleCodeAndDesc method' , function (done) {
+          myEl.scanElement('asq-text-input-q').then(
             // succed
             (analyzer)=>{
-              assert(Object.keys(analyzer).length != 0)
+              var res = myEl.getExampleCodeAndDesc(analyzer)
+              console.log(res.cd);
+              assert.isDefined(res.code);
+              assert.isDefined(res.description);
+              assert(res.code.indexOf('<asq-text-input-q') != -1 && res.code.indexOf('</asq-text-input-q>') != -1)
               done()
             },
             // fail
@@ -42,8 +74,8 @@
               done()
             }
           )
+        })
 
-        });
       });
     </script>
   </body>

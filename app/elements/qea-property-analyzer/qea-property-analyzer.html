@@ -63,7 +63,8 @@
       }
 
       _computeProps(analyzer){
-        if (Object.keys(analyzer).length === 0) {
+        if (!analyzer || Object.keys(analyzer).length === 0
+            || !analyzer.elements || analyzer.elements.length == 0) {
           return []
         }
         return this.getProperties(analyzer);
@@ -89,13 +90,13 @@
 
       // return the list of behaviors of the element analyzed
       getBehaviors(analyzer){
-        return this.getElement(analyzer)[0].behaviors;
+        return this.getElements(analyzer)[0].behaviors;
       }
 
       // return the info about the analized element.
       // if tagName is not specified it return a list contaning all the custom
       // elements founded in the scanned file
-      getElement(analyzer, tagName){
+      getElements(analyzer, tagName){
         if (tagName) {
           return analyzer.elementsByTagName[tagName];
         }
@@ -104,28 +105,27 @@
 
       // return the properties of the analyzed element;
       getProperties(analyzer){
-        return this.getElement(analyzer)[0].properties;
+        return this.getElements(analyzer)[0].properties;
       }
 
       // return an object contaning the description and the example code of the
       // analized element
       getExampleCodeAndDesc (analyzer){
-       let el = this.getElement(analyzer)[0] || null;
+       let el = this.getElements(analyzer)[0] || null;
        if (el == null) {
          return new Error('impossible to extract code from '+ this.src)
        }
        let descAndCode = el.desc;
        let code = descAndCode.substring(descAndCode.indexOf(`<${el.is}`),
-                  descAndCode.lastIndexOf(`</${el.is}>`)+ `</${el.is}>`.length)
-       let desc = descAndCode.substring( 0, descAndCode.indexOf(`## Example` -5))
+                  descAndCode.indexOf(`</${el.is}>`)+ `</${el.is}>`.length)
+       let desc = descAndCode.substring( 0, descAndCode.indexOf(`## Example`))
        return {description: desc, code: code}
       }
 
 
       reset(){
         this.src = '';
-        // this.props = [];
-        this._analyzer = {};
+        this._analyzer = null;
       }
 
 
