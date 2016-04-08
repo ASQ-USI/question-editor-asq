@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script src="../../.tmp/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../.tmp/bower_components/web-component-tester/browser.js"></script>
+    <!-- import the element to test -->
+    <link rel="import" href="../../.tmp/elements/qea-property-analyzer/qea-property-analyzer.html">
+  </head>
+  <body>
+    <!-- use the document as a place to set up your fixtures -->
+    <test-fixture id="qea-property-analyzer-fixture">
+      <template>
+        <qea-property-analyzer ></qea-property-analyzer>
+      </template>
+    </test-fixture>
+    <script>
+      suite('qea-property-analyzer test', function() {
+        var myEl, listItems;
+
+        setup(function() {
+          myEl = fixture('qea-property-analyzer-fixture');
+          stub('qea-property-analyzer', {
+            resolvePath: function(tagName) {
+              return '../../.tmp/bower_components/paper-button/paper-button.html'
+            }
+          });
+        });
+
+
+        test('check analysis of a polyer elem', function(done) {
+          console.log(myEl);
+          myEl.scanElement('paper-button').then(
+            // succed
+            (analyzer)=>{
+              assert(Object.keys(analyzer).length != 0)
+              done()
+            },
+            // fail
+            (e)=>{
+              assert.fail('can not analyze element')
+              done()
+            }
+          )
+
+        });
+      });
+    </script>
+  </body>
+</html>
