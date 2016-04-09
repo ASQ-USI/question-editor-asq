@@ -1,8 +1,13 @@
-# test
-If you want to create some tests import your elements from the `.tmp` folder in order to have the transpiled version of them
+# Test
+You need to [have web-component-tester](https://github.com/Polymer/web-component-tester) installed. To install:
+```
+npm install -g web-component-tester
+```
+
+If you want to create some tests import your elements from the `.tmp` folder in order to have the transpiled ES5 version of them.
 
 ### Run tests
-first you need to transpile to ES5
+First you need to transpile to ES5
 ```
 gulp
 ```
@@ -12,7 +17,7 @@ If you want to run all test on all the browser installed on your system, move in
 $ wct
 ```
 
-if you prefer to execute them from browser
+If you prefer to execute them from browser
 move in the root folder of the project
 ```
 $ polyserve
