@@ -75,9 +75,9 @@
 
         <div class="page page1" page-name='canvas'>
           <qea-canvas id="qeaCanvas"
-            dropped-elem={{dropped}}
+            dropped-elem=[[_dropped]]
             prop-to-change=[[_propToChange]]
-            is-dragging={{isDragging}}>
+            is-dragging=[[_isDragging]]>
           </qea-canvas>
           <nav id="nav-container">
             <qea-questions-list id="questions-list"></qea-questions-list>
@@ -87,7 +87,7 @@
       </iron-pages>
     </section>
 
-    <paper-toast id="toast" text={{toastMessage}} duration='3000' ></paper-toast>
+    <paper-toast id="toast" text=[[_toastMessage]] duration='3000' ></paper-toast>
 
   </template>
   <script>
@@ -107,15 +107,15 @@
         },
 
         this.properties = {
-          toastMessage: {
+          _toastMessage: {
             type: String,
             value: ''
           },
-          isDragging: {
+          _isDragging: {
             type: Boolean,
             value: false
           },
-          dropped: {
+          _dropped: {
             type: Object,
             notify: true
           },
@@ -130,7 +130,7 @@
         }
       }
       openToast(host, messageData) {
-        this.toastMessage = messageData.text;
+        this._toastMessage = messageData.text;
         if (messageData.type && messageData.type == 'error') {
           this.$.toast.customStyle['--paper-toast-background-color'] = '#F44336';
           this.$.toast.updateStyles();
@@ -140,15 +140,15 @@
 
       // _dragStart(host){
       //   // receive the event from question-item when drag start
-      //   this.isDragging = true;
+      //   this._isDragging = true;
       // }
       //
       // _dragStop(host, droppedElem) {
       //   // receive the event from question-item when drag stop
-      //   this.isDragging = false;
+      //   this._isDragging = false;
       //   if (droppedElem) {
       //     // render the dropped element
-      //     this.dropped = droppedElem;
+      //     this._dropped = droppedElem;
       //   }
       //
       // }

@@ -30,7 +30,7 @@
 
 
     </style>
-    <div id="canvas" on-mouseover="_allowDrop" on-mouseout="_denyDrop" on-dblclick='_selected'>
+    <div id="canvas"  on-dblclick='_selected'>
     </div>
 
   </template>
@@ -55,16 +55,6 @@
             type: Object,
             observer: '_notifyDrop'
           },
-          canDrop: {
-            type: Boolean,
-            value: false
-          },
-          previousDropBorder:{
-            type: Object,
-            value: function (){
-              return { node: null}
-            }
-          },
           propToChange: {
             type: Object,
             observer: 'updateProp'
@@ -73,21 +63,13 @@
         }
       }
 
-      // function called when user drops an item in the canvas
-      _notifyDrop(droppedElem){
-        // render the dropped element if possible
-        // TODO use droppedElem.detail.hover() to get the target instead the hard coded canvas
-        if (this.canDrop) {
-          this._injectDomElement(this.$.canvas, droppedElem.name )
-        }
-      }
 
       _importElement(elementName, notyfyImport=true){
       // check if the element is already been imported
         if (!this.$$(elementName)){
           Polymer.Base.importHref(this.resolvePath(elementName),
-            ()=>{ if (notyfyImport){this.message(elementName+ ' imported')} },
-            ()=> {this.message('error while importing: '+ elementName); return 0}
+            ()=>{ if (notyfyImport){this._message(elementName+ ' imported')} },
+            ()=> {this._message('error while importing: '+ elementName); return 0}
           )
         }
         return 1;
@@ -117,39 +99,8 @@
         return elem;
       }
 
-      message(message){
+      _message(message){
         this.fire('fireToast', {text: message})
-      }
-
-      // function called when mouse is over the canvas area
-      _allowDrop(e){
-        this.canDrop = true
-        if (this.isDragging){
-          this._toggleDropBorder(true)
-        }
-      }
-
-      // function called when mouse leves the canvas area
-      _denyDrop(){
-        this.canDrop = false
-        this._toggleDropBorder(false);
-      }
-
-      // toggle the helper dotted blue borders around drop target element
-      _toggleDropBorder(isActive, targetNode){
-        var isActive = isActive || false;
-        var targetNode = targetNode || this.$.canvas;
-
-        if (isActive) {
-          // check if there arlready is an helper border in the canvas
-          if (this.previousDropBorder.node) {
-            this.toggleClass('readyForDrop', false, this.previousDropBorder.node);
-          }
-          this.previousDropBorder.node = targetNode;
-        }else {
-          this.previousDropBorder.node = null;
-        }
-        this.toggleClass('readyForDrop', isActive, targetNode)
       }
 
       // function called when user double click on a item;
