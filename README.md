@@ -1,6 +1,6 @@
 # question-editor-asq
 
-Proof of concept for a question editor developed for the [ASQ](http://asq.inf.usi.ch/) web-app
+Proof of concept for a question editor developed for the [ASQ](http://asq.inf.usi.ch/) web-app.
 
 Installation
 -------------
@@ -31,7 +31,7 @@ bower install
 ```
 gulp serve
 ```
-This command will transpile your ES6 polymer components into ES5 and outputs an IP address you can use to locally test and another that can be used on devices connected to your network.
+This command will transpile your ES6 polymer components into ES5 and output two IP addresses: one you can use to locally test and another that can be used from devices connected to your network.
 
 
 
