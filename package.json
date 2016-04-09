@@ -1,5 +1,5 @@
 {
-  "name": "editor-project",
+  "name": "question-editor-asq",
   "version": "0.0.1",
   "description": "question editor for ASQ wab app",
   "main": "electron.js",
