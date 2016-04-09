@@ -23,7 +23,7 @@
         });
 
 
-        test('check render single element', function(done) {
+        test('correctly render single element', function(done) {
           myEl.value = {name : "im a single element"}
 
           flush(function() {
@@ -33,7 +33,7 @@
           });
         });
 
-        test('check value renedered in single element', function (done) {
+        test('value renedered in single element', function (done) {
           myEl.value = {name : "im a single element"}
 
           flush(function() {
@@ -43,7 +43,7 @@
           });
         });
 
-        test('check render category element', function(done) {
+        test('correctly render category element', function(done) {
           myEl.value = {category: 'test', list: [{name : "im a child"}]}
 
           flush(function() {
@@ -55,7 +55,7 @@
           });
         });
 
-        test('check values rendered in category element', function(done) {
+        test('values rendered in category element', function(done) {
           myEl.value = {category: 'test', list: [{name : "im a child"}]}
 
           flush(function() {

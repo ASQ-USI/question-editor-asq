@@ -15,7 +15,7 @@
       </template>
     </test-fixture>
     <script>
-      suite('qea-property-analyzer test', function() {
+      suite('public methods succeeds', function() {
         var myEl, listItems;
 
         setup(function() {
@@ -28,7 +28,7 @@
         });
 
 
-        test('test scanElemen method', function(done) {
+        test('retrun an analyzer object from scanElement method', function(done) {
 
             myEl.scanElement('asq-text-input-q').then(
               // succed
@@ -47,7 +47,7 @@
 
 
 
-        test('test reset method', function (done) {
+        test('reset method succeeds in restoring the default state of src and _analyzer property ', function (done) {
           myEl.src = 'test src';
           myEl._analyzer = {hello:'world'};
 
@@ -57,7 +57,7 @@
           done()
         });
 
-        test('test getExampleCodeAndDesc method' , function (done) {
+        test('getExampleCodeAndDesc method returns code and description' , function (done) {
           myEl.scanElement('asq-text-input-q').then(
             // succed
             (analyzer)=>{

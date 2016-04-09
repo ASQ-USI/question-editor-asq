@@ -21,7 +21,7 @@
         myEl = fixture('qea-questions-list-fixture');
       });
 
-      test('check render no elements', function(done) {
+      test('correctly render empty list of questions', function(done) {
         myEl.questions = []
 
         flush(function() {
@@ -31,7 +31,7 @@
         });
       });
 
-      test('check render single element', function(done) {
+      test('correctly render single question element', function(done) {
         myEl.questions = [{name : "im a single element"}]
 
         flush(function() {
@@ -42,7 +42,7 @@
         });
       });
 
-      test('check render multiple elements', function(done) {
+      test('correctly render multiple questions elements', function(done) {
         myEl.questions = [{name : "im element1"}, {name : "im element2"}]
 
         flush(function() {
