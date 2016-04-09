@@ -4,7 +4,11 @@
   "description": "question editor for ASQ wab app",
   "main": "electron.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "cd app && wct"
+  },
+  "repository" :{
+    "type" : "git",
+    "url" : "https://github.com/ASQ-USI/question-editor-asq.git"
   },
   "author": "Marco Ravazzini",
   "license": "ISC",
@@ -27,5 +31,8 @@
     "jshint": "^2.9.1",
     "jshint-stylish": "^2.1.0",
     "run-sequence": "^1.1.5"
+  },
+    "dependencies": {
+      "redux": "^3.4.0"
   }
 }
