@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script src="../../.tmp/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../.tmp/bower_components/web-component-tester/browser.js"></script>
+    <!-- import the element to test -->
+    <link rel="import" href="../../.tmp/elements/qea-questions-list/qea-questions-list.html">
+  </head>
+  <body>
+  <test-fixture id="qea-questions-list-fixture">
+    <template>
+      <qea-questions-list></qea-questions-list>
+    </template>
+  </test-fixture>
+
+  <script>
+    suite('qea-questions-list test', function() {
+      var myEl, listItems;
+      setup(function() {
+        myEl = fixture('qea-questions-list-fixture');
+      });
+
+      test('correctly render empty list of questions', function(done) {
+        myEl.questions = []
+
+        flush(function() {
+          listItems = Polymer.dom(myEl.root).querySelectorAll('qea-question-type');
+          assert.equal(listItems.length, 0);
+          done();
+        });
+      });
+
+      test('correctly render single question element', function(done) {
+        myEl.questions = [{name : "im a single element"}]
+
+        flush(function() {
+          listItems = Polymer.dom(myEl.root).querySelectorAll('qea-question-type');
+          assert.equal(listItems.length, 1);
+          assert.equal(listItems[0].value.name , "im a single element")
+          done();
+        });
+      });
+
+      test('correctly render multiple questions elements', function(done) {
+        myEl.questions = [{name : "im element1"}, {name : "im element2"}]
+
+        flush(function() {
+          listItems = Polymer.dom(myEl.root).querySelectorAll('qea-question-type');
+          assert.equal(listItems.length, 2);
+          assert.equal(listItems[0].value.name , "im element1")
+          assert.equal(listItems[1].value.name , "im element2")
+          done();
+        });
+      });
+
+
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<script>
+window.qeaBehaviors = window.qeaBehaviors || {};
+qeaBehaviors.inspectBehavior = {
+  properties: {
+    _analyzerRef: {
+      type: Object,
+      value: ()=> {return null}
+    }
+  },
+
+  attached: function() {
+    let a = document.querySelector('qea-property-analyzer');
+    this._analyzerRef = a ? a : null
+  },
+
+  resolvePath(tagName){
+    let p = ''
+    if (typeof __dirname !== "undefined"){
+      p = __dirname;
+    } else {
+      // otherwise set the local path to point to the app folder
+      p = '../..'
+    }
+    return `${p}/bower_components/${tagName.toLowerCase()}/${tagName.toLowerCase()}.html`
+  }
+
+
+}
+</script>

@@ -1,5 +1,5 @@
 {
-  "name": "editor-project",
+  "name": "question-editor-asq",
   "version": "0.0.1",
   "authors": [
     "Marco Ravazzini"
@@ -7,7 +7,11 @@
   "description": "question editor for ASQ wab app",
   "main": "",
   "moduleType": [],
-  "license": "MIT",
+  "license": "RPL-1.5",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ASQ-USI/question-editor-asq.git"
+  },
   "homepage": "",
   "ignore": [
     "**/.*",

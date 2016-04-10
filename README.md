@@ -1,6 +1,6 @@
 # question-editor-asq
 
-Proof of concept for a question editor developed for the [ASQ](http://asq.inf.usi.ch/) web-app
+Proof of concept for a question editor developed for the [ASQ](http://asq.inf.usi.ch/) web-app.
 
 Installation
 -------------
@@ -23,12 +23,31 @@ npm install
 bower install
 ```
 
-run on browser
+
+## Development workflow
+
+### Serve / watch
 
 ```
 gulp serve
 ```
+This command will transpile your ES6 polymer components into ES5 and output two IP addresses: one you can use to locally test and another that can be used from devices connected to your network.
 
+
+
+### Build & Vulcanize
+
+```
+gulp
+
+```
+if you would like to run a server from the dist folder
+```
+gulp serve:dist
+```
+
+
+### Electron
 If you prefer to execute it as a standalone application you need one more thing
 
 ```
@@ -36,4 +55,6 @@ npm install electron-prebuilt -g
 ```
 
 and run with
-`electron .`
+```
+gulp && electron .
+```
