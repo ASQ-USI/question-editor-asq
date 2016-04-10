@@ -8,9 +8,16 @@ npm install -g web-component-tester
 If you want to create some tests import your elements from the `.tmp` folder in order to have the transpiled ES5 version of them.
 
 ## Run tests
+### Short method
+Move into the root folder and just type
+```
+$ npm test
+```
+
+### Long method
 First you need to transpile to ES5
 ```
-gulp
+$ gulp
 ```
 
 If you want to run all test on all the browser installed on your system, move into the app folder and execute

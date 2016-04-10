@@ -48,11 +48,11 @@
 
 
         test('reset method succeeds in restoring the default state of src and _analyzer property ', function (done) {
-          myEl.src = 'test src';
+          myEl._src = 'test src';
           myEl._analyzer = {hello:'world'};
 
           myEl.reset();
-          assert.equal(myEl.src, '');
+          assert.equal(myEl._src, '');
           assert.equal(myEl._analyzer,null);
           done()
         });
