@@ -7,7 +7,11 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Marco Ravazzini",
-  "license": "ISC",
+  "license": "RPL-1.5",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ASQ-USI/question-editor-asq.git"
+  },
   "devDependencies": {
     "babel-preset-es2015": "^6.6.0",
     "browser-sync": "^2.11.1",
