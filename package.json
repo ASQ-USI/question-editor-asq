@@ -4,7 +4,7 @@
   "description": "question editor for ASQ wab app",
   "main": "electron.js",
   "scripts": {
-    "test": "gulp && cd app && wct"
+    "test": "gulp && wct app/test"
   },
   "author": "Marco Ravazzini",
   "license": "RPL-1.5",
