@@ -4,9 +4,10 @@ You need to [have web-component-tester](https://github.com/Polymer/web-component
 npm install -g web-component-tester
 ```
 
+## Add tests
 If you want to create some tests import your elements from the `.tmp` folder in order to have the transpiled ES5 version of them.
 
-### Run tests
+## Run tests
 First you need to transpile to ES5
 ```
 gulp
