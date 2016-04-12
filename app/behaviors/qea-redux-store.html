@@ -6,8 +6,8 @@ qeaBehaviors.reduxStore = PolymerRedux(store)
 let initialState = {
   id: 0, //id of the cuurent page
   elements:[
-    // element inside page using this format: {id, type:(text|question), html}.
-    // The index will represent the render order
+    // elements inside canvas using this format: {id, type:(text|question), html}.
+    // The index of the array will represent the render order
   ]
 }
 
@@ -58,6 +58,8 @@ function elementsReducer(elementsList=[], action) {
         }
       })
       return arr;
+    // change the index of the selected elemnet in the elemnts array in order
+    // to change the render position
     case "MOVE_ELEMENT":
 
       if (action.newIndex < 0 || action.newIndex > (elementsList.length - 1))
