@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../behaviors/qea-redux-store.html">
 
 <dom-module id="qea-landing-page">
   <template>
@@ -24,6 +25,31 @@
       }
     </style>
     <div class="container">
+      <div class="">
+        <button type="button" name="button" on-tap='addPage'>add</button>
+      </div>
+      <div class="">
+        id <input type="number" name="name" id="idRemove" value='0'>
+        <button type="button" name="button" on-tap='removePage'>remove</button>
+      </div>
+      <div class="">
+        id <input type="number" name="name" id="editId" value='0'>
+        innerHTML<input type="text" name="name" id="editText" placeholder="text">
+        <button type="button" name="button" on-tap='editPage'>edit</button>
+      </div>
+      <div class="">
+        id<input type="number" name="name" id="idMove" value='0'>
+        to index<input type="number" name="name" id="toMove" value='0'>
+        <button type="button" name="button" on-tap='moveElement'>move</button>
+
+      </div>
+      <br>
+      <template is="dom-repeat" items="{{elements}}">
+        <b>id: [[item.id]]</b>
+        <div class="" inner-h-t-m-l=[[item.html]] ></div>
+
+
+      </template>
       <paper-fab  icon="add" on-tap="_newPresentation"></paper-fab>
     </div>
 
@@ -36,12 +62,69 @@
     class qeaLandingPage {
 
       get behaviors() {
-        return [];
+        return [qeaBehaviors.reduxStore];
       }
 
       beforeRegister(){
         this.is = 'qea-landing-page'
-        this.properties = {}
+        this.properties = {
+          counter : {
+            type: Number,
+            value: 0
+          },
+          elements: {
+            type: Array,
+            statePath: 'elements'
+          }
+        }
+      }
+      created(){
+        this.dispatch({type:''})
+      }
+
+
+      addPage() {
+          this.dispatch(()=> {
+            return {
+               type: 'ADD_ELEMENT',
+               elementId: this.counter++,
+               elementType: 'text',
+               elementHtml: `<div>${new Date()}${new Date().getTime()}</div>`
+            };
+          });
+          console.log(this.getState());
+      }
+
+      removePage(){
+        this.dispatch(()=> {
+          return {
+             type: 'REMOVE_ELEMENT',
+             elementId: this.$.idRemove.value
+          };
+        });
+        console.log(this.getState());
+      }
+
+      editPage(){
+        this.dispatch(()=> {
+          return {
+             type: 'EDIT_ELEMENT',
+             elementId: this.$.editId.value,
+             elementHtml: this.$.editText.value
+          };
+        });
+        console.log(this.getState());
+      }
+
+      moveElement(){
+        this.dispatch(()=> {
+          return {
+             type: 'MOVE_ELEMENT',
+             elementId: this.$.idMove.value,
+             newIndex: this.$.toMove.value
+          };
+        });
+        console.log(this.getState());
       }
 
       // go to new page
