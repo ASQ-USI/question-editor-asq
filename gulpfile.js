@@ -86,6 +86,9 @@ gulp.task('vulcanize',['bowertotmp'], function () {
 
 // copy all bower_components in .tmp folder
 gulp.task('bowertotmp', function () {
+  gulp.src(['node_modules/redux/dist/redux.js'])
+    .pipe(gulp.dest('.tmp/script/'));
+
  return gulp.src(['app/bower_components/**/*'])
    .pipe(gulp.dest('.tmp/bower_components/'));
 });

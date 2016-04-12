@@ -1,0 +1,80 @@
+<script>
+window.qeaBehaviors = window.qeaBehaviors || {};
+let store = Redux.createStore(appReducer)
+qeaBehaviors.reduxStore = PolymerRedux(store)
+
+let initialState = {
+  id: 0, //id of the cuurent page
+  elements:[
+    // element inside page using this format: {id, type:(text|question), html}.
+    // The index will represent the render order
+  ]
+}
+
+
+function appReducer(state=initialState, action) {
+
+  switch (action.type) {
+
+    case "ADD_ELEMENT":
+    case "REMOVE_ELEMENT":
+    case "EDIT_ELEMENT":
+    case "MOVE_ELEMENT":
+      return Object.assign({}, state, {
+        elements: elementsReducer(state.elements, action)
+      })
+    default:
+      return state;
+  }
+}
+
+function elementsReducer(elementsList=[], action) {
+  switch (action.type) {
+    case "ADD_ELEMENT":
+      return [...elementsList, {
+        id: action.elementId,
+        type: action.elementType,
+        html: action.elementHtml
+      }]
+    case "REMOVE_ELEMENT":
+      let index = 0;
+      for (index; index < elementsList.length; index++) {
+        if(elementsList[index].id == action.elementId) {break}
+      }
+      return [
+        ...elementsList.slice(0, index),
+        ...elementsList.slice(index + 1)
+      ]
+    case "EDIT_ELEMENT":
+      let arr = elementsList.map((elem, index)=>{
+        if (elem.id != action.elementId) {
+          return elem;
+        }else {
+          return {
+            id: action.elementId,
+            type: action.elementType || elem.type,
+            html: action.elementHtml
+          }
+        }
+      })
+      return arr;
+    case "MOVE_ELEMENT":
+
+      if (action.newIndex < 0 || action.newIndex > (elementsList.length - 1))
+        {return elementsList}
+
+      let oldIndex = 0
+      for (oldIndex; oldIndex < elementsList.length; oldIndex++) {
+        if(elementsList[oldIndex].id == action.elementId) {break}
+      }
+      let newArray = elementsList.slice();
+      let value = newArray.splice(oldIndex,1)
+      newArray.splice(action.newIndex ,0, value[0])
+      return newArray;
+    default:
+      return elementsList;
+  }
+}
+
+
+</script>
