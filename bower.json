@@ -7,19 +7,12 @@
   "description": "question editor for ASQ wab app",
   "main": "",
   "moduleType": [],
-<<<<<<< HEAD
-<<<<<<< HEAD
   "license": "RPL-1.5",
   "repository": {
     "type": "git",
     "url": "https://github.com/ASQ-USI/question-editor-asq.git"
   },
-=======
-  "license": "",
->>>>>>> origin/redux
-=======
-  "license": "",
->>>>>>> origin/redux
+  "license": "RPL-1.5",
   "homepage": "",
   "ignore": [
     "**/.*",

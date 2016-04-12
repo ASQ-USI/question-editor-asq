@@ -4,21 +4,11 @@
   "description": "question editor for ASQ wab app",
   "main": "electron.js",
   "scripts": {
-<<<<<<< HEAD
-<<<<<<< HEAD
     "test": "gulp && wct app/test"
-=======
-=======
->>>>>>> origin/redux
-    "test": "cd app && wct"
   },
   "repository" :{
     "type" : "git",
     "url" : "https://github.com/ASQ-USI/question-editor-asq.git"
-<<<<<<< HEAD
->>>>>>> origin/redux
-=======
->>>>>>> origin/redux
   },
   "author": "Marco Ravazzini",
   "license": "RPL-1.5",
