@@ -2,35 +2,39 @@
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower_components/Sortable/Sortable.html">
 <link rel="import" href="../../behaviors/qea-inspect-behavior.html">
+<link rel="import" href="../qea-selector-highlighter/qea-selector-highlighter.html">
+
+
 <dom-module id="qea-canvas">
   <template>
     <style>
       :host {
         display: block;
         height: 100%;
+        width: calc(100% - 300px);
+        box-sizing: border-box;
+
+        padding: 5px;
       }
       #canvas{
-        padding: 5px;
-        box-sizing: border-box;
         width: 100%;
         height: 100%;
         position: relative;
       }
 
-      .readyForDrop{
-        border: dashed 3px blue;
-      }
-      .wrapper{
-
-      }
-      .qea-selected{
-        border: 2px dotted blue;
-      }
-
-
     </style>
-    <div id="canvas"  on-dblclick='_selected'>
+    <div id="canvas" on-tap='selectItem'>
+      <sortable-js handle=".handle" scroll animation='300' >
+        <qea-selector-highlighter selected-Id=[[selectedElemId]] element-Id='34'>
+          <h1>element n1</h1 >
+        </qea-selector-highlighter>
+        <qea-selector-highlighter selected-Id=[[selectedElemId]] element-Id='43'>
+          <p>####################################################</p>
+        </qea-selector-highlighter>
+
+      </sortable-js>
     </div>
 
   </template>
@@ -51,18 +55,21 @@
           isDragging:{
             type: Boolean
           },
-          droppedElem:{
-            type: Object,
-            observer: '_notifyDrop'
-          },
-          propToChange: {
-            type: Object,
-            observer: 'updateProp'
+          selectedElemId:{
+            type:String
           }
-
         }
       }
 
+      selectItem(event){
+        for (var value of event.path) {
+          if(value.tagName && value.tagName.toLowerCase() === "qea-selector-highlighter"){
+            this.selectedElemId = value.elementId
+            return
+          }
+        }
+        this.selectedElemId = null;
+      }
 
       _importElement(elementName, notyfyImport=true){
       // check if the element is already been imported
@@ -75,85 +82,13 @@
         return 1;
       }
 
-      // function rensponsable to inject elements in the local DOM
-      _injectDomElement(target, elementName) {
-        let dynamicEl, wrapper;
-        this._importElement(elementName);
-        wrapper = this._createElement('div', false);
-        wrapper.id = this._idGenerator();
-        wrapper.className = 'wrapper';
-        dynamicEl = this._createElement(elementName);
-        wrapper.appendChild(dynamicEl)
-        Polymer.dom(target).appendChild(wrapper);
-        this._toggleDropBorder(false);
-      }
 
-      // function rensponsable to generate DOM elements
-      _createElement(elementName, isPolymerElem=true, elemProperties={}) {
-        let elem;
-        if (isPolymerElem) {
-          elem = Polymer.Base.create(elementName, elemProperties);
-        }else {
-          elem = document.createElement(elementName)
-        }
-        return elem;
-      }
 
       _message(message){
         this.fire('fireToast', {text: message})
       }
 
-      // function called when user double click on a item;
-      _selected(e){
-        let wrapper = this._findClosesestWrapper(e.path);
-        this._editSelected();
-        if (wrapper == null) {
-          this._changeSelection();
-          return
-        }
-        this._changeSelection(wrapper);
-        this._editSelected(wrapper);
-      }
 
-      // find the first wrapper DIV in the upper tree DOM
-      _findClosesestWrapper(path){
-        for (var i = 0; i < path.length; i++) {
-          if (path[i].tagName == 'DIV' && path[i].className.indexOf('wrapper') != -1) {
-            return path[i];
-          }
-          if (path[i].tagName == 'QUE-CANVAS') {
-            return null
-          }
-        }
-        return null;
-      }
-
-      // cahnge the selected element by toggling 'qea-selected' class
-      _changeSelection(newSelection){
-        let previousSelection = this.querySelector('.qea-selected')
-        if (newSelection) {
-          this.classFollows('qea-selected', newSelection, previousSelection)
-        }else {
-          this.toggleClass('qea-selected', false, previousSelection)
-        }
-      }
-
-      // function that calls qea-property-analyzer in order to analyze the
-      // selected element and extract properties
-      _editSelected(selected){
-        if (!selected) {
-          this._analyzerRef.reset();
-          return;
-        }
-        let asqElem = selected.children[0];
-        this._analyzerRef.scanElement(asqElem.tagName.toLowerCase())
-          .then(
-            (analyzer)=>{
-              // executed when qea-property-analyzer finishes to analyze element
-            },
-            (e)=>{console.log('error', e)}
-          )
-      }
 
       // generate a random id
       _idGenerator(){
@@ -163,15 +98,7 @@
         return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
       }
 
-      updateProp(prop){
-        if (prop != null ) {
-          let selected = this.querySelector('.qea-selected').children[0] || null
-          if (selected) {
-            selected[prop.name] = prop.value;
-          }
-        }
 
-      }
 
 
 

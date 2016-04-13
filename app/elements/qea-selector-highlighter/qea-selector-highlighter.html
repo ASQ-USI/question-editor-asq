@@ -1,0 +1,111 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+<dom-module id="qea-selector-highlighter">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      .controlPanel{
+        text-align: right;
+      }
+      #lineSeparator{
+        width: 100%;
+        height: 1px;
+        background: #EEEEEE;
+      }
+      paper-button#removeBT{
+        color: red
+      }
+      .control{
+        opacity: 0.8;
+      }
+      .handle:hover{
+        cursor: move;
+      }
+    </style>
+    <paper-material elevation=[[_elevation]] animated>
+      <content select=""></content>
+
+      <template is="dom-if" if="[[isSelected]]">
+        <div class="controlPanel">
+          <div id="lineSeparator"></div>
+          <iron-icon  class="handle control" icon="open-with"></iron-icon>
+          <paper-button class="control" id="editBT">edit</paper-button>
+          <paper-button class="control" id='removeBT' on-tap='_removeComponet'>remove</paper-button>
+        </div>
+      </template>
+    </paper-material>
+
+  </template>
+  <script>
+  (function () {
+    'use strict'
+
+    let MyBehavior = {};
+    class qeaSelectorHighlighter {
+
+      get behaviors() {
+        return [];
+      }
+
+      beforeRegister(){
+        this.is = 'qea-selector-highlighter'
+        this.properties = {
+          elementId:{
+            type: String,
+            value: 'ass'
+          },
+          type:{
+            type: String
+          },
+          isSelected:{
+            type: Boolean,
+            value: false
+          },
+          selectedId:{
+            type: String,
+            observer: '_checkSelection'
+          },
+          _elevation:{
+            type: Number,
+            computed: '_calcElevation(isSelected)'
+          }
+        }
+      }
+
+      _calcElevation(isSelected){
+        return isSelected?4:0;
+      }
+
+      _checkSelection(selectedId){
+        this.isSelected = (selectedId == this.elementId)
+      }
+
+      _editComponent(){
+        if (this.type === 'text') {
+
+        }else {
+
+        }
+      }
+
+      _removeComponet(){
+        let confirmation = confirm('Are you sure ??')
+        if (confirmation) {
+          // delete the element
+        }
+
+      }
+
+
+
+    }
+
+    Polymer(qeaSelectorHighlighter);
+  })()
+  </script>
+</dom-module>
