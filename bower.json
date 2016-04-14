@@ -12,6 +12,7 @@
     "type": "git",
     "url": "https://github.com/ASQ-USI/question-editor-asq.git"
   },
+  "license": "RPL-1.5",
   "homepage": "",
   "ignore": [
     "**/.*",
