@@ -28,8 +28,13 @@
       }
     </style>
     <paper-material elevation=[[_elevation]] animated>
-      <content select=""></content>
+      <!-- pace where the text or question will be dinamically inserted -->
+      <div id="content">
 
+      </div>
+
+
+      <!-- control panel -->
       <template is="dom-if" if="[[isSelected]]">
         <div class="controlPanel">
           <div id="lineSeparator"></div>
@@ -57,7 +62,6 @@
         this.properties = {
           elementId:{
             type: String,
-            value: 'ass'
           },
           type:{
             type: String
@@ -73,12 +77,19 @@
           _elevation:{
             type: Number,
             computed: '_calcElevation(isSelected)'
+          },
+          content: {
+            type: String,
+            observer: '_injectContent'
           }
         }
       }
+      _injectContent(content){
+        this.$.content.innerHTML = content;
+      }
 
       _calcElevation(isSelected){
-        return isSelected?4:0;
+        return isSelected ? 4 : 0;
       }
 
       _checkSelection(selectedId){
@@ -94,12 +105,17 @@
       }
 
       _removeComponet(){
-        let confirmation = confirm('Are you sure ??')
+        let confirmation = confirm('Do you really want to delete this element ??')
         if (confirmation) {
           // delete the element
+          // this.dispatch('removeElement', this.elementId);
         }
-
       }
+
+      getCode(){
+        return this.$.content.innerHTML;
+      }
+
 
 
 

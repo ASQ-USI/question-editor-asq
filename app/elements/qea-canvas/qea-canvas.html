@@ -26,14 +26,14 @@
 
     </style>
     <div id="canvas" on-tap='selectItem'>
-      <sortable-js handle=".handle" scroll animation='300' >
-        <qea-selector-highlighter selected-Id=[[selectedElemId]] element-Id='34'>
-          <h1>element n1</h1 >
-        </qea-selector-highlighter>
-        <qea-selector-highlighter selected-Id=[[selectedElemId]] element-Id='43'>
-          <p>####################################################</p>
-        </qea-selector-highlighter>
-
+      <sortable-js handle=".handle" scroll  animation='200' force-Fallback='true'>
+        <template is="dom-repeat" items={{objs}}  >
+          <qea-selector-highlighter
+            selected-Id=[[selectedElemId]]
+            element-Id=[[item.id]]
+            content=[[item.html]]>
+          </qea-selector-highlighter>
+        </template>
       </sortable-js>
     </div>
 
@@ -57,6 +57,14 @@
           },
           selectedElemId:{
             type:String
+          },
+          objs:{
+            type: Array,
+            value: ()=>[
+              {id: 3, html:'<h1>title</h1>'},
+              {id: 4, html:'<h1>gatto</h1>'},
+              {id: 5, html:'<h1>pardo</h1>'}
+            ]
           }
         }
       }
@@ -91,7 +99,7 @@
 
 
       // generate a random id
-      _idGenerator(){
+      idGenerator(){
         let S4 = function() {
           return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
         };
