@@ -1,0 +1,85 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/polymer-tinymce/polymer-tinymce.html">
+
+<dom-module id="qea-text-editor">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <paper-dialog opened={{isDialogOpen}}  on-iron-overlay-canceled='_preventCancellation' >
+      <h2>Create or modify text</h2>
+        <polymer-tinymce id="editor"
+              tinytoolbar="insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent| fontsizeselect | link image | forecolor backcolor"
+              tinyplugins='["advlist autolink lists link image charmap print preview anchor","searchreplace visualblocks code fullscreen","insertdatetime media table contextmenu paste","textcolor" ]'
+        ></polymer-tinymce>
+      <div class="buttons">
+        <paper-button dialog-dismiss on-tap="_clean">Cancel</paper-button>
+        <paper-button dialog-confirm on-tap="_notifyContent">Accept</paper-button>
+      </div>
+    </paper-dialog>
+
+  </template>
+  <script>
+  (function () {
+    'use strict'
+
+    let MyBehavior = {};
+    class qeaTextEditor {
+
+      get behaviors() {
+        return [];
+      }
+
+      beforeRegister(){
+        this.is = 'qea-text-editor'
+        this.properties = {
+          isDialogOpen:{
+            type: Boolean,
+            value: false,
+            notify: true
+          },
+          content:{
+            type: String,
+            observer: 'setContent',
+            notify: true
+          }
+        }
+      }
+
+
+      _preventCancellation(ev){
+        event.preventDefault()
+      }
+
+      _clean(){
+        this.setContent('');
+        this.isDialogOpen = false
+      }
+
+      _notifyContent(){
+        this.content = this.getContent();
+        this.isDialogOpen = false
+        this.setContent('');
+      }
+
+      getContent(){
+        return this.$.editor.getContent();
+      }
+
+      setContent(content){
+        this.$.editor.setContent(content);
+      }
+
+      openDialog(){
+        this.isDialogOpen = true;
+      }
+
+    }
+
+    Polymer(qeaTextEditor);
+  })()
+  </script>
+</dom-module>
