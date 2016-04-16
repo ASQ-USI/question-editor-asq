@@ -30,6 +30,7 @@
     "paper-fab": "PolymerElements/paper-fab#^1.0.0",
     "hydrolysis": "^1.23.3",
     "web-component-tester": "Polymer/web-component-tester#^4.2.2",
-    "Sortable": "sortable.js#^1.4.2"
+    "Sortable": "sortable.js#^1.4.2",
+    "polymer-tinymce": "*"
   }
 }

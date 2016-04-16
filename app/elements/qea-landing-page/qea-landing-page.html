@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../qea-text-editor/qea-text-editor.html">
 
 <dom-module id="qea-landing-page">
   <template>
@@ -24,6 +25,12 @@
       }
     </style>
     <div class="container">
+      <qea-text-editor is-dialog-open={{open}} content={{val}} id="ghj"></qea-text-editor>
+      <input type="text" name="name" value={{val::input}}>
+      <button type="button" name="button" on-tap='toggle'>toggle dialog</button>
+      <div class="">
+        [[val]]
+      </div>
       <paper-fab  icon="add" on-tap="_newPresentation"></paper-fab>
     </div>
 
@@ -41,14 +48,9 @@
 
       beforeRegister(){
         this.is = 'qea-landing-page'
-        this.properties = {
-          elements: {
-            type: Array,
-            statePath: 'elements'
-          }
-        }
-      }
+        this.properties = {}
 
+      }
       // go to new page
       _newPresentation(){
         this.fire('changePage', 'canvas');
