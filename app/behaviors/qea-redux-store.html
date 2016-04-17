@@ -4,7 +4,7 @@ let store = Redux.createStore(appReducer)
 qeaBehaviors.reduxStore = PolymerRedux(store)
 
 let initialState = {
-  id: 0, //id of the cuurent page
+  id: 0, //id of the current page
   elements:[
     // elements inside canvas using this format: {id, type:(text|question), html}.
     // The index of the array will represent the render order
@@ -58,7 +58,7 @@ function elementsReducer(elementsList=[], action) {
         }
       })
       return arr;
-    // change the index of the selected elemnet in the elemnts array in order
+    // change the index of the selected element in the elements array in order
     // to change the render position
     case "MOVE_ELEMENT":
 
