@@ -1,0 +1,14 @@
+<link rel="import" href="../../.tmp/bower_components/polymer/polymer.html">
+<link rel="import" href="../../.tmp/behaviors/qea-redux-store.html">
+<link rel="import" href="../../.tmp/behaviors/qea-actions-behavior.html">
+
+
+<script>
+  Polymer({
+    is: 'simple-elem',
+    behaviors: [
+      qeaBehaviors.actionsBehavior,
+      qeaBehaviors.reduxStore
+    ]
+  });
+</script>

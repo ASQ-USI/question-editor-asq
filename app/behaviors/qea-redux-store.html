@@ -23,6 +23,8 @@ function appReducer(state=initialState, action) {
       return Object.assign({}, state, {
         elements: elementsReducer(state.elements, action)
       })
+    case "RESET_STATE":
+      state = undefined;
     default:
       return state;
   }
@@ -61,7 +63,6 @@ function elementsReducer(elementsList=[], action) {
     // change the index of the selected element in the elements array in order
     // to change the render position
     case "MOVE_ELEMENT":
-
       if (action.newIndex < 0 || action.newIndex > (elementsList.length - 1))
         {return elementsList}
 

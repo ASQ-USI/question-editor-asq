@@ -1,0 +1,46 @@
+<script>
+  window.qeaBehaviors = window.qeaBehaviors || {};
+  qeaBehaviors.actionsBehavior = {
+    actions: {
+      addElement: function(type, html){
+          var _idGenerator = function(){
+            let S4 = function() {
+              return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+            };
+            return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
+          }
+          return {
+              type: 'ADD_ELEMENT',
+              elementId: _idGenerator(),
+              elementType: type,
+              elementHtml: html
+          };
+      },
+      removeElement: function(id) {
+          return {
+              type: 'REMOVE_ELEMENT',
+              elementId: id
+          };
+      },
+      // type is optional
+      editElement: function(id, html, type) {
+          return {
+              type: 'EDIT_ELEMENT',
+              elementId: id ,
+              elementType: type,
+              elementHtml: html
+          };
+      },
+      moveElement: function(id, newIndex) {
+          return {
+              type: 'MOVE_ELEMENT',
+              elementId: id,
+              newIndex: newIndex
+          };
+      },
+      resetState: function () {
+        return { type: 'RESET_STATE'}
+      }
+    }
+  }
+</script>
