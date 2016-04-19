@@ -2,6 +2,8 @@
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../behaviors/qea-redux-store.html">
+<link rel="import" href="../../behaviors/qea-actions-behavior.html">
 
 <dom-module id="qea-selector-highlighter">
   <template>
@@ -33,7 +35,6 @@
 
       </div>
 
-
       <!-- control panel -->
       <template is="dom-if" if="[[isSelected]]">
         <div class="controlPanel">
@@ -54,7 +55,10 @@
     class qeaSelectorHighlighter {
 
       get behaviors() {
-        return [];
+        return [
+          qeaBehaviors.actionsBehavior,
+          qeaBehaviors.reduxStore
+        ];
       }
 
       beforeRegister(){
@@ -108,7 +112,7 @@
         let confirmation = confirm('Do you really want to delete this element ??')
         if (confirmation) {
           // delete the element
-          // this.dispatch('removeElement', this.elementId);
+          this.dispatch('removeElement', this.elementId);
         }
       }
 

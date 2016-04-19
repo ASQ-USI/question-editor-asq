@@ -5,7 +5,8 @@
 <link rel="import" href="../../bower_components/Sortable/Sortable.html">
 <link rel="import" href="../../behaviors/qea-inspect-behavior.html">
 <link rel="import" href="../qea-selector-highlighter/qea-selector-highlighter.html">
-
+<link rel="import" href="../../behaviors/qea-redux-store.html">
+<link rel="import" href="../../behaviors/qea-actions-behavior.html">
 
 <dom-module id="qea-canvas">
   <template>
@@ -26,11 +27,12 @@
 
     </style>
     <div id="canvas" on-tap='selectItem'>
-      <sortable-js handle=".handle" scroll  animation='200' force-Fallback='true'>
-        <template is="dom-repeat" items={{objs}}  >
+      <sortable-js handle=".handle" scroll  animation='200' force-Fallback='true' >
+        <template is="dom-repeat" items={{objs}}  id="repeater">
           <qea-selector-highlighter
             selected-Id=[[selectedElemId]]
             element-Id=[[item.id]]
+            type=[[item.type]]
             content=[[item.html]]>
           </qea-selector-highlighter>
         </template>
@@ -46,7 +48,11 @@
     class qeaCanvas {
 
       get behaviors() {
-        return [qeaBehaviors.inspectBehavior];
+        return [
+          qeaBehaviors.inspectBehavior,
+          qeaBehaviors.actionsBehavior,
+          qeaBehaviors.reduxStore
+        ];
       }
 
       beforeRegister(){
@@ -60,11 +66,7 @@
           },
           objs:{
             type: Array,
-            value: ()=>[
-              {id: 3, html:'<h1>title</h1>'},
-              {id: 4, html:'<h1>gatto</h1>'},
-              {id: 5, html:'<h1>pardo</h1>'}
-            ]
+            statePath: 'elements'
           }
         }
       }
@@ -95,19 +97,6 @@
       _message(message){
         this.fire('fireToast', {text: message})
       }
-
-
-
-      // generate a random id
-      idGenerator(){
-        let S4 = function() {
-          return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
-        };
-        return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
-      }
-
-
-
 
 
     }
