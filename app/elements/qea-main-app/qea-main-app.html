@@ -1,11 +1,12 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
 <link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+
 <link rel="import" href="../qea-questions-list/qea-questions-list.html">
 <link rel="import" href="../qea-canvas/qea-canvas.html">
 <link rel="import" href="../qea-property-analyzer/qea-property-analyzer.html">
 <link rel="import" href="../qea-landing-page/qea-landing-page.html">
+<link rel="import" href="../qea-toolbar/qea-toolbar.html">
 
 
 <dom-module id="qea-main-app">
@@ -13,17 +14,6 @@
     <style>
       :host {
         display: block;
-      }
-      #toast{
-      }
-
-      paper-toolbar{
-        --paper-toolbar-background: white;
-        --paper-toolbar-color: black;
-        --paper-toolbar-title: {
-          min-width: 230px;
-          flex-grow : 0;
-        }
       }
 
       #canvas-container{
@@ -59,16 +49,15 @@
 
     <qea-property-analyzer props='{{props}}'></qea-property-analyzer>
 
-    <paper-toolbar justify='start' >
-      <span class="title">question-editor-asq  </span>
-    </paper-toolbar>
+    <qea-toolbar current-Page=[[_currentPage]]></qea-toolbar>
 
 
 
     <section id="canvas-container">
 
       <!-- be sure to add the "page-name" attribute to all the new pages inserted -->
-      <iron-pages id='pageController' selected="canvas" attr-For-Selected="page-name">
+
+      <iron-pages id='pageController' selected={{_currentPage}} attr-For-Selected="page-name">
 
         <div class="page page0" page-name='landingPage'>
           <qea-landing-page></qea-landing-page>
@@ -106,9 +95,6 @@
         this.listeners = {
           "fireToast": "openToast",
           "changePage": "changePage"
-          // "dragStart": "_dragStart",
-          // "dragStop" : "_dragStop",
-          // "changeProp": "_changeProp"
         },
 
         this.properties = {
@@ -131,6 +117,11 @@
           props: {
             type: Object,
             notify: true
+          },
+          _currentPage:{
+            type: String,
+            value: 'landingPage',
+            notify: true
           }
         }
       }
@@ -144,25 +135,6 @@
         }
         this.$.toast.open();
       }
-
-      // _dragStart(host){
-      //   // receive the event from question-item when drag start
-      //   this._isDragging = true;
-      // }
-      //
-      // _dragStop(host, droppedElem) {
-      //   // receive the event from question-item when drag stop
-      //   this._isDragging = false;
-      //   if (droppedElem) {
-      //     // render the dropped element
-      //     this._dropped = droppedElem;
-      //   }
-      //
-      // }
-      //
-      // _changeProp(host,editedProp){
-      //   this._propToChange = editedProp;
-      // }
 
       changePage(host, selectedPage=''){
         for (var page of this.$.pageController.items) {
