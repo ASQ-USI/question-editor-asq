@@ -7,6 +7,7 @@
 <link rel="import" href="../qea-property-analyzer/qea-property-analyzer.html">
 <link rel="import" href="../qea-landing-page/qea-landing-page.html">
 
+
 <dom-module id="qea-main-app">
   <template>
     <style>
@@ -95,6 +96,10 @@
     'use strict';
 
     class qeaMainApp {
+      get behaviors() {
+        return [];
+      }
+
       beforeRegister() {
         this.is = 'qea-main-app';
 
@@ -129,6 +134,8 @@
           }
         }
       }
+
+
       openToast(host, messageData) {
         this._toastMessage = messageData.text;
         if (messageData.type && messageData.type == 'error') {

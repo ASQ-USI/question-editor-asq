@@ -41,7 +41,12 @@
 
       beforeRegister(){
         this.is = 'qea-landing-page'
-        this.properties = {}
+        this.properties = {
+          elements: {
+            type: Array,
+            statePath: 'elements'
+          }
+        }
       }
 
       // go to new page
