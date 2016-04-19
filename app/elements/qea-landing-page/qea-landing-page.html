@@ -26,9 +26,10 @@
     </style>
     <div class="container">
       <qea-text-editor is-dialog-open={{open}} content={{val}} id="ghj"></qea-text-editor>
+      
       <input type="text" name="name" value={{val::input}}>
       <button type="button" name="button" on-tap='toggle'>toggle dialog</button>
-      <div class="">
+      <div id="textSample">
         [[val]]
       </div>
       <paper-fab  icon="add" on-tap="_newPresentation"></paper-fab>
@@ -54,10 +55,15 @@
             value: false
           },
           val:{
-            type: String
+            type: String,
+            observer: 'injector'
           }
         }
       }
+      injector(val){
+        this.$.textSample.innerHTML = val
+      }
+
       toggle(){
         // this.open = true
         this.$.ghj.openDialog()
