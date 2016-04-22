@@ -63,7 +63,6 @@
         <div class="page page1" page-name='canvas'>
           <qea-canvas id="qeaCanvas"
             dropped-elem=[[_dropped]]
-            prop-to-change=[[_propToChange]]
             is-dragging=[[_isDragging]]>
           </qea-canvas>
           <nav id="nav-container">
@@ -92,6 +91,8 @@
         this.listeners = {
           "fireToast": "_openToast",
           "changePage": "_changePage"
+          "dragStart": "_dragStart",
+          "dragStop" : "_dragStop"
         },
 
         this.properties = {
@@ -106,10 +107,6 @@
           _dropped: {
             type: Object,
             notify: true
-          },
-          _propToChange: {
-            type: Object,
-            value: ()=>null
           },
           props: {
             type: Object,
@@ -133,7 +130,23 @@
         this.$.toast.open();
       }
 
-      _changePage(host, selectedPage=''){
+
+      _dragStart(host){
+        // receive the event from question-item when drag start
+        this._isDragging = true;
+      }
+
+      _dragStop(host, droppedElem) {
+        // receive the event from question-item when drag stop
+        this._isDragging = false;
+        if (droppedElem) {
+          // render the dropped element
+          this._dropped = droppedElem;
+        }
+
+      }
+
+      changePage(host, selectedPage=''){
         for (var page of this.$.pageController.items) {
           if (page.getAttribute('page-name') == selectedPage ){
             this.$.pageController.selected = selectedPage;
