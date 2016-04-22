@@ -9,15 +9,15 @@
         display: block;
       }
     </style>
-    <paper-dialog opened={{isDialogOpen}}  on-iron-overlay-canceled='_preventCancellation' >
+    <paper-dialog opened={{isDialogOpen}} on-iron-overlay-canceled='_preventCancellation'  id='myDialog' >
       <h2>Create or modify text</h2>
         <polymer-tinymce id="editor"
               tinytoolbar="insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent| fontsizeselect | link image | forecolor backcolor"
               tinyplugins='["advlist autolink lists link image charmap print preview anchor","searchreplace visualblocks code fullscreen","insertdatetime media table contextmenu paste","textcolor" ]'
         ></polymer-tinymce>
       <div class="buttons">
-        <paper-button dialog-dismiss on-tap="_clean">Cancel</paper-button>
-        <paper-button dialog-confirm on-tap="_notifyContent">Accept</paper-button>
+        <paper-button dialog-dismiss id="cancell">Cancel</paper-button>
+        <paper-button dialog-confirm id='accept'>Accept</paper-button>
       </div>
     </paper-dialog>
 
@@ -57,7 +57,6 @@
 
       _clean(){
         this.setContent('');
-        this.isDialogOpen = false
       }
 
       // update data binding
@@ -76,9 +75,24 @@
       setContent(content){
         this.$.editor.setContent(content);
       }
-      
+
       openDialog(){
         this.isDialogOpen = true;
+        return new Promise(
+          (resolve)=>  {
+            const self = this
+            function onIronOverlayClosed(e){
+              let result = null;
+              if(e.detail.confirmed){
+                result = self.getContent();
+              }
+              self._clean();
+              e.target.removeEventListener('iron-overlay-closed', onIronOverlayClosed);
+              resolve(result);
+            }
+            this.$.myDialog.addEventListener('iron-overlay-closed', onIronOverlayClosed);
+          }
+        )
       }
 
     }

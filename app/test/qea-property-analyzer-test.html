@@ -32,12 +32,12 @@
 
             myEl.scanElement('asq-text-input-q').then(
               // succed
-              (analyzer)=>{
+              function(analyzer){
                 assert(Object.keys(analyzer).length != 0)
                 done()
               },
               // fail
-              (e)=>{
+              function(e){
                 assert.fail('can not analyze element')
                 done()
               }
@@ -60,7 +60,7 @@
         test('getExampleCodeAndDesc method returns code and description' , function (done) {
           myEl.scanElement('asq-text-input-q').then(
             // succed
-            (analyzer)=>{
+            function(analyzer){
               var res = myEl.getExampleCodeAndDesc(analyzer)
               assert.isDefined(res.code);
               assert.isDefined(res.description);
@@ -68,7 +68,7 @@
               done()
             },
             // fail
-            (e)=>{
+            function(e){
               assert.fail('can not analyze element')
               done()
             }

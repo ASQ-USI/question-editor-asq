@@ -4,9 +4,10 @@
 <link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../bower_components/Sortable/Sortable.html">
 <link rel="import" href="../../behaviors/qea-inspect-behavior.html">
-<link rel="import" href="../qea-selector-highlighter/qea-selector-highlighter.html">
 <link rel="import" href="../../behaviors/qea-redux-store.html">
 <link rel="import" href="../../behaviors/qea-actions-behavior.html">
+<link rel="import" href="../qea-selector-highlighter/qea-selector-highlighter.html">
+<link rel="import" href="../qea-text-editor/qea-text-editor.html">
 
 <dom-module id="qea-canvas">
   <template>
@@ -26,6 +27,7 @@
       }
 
     </style>
+    <qea-text-editor id="textEditor"></qea-text-editor>
     <div id="canvas" on-tap='selectItem'>
       <sortable-js handle=".handle" scroll  animation='200' force-Fallback='true' >
         <template is="dom-repeat" items={{objs}}  id="repeater">
@@ -92,6 +94,22 @@
         return 1;
       }
 
+      insertTextArea(){
+        this.$.textEditor.openDialog().then(
+          (text)=>{
+            if (text) {  this.dispatch('addElement', 'text', text)}
+          }
+        );
+      }
+
+      modifyTextArea(id, code){
+        this.$.textEditor.setContent(code)
+        this.$.textEditor.openDialog().then(
+          (text)=>{
+            if (text) {  this.dispatch('editElement',id, text)}
+          }
+        );
+      }
 
 
       _message(message){
