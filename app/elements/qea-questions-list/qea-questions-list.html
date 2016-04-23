@@ -64,8 +64,19 @@
                 //   {name: "asq-text-input-q"},
                 //   {name: "asq-multi-choice-q"}
                 // ]},
-                {name: "asq-text-input-q"},
-                {name: "asq-multi-choice-q"}
+                {category: 'sub item', list: [
+
+                { label: "text input",
+                  bowerName: "asq-text-input-q",
+                }]},
+                { label: "multi choice",
+                  bowerName: "asq-multi-choice-q",
+                  costumEditor: {
+                    bowerName: "multiEditor",
+                    link: ''
+                  }
+                }
+
               ]
             }
           }

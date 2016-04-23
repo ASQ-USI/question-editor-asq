@@ -74,6 +74,10 @@
           _hovered:{
             type: Boolean,
             value: false
+          },
+          droppedElem:{
+            type: Object,
+            observer: '_notifyDrop'
           }
         }
       }
@@ -89,16 +93,14 @@
       }
 
       _onHovered() {
-        this.hovered = true;
         this.toggleClass('qea-selected' , this.isDragging, this.$.canvas)
       }
       _onUnhovered() {
-        this.hovered = false;
         this.toggleClass('qea-selected' , false, this.$.canvas)
       }
 
       _notifyDrop(el){
-        console.log(el.name);
+        console.log(el);
         this.toggleClass('qea-selected' , false, this.$.canvas)
       }
 

@@ -70,6 +70,10 @@
           </nav>
         </div>
 
+        <div class="page page3" page-name='questionEditor'>
+
+        </div>
+
       </iron-pages>
     </section>
 
@@ -146,7 +150,7 @@
 
       }
 
-      changePage(host, selectedPage=''){
+      changePage(host, {selectedPage, pageData}){
         for (var page of this.$.pageController.items) {
           if (page.getAttribute('page-name') == selectedPage ){
             this.$.pageController.selected = selectedPage;
