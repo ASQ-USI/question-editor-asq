@@ -79,6 +79,10 @@
           droppedElem:{
             type: Object,
             observer: '_notifyDrop'
+          },
+          isHover:{
+            type: Boolean,
+            value: false
           }
         }
       }
@@ -95,14 +99,18 @@
 
       _onHovered() {
         this.toggleClass('qea-selected' , this.isDragging, this.$.canvas)
+        this.isHover = true;
       }
       _onUnhovered() {
-        this.toggleClass('qea-selected' , false, this.$.canvas)
+        this.toggleClass('qea-selected' , false, this.$.canvas);
+        this.isHover = false
       }
 
       _notifyDrop(el){
         this.toggleClass('qea-selected' , false, this.$.canvas)
-        this.fire('changePage', {selectedPage:'questionEditor', pageData:el.questionDetails});
+        if (this.isHover) {
+          this.fire('changePage', {selectedPage:'questionEditor', pageData:el.questionDetails});
+        }
       }
 
 

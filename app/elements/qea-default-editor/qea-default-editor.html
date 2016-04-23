@@ -1,4 +1,10 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/asq-exercise/asq-exercise.html">
+<link rel="import" href="../qea-property-analyzer/qea-property-analyzer.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../behaviors/qea-redux-store.html">
+<link rel="import" href="../../behaviors/qea-actions-behavior.html">
+
 <dom-module id="qea-default-editor">
   <template>
     <style>
@@ -7,33 +13,42 @@
         position: relative;
         height: 100%;
       }
-      .leftPanel, .mainArea, .rightPanel{
+      #leftPanel, #mainArea, #rightPanel{
         height: 100%;
       }
-      .leftPanel{
-        width: 300px;
-        background: red;
+      #leftPanel{
+        width: 400px;
+        border-right: 1px solid #eee;
       }
-      .mainArea{
+      #mainArea{
         width: 100%;
         box-sizing: border-box;
         padding: 40px;
-        background: blue;
       }
-      .rightPanel{
-        width: 300px;
-        background: green;
+      #rightPanel{
+        width: 400px;
+        border-left: 1px solid #eee;
+      }
+      #saveChanges{
+        position: fixed;
+        bottom: 10px;
+        right: 270px;
       }
     </style>
-    <div class="leftPanel">
+    <qea-property-analyzer id="analyzer"></qea-property-analyzer>
+    <div id="leftPanel">
 
     </div>
-    <div class="mainArea">
-      dd
+    <div id="mainArea">
+      <asq-exercise>
+        [[questionType]]
+      </asq-exercise>
     </div>
-    <div class="rightPanel">
+    <div id="rightPanel">
 
     </div>
+
+    <paper-button raised id="saveChanges" on-tap='_saveChanges'>Save changes</paper-button>
 
   </template>
   <script>
@@ -44,7 +59,11 @@
     class qeaDefaultEditor {
 
       get behaviors() {
-        return [];
+        return [
+          qeaBehaviors.appBehavior,
+          qeaBehaviors.actionsBehavior,
+          qeaBehaviors.reduxStore
+        ];
       }
 
       beforeRegister(){
@@ -54,12 +73,60 @@
             type: String
           },
           html:{
+            type: String,
+            observer: '_htmlChanged'
+          },
+          questionType:{
             type: String
           }
         }
       }
 
-      // function here
+      _htmlChanged(code){
+        this.async(()=>{
+          this.$.analyzer.scanElement(this.questionType).then(
+            (analyzer)=>{
+              this._insertExampleCode(analyzer)
+            }
+          )
+        }, 100)
+
+      }
+
+      _insertExampleCode(analyzer){
+        let placeToInsert = this.html != '' ? this.$.mainArea : this.$$('asq-exercise');
+        let code = this.$.analyzer.getExampleCodeAndDesc(analyzer).code
+        let tags = this._extraxctTags(code)
+        for (let tag of tags) {
+          this.importHref(this.resolvePath(tag) )
+        }
+        this.async(()=>{
+          var toLocal = document.createElement('div');
+          Polymer.dom(toLocal).innerHTML = code;
+          Polymer.dom(placeToInsert).appendChild(toLocal)
+        },1000)
+      }
+
+      _extraxctTags(code, allTags=false){
+        let re;
+        if (allTags) {
+          re = /\<\/([a-z-]+)\>/gi;
+        }else {
+          re = /\<\/(asq\-[a-z-]+)\>/gi;
+        }
+        let result  = Array.from(new Set(code.match(re)));
+        for (var i = 0; i < result.length; i++) {
+          result[i] = result[i].replace(/[\<\/\>]/g, '')
+        }
+        return result
+      }
+
+      _saveChanges(){
+        let html = this.$.mainArea.innerHTML;
+        this.dispatch('addElement', this.questionType, html)
+        this.fire('changePage', {selectedPage: 'canvas'})
+      }
+
 
 
     }

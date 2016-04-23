@@ -150,7 +150,7 @@
 
       }
 
-      changePage(host, {selectedPage, pageData, questionInfo={id:null, html:'', label:'', bowerName:''}}){
+      changePage(host, {selectedPage, pageData, questionInfo={id:null, html:''}}){
         for (var page of this.$.pageController.items) {
           if (page.getAttribute('page-name') == selectedPage ){
             if (selectedPage === 'questionEditor') {
@@ -167,7 +167,7 @@
       _moveToquestionPage(pageData, questionInfo){
         let defaultEdit = {editorBowerName:'defaultEditor', link:null }
         let {label, bowerName, customEditor=defaultEdit}= pageData
-
+        questionInfo.questionType = questionInfo.questionType || bowerName
         if (customEditor.editorBowerName === 'defaultEditor') {
           this._insertEditor('qea-default-editor', questionInfo);
           this.$.pageController.selected = 'questionEditor';
