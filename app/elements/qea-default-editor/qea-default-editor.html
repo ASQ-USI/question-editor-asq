@@ -1,0 +1,70 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<dom-module id="qea-default-editor">
+  <template>
+    <style>
+      :host {
+        display: flex;
+        position: relative;
+        height: 100%;
+      }
+      .leftPanel, .mainArea, .rightPanel{
+        height: 100%;
+      }
+      .leftPanel{
+        width: 300px;
+        background: red;
+      }
+      .mainArea{
+        width: 100%;
+        box-sizing: border-box;
+        padding: 40px;
+        background: blue;
+      }
+      .rightPanel{
+        width: 300px;
+        background: green;
+      }
+    </style>
+    <div class="leftPanel">
+
+    </div>
+    <div class="mainArea">
+      dd
+    </div>
+    <div class="rightPanel">
+
+    </div>
+
+  </template>
+  <script>
+  (function () {
+    'use strict'
+
+    let MyBehavior = {};
+    class qeaDefaultEditor {
+
+      get behaviors() {
+        return [];
+      }
+
+      beforeRegister(){
+        this.is = 'qea-default-editor'
+        this.properties = {
+          id: {
+            type: String
+          },
+          html:{
+            type: String
+          }
+        }
+      }
+
+      // function here
+
+
+    }
+
+    Polymer(qeaDefaultEditor);
+  })()
+  </script>
+</dom-module>

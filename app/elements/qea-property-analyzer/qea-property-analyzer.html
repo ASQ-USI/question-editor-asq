@@ -1,6 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/hydrolysis/hydrolysis-analyzer.html">
-<link rel="import" href="../../behaviors/qea-inspect-behavior.html">
+<link rel="import" href="../../behaviors/qea-app-behavior.html">
 
 <!-- use this element as a library to analize a polymer elements -->
 <dom-module id="qea-property-analyzer">
@@ -28,7 +28,7 @@
     class qeaPropertyAnalyzer {
 
       get behaviors() {
-        return [qeaBehaviors.inspectBehavior];
+        return [qeaBehaviors.appBehavior];
       }
 
       beforeRegister(){

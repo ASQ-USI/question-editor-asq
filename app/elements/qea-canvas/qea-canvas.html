@@ -3,7 +3,7 @@
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../bower_components/Sortable/Sortable.html">
-<link rel="import" href="../../behaviors/qea-inspect-behavior.html">
+<link rel="import" href="../../behaviors/qea-app-behavior.html">
 <link rel="import" href="../../behaviors/qea-redux-store.html">
 <link rel="import" href="../../behaviors/qea-actions-behavior.html">
 <link rel="import" href="../qea-selector-highlighter/qea-selector-highlighter.html">
@@ -52,10 +52,11 @@
 
       get behaviors() {
         return [
-          qeaBehaviors.inspectBehavior,
+          qeaBehaviors.appBehavior,
           qeaBehaviors.actionsBehavior,
           qeaBehaviors.reduxStore
         ];
+
       }
 
       beforeRegister(){
@@ -100,10 +101,9 @@
       }
 
       _notifyDrop(el){
-        console.log(el);
         this.toggleClass('qea-selected' , false, this.$.canvas)
+        this.fire('changePage', {selectedPage:'questionEditor', pageData:el.questionDetails});
       }
-
 
 
       insertTextArea(){
@@ -122,6 +122,7 @@
           }
         );
       }
+
 
 
     }

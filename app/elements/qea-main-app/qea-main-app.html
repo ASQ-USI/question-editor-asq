@@ -6,6 +6,8 @@
 <link rel="import" href="../qea-property-analyzer/qea-property-analyzer.html">
 <link rel="import" href="../qea-landing-page/qea-landing-page.html">
 <link rel="import" href="../qea-toolbar/qea-toolbar.html">
+<link rel="import" href="../qea-default-editor/qea-default-editor.html">
+<link rel="import" href="../../behaviors/qea-app-behavior.html">
 
 <dom-module id="qea-main-app">
   <template>
@@ -70,9 +72,7 @@
           </nav>
         </div>
 
-        <div class="page page3" page-name='questionEditor'>
-
-        </div>
+        <div class="page page3" id='questionEditorPage' page-name='questionEditor'></div>
 
       </iron-pages>
     </section>
@@ -86,7 +86,7 @@
 
     class qeaMainApp {
       get behaviors() {
-        return [];
+        return [qeaBehaviors.appBehavior];
       }
 
       beforeRegister() {
@@ -150,14 +150,49 @@
 
       }
 
-      changePage(host, {selectedPage, pageData}){
+      changePage(host, {selectedPage, pageData, questionInfo={id:null, html:'', label:'', bowerName:''}}){
         for (var page of this.$.pageController.items) {
           if (page.getAttribute('page-name') == selectedPage ){
+            if (selectedPage === 'questionEditor') {
+              this._moveToquestionPage(pageData, questionInfo);
+              return
+            }
             this.$.pageController.selected = selectedPage;
             return
           }
         }
         this.openToast(null, {text: `no page available with name: ${selectedPage}`, type: 'error'})
+      }
+
+      _moveToquestionPage(pageData, questionInfo){
+        let defaultEdit = {editorBowerName:'defaultEditor', link:null }
+        let {label, bowerName, customEditor=defaultEdit}= pageData
+
+        if (customEditor.editorBowerName === 'defaultEditor') {
+          this._insertEditor('qea-default-editor', questionInfo);
+          this.$.pageController.selected = 'questionEditor';
+        }else {
+          Polymer.Base.importHref(this.resolvePath(bowerName),
+            (success)=>{
+              // TODO
+            },
+            (fail)=>{
+              // TODO
+            });
+        }
+      }
+
+      _insertEditor(editorBowerName, questionInfo){
+        let oldEditors = Polymer.dom(this.$.questionEditorPage).childNodes
+        if (oldEditors.length>0 && oldEditors[0].tagName.toLowerCase() == editorBowerName) {
+          // TODO
+        }else {
+          for (let edit of oldEditors) {
+            Polymer.dom(this.$.questionEditorPage).removeChild(edit)
+          }
+          let elem = this._createElement(editorBowerName, true, questionInfo )
+          Polymer.dom(this.$.questionEditorPage).appendChild(elem)
+        }
       }
 
 
