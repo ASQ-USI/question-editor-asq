@@ -1,0 +1,133 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<dom-module id="qea-general-prop-edit">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      .propContainer{
+        color: rgba(0, 0, 0, 0.7);
+        margin: 3px 0;
+      }
+      .label{
+
+      }
+      .setter{
+        padding-left: 15px;
+        max-width: 70%;
+      }
+
+    </style>
+
+    <template is="dom-if" if="[[_isAvailableType(propType)]]">
+
+
+      <div class="propContainer">
+
+        <div class="label">
+          <span>[[propInfo.name]]</span>
+          <paper-icon-button icon="info-outline" on-tap='_showInfo' hidden="{{_isPresent(propInfo.desc)}}" ></paper-icon-button>
+        </div>
+
+        <!-- string -->
+        <template is="dom-if" if="[[_checkType('string', propType)]]">
+          <div class="setter">
+            <paper-input label="Input label"
+              no-label-float
+              data=[[propInfo.name]]
+              on-change="_updateStringProp"></paper-input>
+          </div>
+        </template>
+
+        <!-- boolean -->
+        <template is="dom-if" if="[[_checkType('Boolean',propType)]]">
+          <div class="setter">
+            <paper-toggle-button
+              on-change='_updateBoolProp'
+              data=[[propInfo.name]]></paper-toggle-button>
+          </div>
+        </template>
+
+        <!-- code -->
+        <template is="dom-if" if="[[_checkType('Code',propType)]]">
+          code
+        </template>
+
+        <!-- advanceInput -->
+        <template is="dom-if" if="[[_checkType('advanceInput',propType)]]">
+          rich
+        </template>
+
+        <!-- number -->
+        <template is="dom-if" if="[[_checkType('number',propType)]]">
+          <div class="setter">
+            <paper-input label="Input label"
+              no-label-float
+              type='number'
+              data=[[propInfo.name]]
+              on-change="_updateStringProp"></paper-input>
+          </div>
+        </template>
+
+      </div>
+
+    </template>
+
+  </template>
+  <script>
+  (function () {
+    'use strict'
+
+    let MyBehavior = {};
+    class qeaGeneralPropEdit {
+
+      get behaviors() {
+        return [];
+      }
+
+      beforeRegister(){
+        this.is = 'qea-general-prop-edit'
+        this.properties = {
+          propType: {
+            type: String,
+            value: 'String'// string, code, boolean, advanceInput, number
+          },
+          propInfo: {
+            type: Object,
+            value: ()=>{return{name:''}}
+          },
+          targetReference:{
+            type: Object,
+            value: ()=>{return {}}
+          }
+
+        }
+      }
+
+      _isAvailableType(type){
+        let types = ['string', 'code', 'boolean', 'advanceinput', 'number']
+        return (types.indexOf(type.toLowerCase()) != -1)
+      }
+
+      _checkType(type, propType){
+        return type.toLowerCase() === propType.toLowerCase();
+      }
+
+      _isPresent(desc=''){
+        return !(desc.length > 1)
+      }
+
+      _showInfo(){
+        alert(this.propInfo.desc)
+      }
+
+
+
+
+    }
+
+    Polymer(qeaGeneralPropEdit);
+  })()
+  </script>
+</dom-module>

@@ -169,7 +169,7 @@
         let {label, bowerName, customEditor=defaultEdit}= pageData
         questionInfo.questionType = questionInfo.questionType || bowerName
         if (customEditor.editorBowerName === 'defaultEditor') {
-          this._insertEditor('qea-default-editor', questionInfo);
+          this._insertEditor('qea-default-editor', questionInfo, bowerName);
           this.$.pageController.selected = 'questionEditor';
         }else {
           Polymer.Base.importHref(this.resolvePath(bowerName),
@@ -182,10 +182,13 @@
         }
       }
 
-      _insertEditor(editorBowerName, questionInfo){
+      _insertEditor(editorBowerName, questionInfo, questionBowerName){
         let oldEditors = Polymer.dom(this.$.questionEditorPage).childNodes
         if (oldEditors.length>0 && oldEditors[0].tagName.toLowerCase() == editorBowerName) {
           // TODO
+          oldEditors[0].html = questionInfo.html;
+          oldEditors[0].questionType = questionBowerName;
+          oldEditors[0].id = questionInfo.id;
         }else {
           for (let edit of oldEditors) {
             Polymer.dom(this.$.questionEditorPage).removeChild(edit)

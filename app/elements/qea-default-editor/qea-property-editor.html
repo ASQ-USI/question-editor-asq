@@ -7,7 +7,6 @@
   <template>
     <style>
       :host {
-        height: 100%;
         display: block;
       }
       .noPropertyToShow{
@@ -20,8 +19,7 @@
         display: block;
       }
       .propContainer{
-        height: 100%;
-        overflow-y: auto;
+        /*overflow-y: auto;*/
       }
       .property{
         color: rgba(0, 0, 0, 0.7);
@@ -42,25 +40,28 @@
       </div>
 
       <template is="dom-repeat" items="{{propArray}}">
-        <div class="property">
-          <div class="label">
-            <span>[[item.name]]</span>
-            <paper-icon-button icon="info-outline" on-tap='_showInfo'></paper-icon-button>
-          </div>
-          <template is="dom-if" if="{{_isString(item.type)}}">
-            <div class="setter">
-              <paper-input label="Input label"
-                no-label-float
-                data=[[item.name]]
-                on-change="_updateStringProp"></paper-input>
-            </div>
-          </template>
-          <template is="dom-if" if="{{_isBoolean(item.type)}}">
-            <div class="setter">
-              <paper-toggle-button on-change='_updateBoolProp' data=[[item.name]]></paper-toggle-button>
-            </div>
-          </template>
+        <template is="dom-if" if="[[_acceptedType(item.type) ]]">
 
+
+          <div class="property">
+            <div class="label">
+              <span>[[item.name]]</span>
+              <paper-icon-button icon="info-outline" on-tap='_showInfo'></paper-icon-button>
+            </div>
+            <template is="dom-if" if="{{_isString(item.type)}}">
+              <div class="setter">
+                <paper-input label="Input label"
+                  no-label-float
+                  data=[[item.name]]
+                  on-change="_updateStringProp"></paper-input>
+              </div>
+            </template>
+            <template is="dom-if" if="{{_isBoolean(item.type)}}">
+              <div class="setter">
+                <paper-toggle-button on-change='_updateBoolProp' data=[[item.name]]></paper-toggle-button>
+              </div>
+            </template>
+          </template>
         </div>
 
       </template>
@@ -91,6 +92,10 @@
             observer: '_checkLength'
           }
         }
+      }
+
+      _acceptedType(type){
+        return (type == 'String' || type == 'Boolean' )
       }
 
       // check if there are some properties to show
