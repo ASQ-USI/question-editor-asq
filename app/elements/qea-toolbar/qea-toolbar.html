@@ -1,0 +1,104 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<dom-module id="qea-toolbar">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      paper-toolbar{
+        --paper-toolbar-background: white;
+        --paper-toolbar-color: black;
+        --paper-toolbar-title: {
+          min-width: 230px;
+          flex-grow : 0;
+        }
+      }
+
+      .tollbarIcons{
+        margin: 0 10px;
+      }
+
+      .tollbarIcons:hover{
+        border: 1px solid #eee;
+        border-radius: 5px;
+      }
+
+    </style>
+    <paper-toolbar justify='start' >
+      <span class="title">question-editor-asq</span>
+
+      <template is="dom-if" if="[[_isVisible]]">
+        <paper-icon-button icon="add-box" id="addText"
+          class="tollbarIcons" on-tap='_insertText'>
+        </paper-icon-button>
+        <paper-tooltip for='addText' animation-Delay='200'>insert text area</paper-tooltip>
+
+        <paper-icon-button icon="undo" id="undo" class="tollbarIcons" disabled></paper-icon-button>
+        <paper-tooltip for='undo' animation-Delay='200'>undo</paper-tooltip>
+
+        <paper-icon-button icon="redo" id="redo" class="tollbarIcons" disabled></paper-icon-button>
+        <paper-tooltip for='redo' animation-Delay='200'>redo</paper-tooltip>
+
+        <!-- <paper-button disabled>save</paper-button> -->
+      </template>
+
+
+
+    </paper-toolbar>
+
+  </template>
+  <script>
+  (function () {
+    'use strict'
+
+    let MyBehavior = {};
+    class qeaToolbar {
+
+      get behaviors() {
+        return [];
+      }
+
+      beforeRegister(){
+        this.is = 'qea-toolbar'
+        this.properties = {
+          currentPage:{
+            observer: '_showChecker',
+            type:String
+          },
+          _isVisible:{
+            type: Boolean,
+            value: false
+          }
+        }
+      }
+
+      _showChecker(currentPage){
+        switch (currentPage) {
+          case 'canvas':
+            this._isVisible = true;
+            break;
+          case 'landingPage':
+          default:
+            this._isVisible = false;
+            return;
+        }
+      }
+
+      _insertText(){
+        let canvas = Polymer.dom( this.parentNode.root).querySelector('qea-canvas');
+        canvas.insertTextArea()
+      }
+
+
+    }
+
+    Polymer(qeaToolbar);
+  })()
+  </script>
+</dom-module>
