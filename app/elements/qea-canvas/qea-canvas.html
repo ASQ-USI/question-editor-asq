@@ -28,7 +28,7 @@
 
     </style>
     <qea-text-editor id="textEditor"></qea-text-editor>
-    <div id="canvas" on-tap='selectItem'>
+    <div id="canvas" on-tap='_selectItem'>
       <sortable-js handle=".handle" scroll  animation='200' force-Fallback='true' >
         <template is="dom-repeat" items={{objs}}  id="repeater">
           <qea-selector-highlighter
@@ -73,7 +73,7 @@
         }
       }
 
-      selectItem(event){
+      _selectItem(event){
         for (var value of event.path) {
           if(value.tagName && value.tagName.toLowerCase() === "qea-selector-highlighter"){
             this.selectedElemId = value.elementId
