@@ -94,7 +94,7 @@
 
         this.listeners = {
           "fireToast": "_openToast",
-          "changePage": "_changePage"
+          "changePage": "_changePage",
           "dragStart": "_dragStart",
           "dragStop" : "_dragStop"
         },
@@ -150,7 +150,7 @@
 
       }
 
-      changePage(host, {selectedPage, pageData, questionInfo={id:null, html:''}}){
+      _changePage(host, {selectedPage, pageData, questionInfo={id:null, html:''}}){
         for (var page of this.$.pageController.items) {
           if (page.getAttribute('page-name') == selectedPage ){
             if (selectedPage === 'questionEditor') {
