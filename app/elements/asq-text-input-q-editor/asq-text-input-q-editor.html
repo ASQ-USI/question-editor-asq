@@ -1,0 +1,184 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/qea-property-editor/qea-property-editor-repeater.html">
+<link rel="import" href="../../bower_components/qea-property-editor/qea-property-editor.html">
+<link rel="import" href="../../bower_components/asq-text-input-q/asq-text-input-q.html">
+<link rel="import" href="../../bower_components/asq-stem/asq-stem.html">
+<link rel="import" href="../../bower_components/asq-solution/asq-solution.html">
+
+
+<dom-module id="asq-text-input-q-editor">
+  <template>
+    <style>
+      :host {
+        display: flex;
+        position: relative;
+        height: 100%;
+      }
+      #leftPanel, #mainArea, #rightPanel{
+        height: 100%;
+      }
+      #leftPanel{
+        overflow-y: auto;
+        box-sizing: border-box;
+        padding: 5px;
+        width: 400px;
+        border-right: 1px solid #eee;
+      }
+      #mainArea{
+        width: 100%;
+        box-sizing: border-box;
+        padding: 40px;
+      }
+      #rightPanel{
+        width: 400px;
+        border-left: 1px solid #eee;
+      }
+      #saveChanges{
+        position: fixed;
+        bottom: 10px;
+        right: 270px;
+      }
+      .sectionTitle{
+        font-weight: bold;
+        text-transform: uppercase;
+        padding: 10px 0;
+      }
+      .explanation{
+        text-align: center;
+        margin-top: -41px;
+        margin-bottom: 23px;
+        font-size: 0.7em;
+        color: #cacaca;
+      }
+      #advanced{
+        cursor: pointer;
+        margin-top: 20px;
+        text-align: right;
+        font-size: 0.7em;
+        color: #cacaca;
+      }
+      #advanced:hover{
+        color: #a7a7a7;
+      }
+
+    </style>
+    <div id="leftPanel">
+
+      <qea-property-editor
+        name='title'
+        label="question Title"
+        type='string'
+        default="i'm a title"
+        value={{stemContent}}>
+      </qea-property-editor>
+
+      <div class="sectionTitle">
+        qestion properties
+      </div>
+      <qea-property-editor-repeater
+        property-Array=[[questionProps]]
+        values={{propValues}}
+        is-Advanced-User=[[viewAdvanced]]>
+      </qea-property-editor-repeater>
+
+      <div id="advanced" on-tap="showAdvanced">
+        show all
+      </div>
+
+    </div>
+    <div id="mainArea">
+      <div class="explanation">
+        To modify the elements in this area, change the values in the left column
+      </div>
+      <asq-text-input-q
+        label=[[propValues.label]]
+        disabled=[[propValues.disabled]]
+        value={{propValues.value}}
+        floating-Label=[[propValues.floatingLabel]]>
+
+        <asq-stem><span id="stemContent" inner-H-t-m-l={{stemContent}}></span></asq-stem>
+        <div id='questionDescription' inner-H-t-m-l={{qeDesc}}>
+
+        </div>
+
+        <asq-solution hidden>[[solution]]</asq-solution>
+      </asq-text-input-q>
+    </div>
+    <div id="rightPanel">
+
+    </div>
+
+  </template>
+  <script>
+  (function () {
+    'use strict'
+
+    let questionProperties=[
+      {
+        name: "label",
+        type: "string", //< Boolean | Number | String | Enum  >
+        description: `The label for this input. It normally appears as grey text
+                inside the text input and disappears once the user enters text.`,
+        isAdvancedProperty: "false"
+      },
+      {
+        name: "disabled",
+        type: "Boolean", //< Boolean | Number | String | Enum  >
+        description: `Set to true to style the element as disabled.`,
+        default: "false",
+        isAdvancedProperty: "false"
+      },
+      {
+        name: "value",
+        type: "string", //< Boolean | Number | String | Enum  >
+        description: "The current value of the input.",
+        isAdvancedProperty: "false"
+      },
+      {
+        name: "floatingLabel",
+        label:'move label hover text',
+        type: "Boolean", //< Boolean | Number | String | Enum  >
+        description: `If true, the label will "float" above the text input once the
+                      user enters text instead of disappearing.`,
+        default: "false",
+        isAdvancedProperty: 'true'
+      },
+    ];
+    class asqTextInputQEditor {
+
+      get behaviors() {
+        return [];
+      }
+
+      beforeRegister(){
+        this.is = 'asq-text-input-q-editor'
+        this.properties = {
+          questionProps: {
+            type: Array,
+            value: questionProperties
+          },
+          propValues: {
+            type: Object
+          },
+          viewAdvanced:{
+            type:String,
+            value: 'false'
+          }
+        }
+      }
+
+
+      // function here
+      showAdvanced(){
+        this.viewAdvanced = this.viewAdvanced == 'true' ? 'false': 'true';
+        this.$.advanced.textContent = this.viewAdvanced == 'true' ? 'hide advanced': 'show all';
+      }
+
+
+
+    }
+
+    Polymer(asqTextInputQEditor);
+  })()
+  </script>
+</dom-module>
