@@ -4,6 +4,7 @@
 <link rel="import" href="../../bower_components/asq-text-input-q/asq-text-input-q.html">
 <link rel="import" href="../../bower_components/asq-stem/asq-stem.html">
 <link rel="import" href="../../bower_components/asq-solution/asq-solution.html">
+<link rel="import" href="../../bower_components/qea-property-editor/qea-advanced-editors.html">
 
 
 <dom-module id="asq-text-input-q-editor">
@@ -25,6 +26,7 @@
         border-right: 1px solid #eee;
       }
       #mainArea{
+        position: relative;
         width: 100%;
         box-sizing: border-box;
         padding: 40px;
@@ -61,49 +63,77 @@
         color: #a7a7a7;
       }
 
-    </style>
-    <div id="leftPanel">
+      .controlPanel{
+        position: absolute;
+        right: 20px;
+        bottom: 20px;
+      }
 
+    </style>
+
+    <!-- leftPanel -->
+    <div id="leftPanel">
+      <qea-advanced-editors></qea-advanced-editors>
+
+      <!-- title property-->
       <qea-property-editor
         name='title'
         label="question Title"
         type='string'
-        default="i'm a title"
-        value={{stemContent}}>
+        default='Title'
+        value={{qTitleVal}}>
+      </qea-property-editor>
+
+      <!-- description property-->
+      <qea-property-editor
+        name='Question Description'
+        type='string'
+        widget-Type='text-code'
+        default={{qDescVal}}
+        value={{qDescVal}}>
       </qea-property-editor>
 
       <div class="sectionTitle">
         qestion properties
       </div>
-      <qea-property-editor-repeater
-        property-Array=[[questionProps]]
+      <!-- list of question properties -->
+      <qea-property-editor-repeater id="propertyRepeater"
+        property-Array={{questionProps]]
         values={{propValues}}
         is-Advanced-User=[[viewAdvanced]]>
       </qea-property-editor-repeater>
 
-      <div id="advanced" on-tap="showAdvanced">
+      <div id="advanced" on-tap="_showAdvanced">
         show all
       </div>
 
     </div>
+
+    <!-- Main Area -->
     <div id="mainArea">
       <div class="explanation">
         To modify the elements in this area, change the values in the left column
       </div>
+
       <asq-text-input-q
         label=[[propValues.label]]
         disabled=[[propValues.disabled]]
         value={{propValues.value}}
         floating-Label=[[propValues.floatingLabel]]>
 
-        <asq-stem><span id="stemContent" inner-H-t-m-l={{stemContent}}></span></asq-stem>
-        <div id='questionDescription' inner-H-t-m-l={{qeDesc}}>
-
-        </div>
+        <asq-stem><span id="stemContent" inner-H-t-m-l={{qTitleVal}}></span></asq-stem>
+        <div id='questionDescription' inner-H-t-m-l={{qDescVal}}></div>
 
         <asq-solution hidden>[[solution]]</asq-solution>
       </asq-text-input-q>
+
+      <div class="controlPanel">
+        <paper-button raised id="solutionBt" on-tap='_setSolution' noink>[[_solutionBt]]</paper-button>
+        <paper-button raised on-tap='_saveQuestion'>save</paper-button>
+      </div>
     </div>
+
+    <!-- Right Panel -->
     <div id="rightPanel">
 
     </div>
@@ -116,6 +146,7 @@
     let questionProperties=[
       {
         name: "label",
+        label:'Input label',
         type: "string", //< Boolean | Number | String | Enum  >
         description: `The label for this input. It normally appears as grey text
                 inside the text input and disappears once the user enters text.`,
@@ -123,6 +154,7 @@
       },
       {
         name: "disabled",
+        label:'Disable input',
         type: "Boolean", //< Boolean | Number | String | Enum  >
         description: `Set to true to style the element as disabled.`,
         default: "false",
@@ -130,6 +162,7 @@
       },
       {
         name: "value",
+        label:'Input value',
         type: "string", //< Boolean | Number | String | Enum  >
         description: "The current value of the input.",
         isAdvancedProperty: "false"
@@ -163,18 +196,94 @@
           viewAdvanced:{
             type:String,
             value: 'false'
-          }
+          },
+          restoreState:{
+            type: Object,
+            observer: '_restoreQuestionState'
+          },
+          _solutionBt:{
+            type: String,
+            value: 'set solution'
+          },
+          qTitleVal:String,
+          qDescVal: String,
+          qSolVal:String
+
         }
       }
 
 
-      // function here
-      showAdvanced(){
+      _showAdvanced(){
         this.viewAdvanced = this.viewAdvanced == 'true' ? 'false': 'true';
         this.$.advanced.textContent = this.viewAdvanced == 'true' ? 'hide advanced': 'show all';
       }
 
+      _restoreQuestionState(state={}){
+        let qProps = Polymer.dom(this.$.propertyRepeater.root).querySelectorAll('qea-property-editor');
+        let specificProps = {};
+        this.qTitleVal = state.qTitleVal  ;
+        this.qDescVal = state.qDescVal  ;
+        this.qSolVal = state.qSolVal
+        specificProps = state.propValues ;
+        for (let spProp of qProps) {
+          spProp.value = specificProps[spProp.name]
+        }
 
+      }
+
+      _getQuestionState(){
+        let state={};
+        state.qTitleVal = this.qTitleVal || '';
+        state.qDescVal = this.qDescVal || '';
+        state.propValues = this.propValues || {};
+        state.qSolVal = this.qSolVal || '';
+        return state;
+      }
+
+      _getFormattedCode(){
+        return
+         `<asq-text-input-q
+            label=${this.propValues.label || '""'}
+            ${this.propValues.disabled? 'disabled='+this.propValues.disabled : ''}
+            value=${this.propValues.value || '""'}
+            ${this.propValues.floatingLabel? 'floating-Label='+this.propValues.floatingLabel : ''}>
+
+            <asq-stem>${this.qTitleVal || ''}</asq-stem>
+            ${this.qDescVal || ''}
+            <asq-solution hidden>${this.qSolVal || ''}</asq-solution>
+          </asq-text-input-q>`
+      }
+
+      _setSolution(){
+        this.qSolVal = '';
+        if (this._solutionBt != 'confirm') {
+          this.fire('fireToast', {text:"aswer like a user and press confirm"})
+          this._solutionBt = 'confirm'
+        }else {
+          if (!this.propValues.value) {
+            this.fire('fireToast', {text:"you haven't provided a solution for this question", type:'error'})
+            return;
+          }
+          this._solutionBt= 'set solution'
+          let a = confirm(
+            `The solution is:
+                ${this.propValues.value}
+            is it correct?`)
+          if (a) {
+            this.qSolVal = this.propValues.value
+          }
+        }
+
+      }
+
+      _saveQuestion(){
+        if (!this.qSolVal) {
+          this.fire('fireToast', {text:"you haven't provided a solution for this question", type:'error'})
+        }
+        let code = this._getFormattedCode();
+        let state = this._getQuestionState();
+        //TODO
+      }
 
     }
 

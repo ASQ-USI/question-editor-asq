@@ -79,7 +79,7 @@
       </iron-pages>
     </section>
 
-    <paper-toast id="toast" text=[[_toastMessage]] duration='3000' ></paper-toast>
+    <paper-toast id="toast" text=[[_toastMessage]] duration='5000' ></paper-toast>
 
   </template>
   <script>
@@ -120,7 +120,7 @@
           },
           _currentPage:{
             type: String,
-            value: 'landingPage',
+            value: 'questionEditor',
             notify: true
           }
         }
@@ -131,6 +131,9 @@
         this._toastMessage = messageData.text;
         if (messageData.type && messageData.type == 'error') {
           this.$.toast.customStyle['--paper-toast-background-color'] = '#F44336';
+          this.$.toast.updateStyles();
+        }else {
+          this.$.toast.customStyle['--paper-toast-background-color'] = 'black'
           this.$.toast.updateStyles();
         }
         this.$.toast.open();
