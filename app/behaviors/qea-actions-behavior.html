@@ -2,7 +2,7 @@
   window.qeaBehaviors = window.qeaBehaviors || {};
   qeaBehaviors.actionsBehavior = {
     actions: {
-      addElement: function(type, html){
+      addElement: function(type, html, properties){
           var _idGenerator = function(){
             let S4 = function() {
               return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
@@ -13,7 +13,8 @@
               type: 'ADD_ELEMENT',
               elementId: _idGenerator(),
               elementType: type,
-              elementHtml: html
+              elementHtml: html,
+              elementProps: properties
           };
       },
       removeElement: function(id) {
@@ -23,12 +24,13 @@
           };
       },
       // type is optional
-      editElement: function(id, html, type) {
+      editElement: function(id, html, properties, type) {
           return {
               type: 'EDIT_ELEMENT',
               elementId: id ,
               elementType: type,
-              elementHtml: html
+              elementHtml: html,
+              elementProps: properties
           };
       },
       moveElement: function(id, newIndex) {

@@ -5,7 +5,8 @@
 <link rel="import" href="../../bower_components/asq-stem/asq-stem.html">
 <link rel="import" href="../../bower_components/asq-solution/asq-solution.html">
 <link rel="import" href="../../bower_components/qea-property-editor/qea-advanced-editors.html">
-
+<link rel="import" href="../../behaviors/qea-redux-store.html">
+<link rel="import" href="../../behaviors/qea-actions-behavior.html">
 
 <dom-module id="asq-text-input-q-editor">
   <template>
@@ -113,6 +114,7 @@
     <div id="mainArea">
       <div class="explanation">
         To modify the elements in this area, change the values in the left column
+        <button type="button" name="button" on-tap='_getFormattedCode'>get code</button>
       </div>
 
       <asq-text-input-q
@@ -157,7 +159,7 @@
         label:'Disable input',
         type: "Boolean", //< Boolean | Number | String | Enum  >
         description: `Set to true to style the element as disabled.`,
-        default: "false",
+        default: 'true',
         isAdvancedProperty: "false"
       },
       {
@@ -180,12 +182,19 @@
     class asqTextInputQEditor {
 
       get behaviors() {
-        return [];
+        return [
+          qeaBehaviors.actionsBehavior,
+          qeaBehaviors.reduxStore
+        ];
       }
 
       beforeRegister(){
         this.is = 'asq-text-input-q-editor'
         this.properties = {
+          questionId:{
+            type: String,
+            value: null
+          },
           questionProps: {
             type: Array,
             value: questionProperties
@@ -241,8 +250,7 @@
       }
 
       _getFormattedCode(){
-        return
-         `<asq-text-input-q
+        let code = `<asq-text-input-q
             label=${this.propValues.label || '""'}
             ${this.propValues.disabled? 'disabled='+this.propValues.disabled : ''}
             value=${this.propValues.value || '""'}
@@ -252,6 +260,7 @@
             ${this.qDescVal || ''}
             <asq-solution hidden>${this.qSolVal || ''}</asq-solution>
           </asq-text-input-q>`
+        return code;
       }
 
       _setSolution(){
@@ -270,19 +279,37 @@
                 ${this.propValues.value}
             is it correct?`)
           if (a) {
+            this.fire('fireToast', {text:"Solution correcly created"})
             this.qSolVal = this.propValues.value
           }
         }
 
       }
 
+      _reset(){
+        let qProps = Polymer.dom(this.$.propertyRepeater.root).querySelectorAll('qea-property-editor');
+        this.qTitleVal = '' ;
+        this.qDescVal = ' ' ;
+        this.qSolVal = '' ;
+        for (let spProp of qProps) {
+          spProp.value = ''+spProp.default || ' ';
+        }
+      }
+
       _saveQuestion(){
+        this.set('propValues.value', '');
         if (!this.qSolVal) {
           this.fire('fireToast', {text:"you haven't provided a solution for this question", type:'error'})
+          return
         }
         let code = this._getFormattedCode();
         let state = this._getQuestionState();
-        //TODO
+        if (this.questionId) {
+          this.dispatch('editElement', this.questionId, code, state)
+        }else {
+          this.dispatch('addElement', 'asq-text-input-q-editor', code, state)
+        }
+        this.fire('changePage', {selectedPage: 'canvas'})
       }
 
     }

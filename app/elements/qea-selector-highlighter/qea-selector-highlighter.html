@@ -74,6 +74,10 @@
             type: Boolean,
             value: false
           },
+          elementProps:{
+            type: Object,
+            value: ()=>{return{}}
+          },
           selectedId:{
             type: String,
             observer: '_checkSelection'
@@ -107,7 +111,13 @@
           canvas.modifyTextArea(this.elementId, this.getCode())
 
         }else {
-
+  
+          let qInfo = {
+            id: this.elementId,
+            props: this.elementProps,
+            type:  this.type
+          }
+          this.fire('changePage',{selectedPage:'questionEditor',questionInfo:qInfo});
         }
       }
 
@@ -121,7 +131,7 @@
       }
 
       getCode(){
-        return this.$.content.innerHTML;
+        return this.content;
       }
 
 

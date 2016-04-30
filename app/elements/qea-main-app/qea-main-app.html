@@ -120,7 +120,7 @@
           },
           _currentPage:{
             type: String,
-            value: 'questionEditor',
+            value: 'canvas',
             notify: true
           }
         }
@@ -155,52 +155,50 @@
 
       }
 
-      _changePage(host, {selectedPage, pageData, questionInfo={id:null, html:''}}){
+      _changePage(host, {selectedPage, pageData=null, questionInfo={id:null, props:{}, type:''}}){
         for (var page of this.$.pageController.items) {
           if (page.getAttribute('page-name') == selectedPage ){
-            // if (selectedPage === 'questionEditor') {
-            //   // this._moveToquestionPage(pageData, questionInfo);
-            //   return
-            // }
-            this.$.pageController.selected = selectedPage;
+            if (selectedPage === 'questionEditor') {
+              this._moveToquestionPage(questionInfo, pageData);
+              return
+            }
+            this._currentPage = selectedPage;
             return
           }
         }
         this.openToast(null, {text: `no page available with name: ${selectedPage}`, type: 'error'})
       }
 
-      // _moveToquestionPage(pageData, questionInfo){
-      //   let defaultEdit = {editorBowerName:'defaultEditor', link:null }
-      //   let {label, bowerName, customEditor=defaultEdit}= pageData
-      //   questionInfo.questionType = questionInfo.questionType || bowerName
-      //   if (customEditor.editorBowerName === 'defaultEditor') {
-      //     this._insertEditor('qea-default-editor', questionInfo, bowerName);
-      //     this.$.pageController.selected = 'questionEditor';
-      //   }else {
-      //     Polymer.Base.importHref(this.resolvePath(bowerName),
-      //       (success)=>{
-      //         // TODO
-      //       },
-      //       (fail)=>{
-      //         // TODO
-      //       });
-      //   }
-      // }
-      //
-      // _insertEditor(editorBowerName, questionInfo, questionBowerName){
-      //   let oldEditors = Polymer.dom(this.$.questionEditorPage).childNodes
-      //   if (oldEditors.length>0 && oldEditors[0].tagName.toLowerCase() == editorBowerName) {
-      //     oldEditors[0].html = questionInfo.html;
-      //     oldEditors[0].questionType = questionBowerName;
-      //     oldEditors[0].id = questionInfo.id;
-      //   }else {
-      //     for (let edit of oldEditors) {
-      //       Polymer.dom(this.$.questionEditorPage).removeChild(edit)
-      //     }
-      //     let elem = this._createElement(editorBowerName, true, questionInfo )
-      //     Polymer.dom(this.$.questionEditorPage).appendChild(elem)
-      //   }
-      // }
+      _moveToquestionPage({id, props, type}, pageData=null){
+        // this.resolvePath(type)
+        if (!pageData) {
+          let oldEditors = Polymer.dom(this.$.questionEditorPage).childNodes
+          for (let edit of oldEditors) {
+            Polymer.dom(this.$.questionEditorPage).removeChild(edit)
+          }
+          let name = type || pageData.bowerName;
+          let elem = this._createElement(name, true, {questionId:id,restoreState:props} )
+          Polymer.dom(this.$.questionEditorPage).appendChild(elem)
+          this._currentPage = 'questionEditor';
+          return
+        }
+        Polymer.Base.importHref(`../${type}`,
+          (success)=>{
+            let oldEditors = Polymer.dom(this.$.questionEditorPage).childNodes
+            for (let edit of oldEditors) {
+              Polymer.dom(this.$.questionEditorPage).removeChild(edit)
+            }
+            let name = type || pageData.bowerName;
+            let elem = this._createElement(name, true )
+            Polymer.dom(this.$.questionEditorPage).appendChild(elem)
+            this._currentPage = 'questionEditor';
+          },
+          (error)=>{
+            console.error('failed to import page '+type)
+          }
+        )
+      }
+
 
 
     }
