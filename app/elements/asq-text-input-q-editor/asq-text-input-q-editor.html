@@ -74,7 +74,7 @@
 
     <!-- leftPanel -->
     <div id="leftPanel">
-      <qea-advanced-editors></qea-advanced-editors>
+
 
       <!-- title property-->
       <qea-property-editor
@@ -219,6 +219,14 @@
           qSolVal:String
 
         }
+      }
+
+      ready() {
+        this.async(()=>{
+          let el = Polymer.Base.create('qea-advanced-editors', {});
+          Polymer.dom(this.$.leftPanel).appendChild(el);
+        }, 200)
+
       }
 
 

@@ -3,11 +3,10 @@
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../qea-questions-list/qea-questions-list.html">
 <link rel="import" href="../qea-canvas/qea-canvas.html">
-<link rel="import" href="../qea-property-analyzer/qea-property-analyzer.html">
 <link rel="import" href="../qea-landing-page/qea-landing-page.html">
 <link rel="import" href="../qea-toolbar/qea-toolbar.html">
 <link rel="import" href="../../behaviors/qea-app-behavior.html">
-<link rel="import" href="../asq-text-input-q-editor/asq-text-input-q-editor.html">
+<link rel="import" href="../../bower_components/asq-spinner/asq-spinner.html">
 
 <dom-module id="qea-main-app">
   <template>
@@ -44,16 +43,23 @@
         margin: 0 10px;
         color: grey;
       }
+      #spinner{
+        --asq-spinner-letter-height: 100px;
+        --asq-spinner-letter-width: 100px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
 
     </style>
 
-    <qea-property-analyzer props='{{props}}'></qea-property-analyzer>
 
     <qea-toolbar current-Page=[[_currentPage]]></qea-toolbar>
 
 
-
     <section id="canvas-container">
+      <asq-spinner id='spinner'></asq-spinner>
 
       <!-- be sure to add the "page-name" attribute to all the new pages inserted -->
       <iron-pages id='pageController' selected={{_currentPage}} attr-For-Selected="page-name">
@@ -98,7 +104,8 @@
           "fireToast": "_openToast",
           "changePage": "_changePage",
           "dragStart": "_dragStart",
-          "dragStop" : "_dragStop"
+          "dragStop" : "_dragStop",
+          "tiny-init": "usvca"
         },
 
         this.properties = {
@@ -114,16 +121,20 @@
             type: Object,
             notify: true
           },
-          props: {
-            type: Object,
-            notify: true
-          },
           _currentPage:{
             type: String,
-            value: 'canvas',
+            value: 'landingPage',
             notify: true
+          },
+          _spinner:{
+            type: Boolean,
+            value: false
           }
         }
+      }
+
+      usvca(a,b,c){
+        console.log(a,b,c);
       }
 
 
@@ -172,6 +183,7 @@
       _moveToquestionPage({id, props, type}, pageData=null){
         // this.resolvePath(type)
         if (!pageData) {
+          console.log('sono qui');
           let oldEditors = Polymer.dom(this.$.questionEditorPage).childNodes
           for (let edit of oldEditors) {
             Polymer.dom(this.$.questionEditorPage).removeChild(edit)
@@ -182,19 +194,24 @@
           this._currentPage = 'questionEditor';
           return
         }
-        Polymer.Base.importHref(`../${type}`,
+        this.toggleAttribute('active', true, this.$.spinner);
+        Polymer.Base.importHref(`../../elements/${pageData.bowerName}/${pageData.bowerName}.html`,
           (success)=>{
             let oldEditors = Polymer.dom(this.$.questionEditorPage).childNodes
             for (let edit of oldEditors) {
               Polymer.dom(this.$.questionEditorPage).removeChild(edit)
             }
             let name = type || pageData.bowerName;
-            let elem = this._createElement(name, true )
-            Polymer.dom(this.$.questionEditorPage).appendChild(elem)
-            this._currentPage = 'questionEditor';
+            let elem = this._createElement(name)
+
+            this.async(()=>{
+              Polymer.dom(this.$.questionEditorPage).appendChild(elem)
+              this.toggleAttribute('active', false, this.$.spinner);
+              this._currentPage = 'questionEditor';
+            },2000)
           },
           (error)=>{
-            console.error('failed to import page '+type)
+            console.error('failed to import page '+pageData.bowerName)
           }
         )
       }

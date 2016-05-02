@@ -1,13 +1,10 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/paper-material/paper-material.html">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../bower_components/Sortable/Sortable.html">
+<link rel="import" href="../../bower_components/qea-property-editor/qea-advanced-text-editor.html">
 <link rel="import" href="../../behaviors/qea-app-behavior.html">
 <link rel="import" href="../../behaviors/qea-redux-store.html">
 <link rel="import" href="../../behaviors/qea-actions-behavior.html">
 <link rel="import" href="../qea-selector-highlighter/qea-selector-highlighter.html">
-<link rel="import" href="../qea-text-editor/qea-text-editor.html">
 
 <dom-module id="qea-canvas">
   <template>
@@ -29,7 +26,7 @@
       }
 
     </style>
-    <qea-text-editor id="textEditor"></qea-text-editor>
+    <qea-advanced-text-editor id="textEditor"></qea-advanced-text-editor>
     <div id="canvas" on-tap='_selectItem' on-mouseover='_onHovered' on-mouseout='_onUnhovered'>
       <sortable-js handle=".handle" scroll  animation='200' force-Fallback='true' >
         <template is="dom-repeat" items={{objs}}  id="repeater">
@@ -55,7 +52,6 @@
 
       get behaviors() {
         return [
-          qeaBehaviors.appBehavior,
           qeaBehaviors.actionsBehavior,
           qeaBehaviors.reduxStore
         ];
@@ -118,7 +114,7 @@
 
 
       insertTextArea(){
-        this.$.textEditor.openDialog().then(
+        this.$.textEditor.openTextDialog().then(
           (text)=>{
             if (text) {  this.dispatch('addElement', 'text', text)}
           }
@@ -126,8 +122,7 @@
       }
 
       modifyTextArea(id, code){
-        this.$.textEditor.setContent(code)
-        this.$.textEditor.openDialog().then(
+        this.$.textEditor.openTextDialog(code).then(
           (text)=>{
             if (text) {  this.dispatch('editElement',id, text)}
           }

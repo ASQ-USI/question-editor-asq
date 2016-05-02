@@ -33,6 +33,7 @@
     "Sortable": "sortable.js#^1.4.2",
     "polymer-tinymce": "*",
     "paper-menu-button": "PolymerElements/paper-menu-button#^1.0.0",
-    "qea-property-editor": "ASQ-USI-Elements/qea-property-editor#master"
+    "qea-property-editor": "ASQ-USI-Elements/qea-property-editor#master",
+    "asq-spinner": "ASQ-USI-Elements/asq-spinner#master"
   }
 }
