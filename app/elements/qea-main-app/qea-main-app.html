@@ -79,7 +79,7 @@
         </div>
 
         <div class="page page3" id='questionEditorPage' page-name='questionEditor'>
-          <asq-text-input-q-editor></asq-text-input-q-editor>
+
         </div>
 
       </iron-pages>
@@ -104,8 +104,7 @@
           "fireToast": "_openToast",
           "changePage": "_changePage",
           "dragStart": "_dragStart",
-          "dragStop" : "_dragStop",
-          "tiny-init": "usvca"
+          "dragStop" : "_dragStop"
         },
 
         this.properties = {
@@ -123,7 +122,7 @@
           },
           _currentPage:{
             type: String,
-            value: 'landingPage',
+            value: 'canvas',
             notify: true
           },
           _spinner:{
@@ -132,11 +131,6 @@
           }
         }
       }
-
-      usvca(a,b,c){
-        console.log(a,b,c);
-      }
-
 
       _openToast(host, messageData) {
         this._toastMessage = messageData.text;
@@ -182,33 +176,27 @@
 
       _moveToquestionPage({id, props, type}, pageData=null){
         // this.resolvePath(type)
+        let oldEditors = Polymer.dom(this.$.questionEditorPage).childNodes
+        for (let edit of oldEditors) {
+          Polymer.dom(this.$.questionEditorPage).removeChild(edit)
+        }
         if (!pageData) {
-          console.log('sono qui');
-          let oldEditors = Polymer.dom(this.$.questionEditorPage).childNodes
-          for (let edit of oldEditors) {
-            Polymer.dom(this.$.questionEditorPage).removeChild(edit)
-          }
+
           let name = type || pageData.bowerName;
-          let elem = this._createElement(name, true, {questionId:id,restoreState:props} )
+          let elem = this._createElement(name, true, {questionId:id, restoreState:props} )
           Polymer.dom(this.$.questionEditorPage).appendChild(elem)
           this._currentPage = 'questionEditor';
           return
         }
         this.toggleAttribute('active', true, this.$.spinner);
-        Polymer.Base.importHref(`../../elements/${pageData.bowerName}/${pageData.bowerName}.html`,
+        Polymer.Base.importHref(this.resolveLocalPath(pageData.bowerName),
           (success)=>{
-            let oldEditors = Polymer.dom(this.$.questionEditorPage).childNodes
-            for (let edit of oldEditors) {
-              Polymer.dom(this.$.questionEditorPage).removeChild(edit)
-            }
             let name = type || pageData.bowerName;
-            let elem = this._createElement(name)
+            let elem = this._createElement(name, true, {})
+            Polymer.dom(this.$.questionEditorPage).appendChild(elem)
+            this.toggleAttribute('active', false, this.$.spinner);
+            this._currentPage = 'questionEditor';
 
-            this.async(()=>{
-              Polymer.dom(this.$.questionEditorPage).appendChild(elem)
-              this.toggleAttribute('active', false, this.$.spinner);
-              this._currentPage = 'questionEditor';
-            },2000)
           },
           (error)=>{
             console.error('failed to import page '+pageData.bowerName)
@@ -216,6 +204,11 @@
         )
       }
 
+
+      resolveLocalPath(tagName){
+        let p = typeof __dirname == "undefined" ? '../..' : __dirname;
+        return `${p}/elements/${tagName.toLowerCase()}/${tagName.toLowerCase()}.html`
+      }
 
 
     }

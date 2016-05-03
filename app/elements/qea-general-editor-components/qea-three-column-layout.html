@@ -1,0 +1,64 @@
+<dom-module id="qea-three-column-layout">
+  <template>
+    <style>
+    :host {
+      display: flex;
+      position: relative;
+      height: 100%;
+    }
+    #leftPanel, #mainArea, #rightPanel{
+      height: 100%;
+    }
+    #leftPanel{
+      overflow-y: auto;
+      box-sizing: border-box;
+      padding: 5px;
+      width: 400px;
+      border-right: 1px solid #eee;
+    }
+    #mainArea{
+      position: relative;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 40px;
+    }
+    #rightPanel{
+      width: 400px;
+      border-left: 1px solid #eee;
+    }
+    #saveChanges{
+      position: fixed;
+      bottom: 10px;
+      right: 270px;
+    }
+    .sectionTitle{
+      font-weight: bold;
+      text-transform: uppercase;
+      padding: 10px 0;
+    }
+    .explanation{
+      text-align: center;
+      margin-top: -41px;
+      margin-bottom: 23px;
+      font-size: 0.7em;
+      color: #cacaca;
+    }
+    #advanced{
+      cursor: pointer;
+      margin-top: 20px;
+      text-align: right;
+      font-size: 0.7em;
+      color: #cacaca;
+    }
+    #advanced:hover{
+      color: #a7a7a7;
+    }
+
+    .controlPanel{
+      position: absolute;
+      right: 20px;
+      bottom: 20px;
+    }
+    </style>
+  </template>
+</dom-module>
