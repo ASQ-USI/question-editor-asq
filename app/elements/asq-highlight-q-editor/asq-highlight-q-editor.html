@@ -1,0 +1,552 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-dropdown/iron-dropdown.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+
+<link rel="import" href="./asq-highlight-q-editor-styles.html">
+<link rel="import" href="../../bower_components/asq-highlight-q/asq-highlight-q.html">
+<link rel="import" href="../../bower_components/asq-highlight-q/elements/asq-hl-color-task/asq-hl-color-task.html">
+<link rel="import" href="../../bower_components/asq-highlight-q/elements/color-palette.html">
+
+<!-- new imports -->
+<link rel="import" href="../../behaviors/qea-redux-store.html">
+<link rel="import" href="../../behaviors/qea-actions-behavior.html">
+<link rel="import" href="../qea-general-editor-components/qea-editors-behavior.html">
+
+
+<dom-module id="asq-highlight-q-editor">
+  <template>
+    <style include="asq-highlight-q-editor-styles"></style>
+    <style>
+      :host{
+        @apply(--layout-vertical);
+        @apply(--layout-fit);
+        --paper-toolbar-background: #CFD8DC;
+        --paper-toolbar-color: #000;
+      }
+
+      #newTaskContainer{
+        @apply(--layout-horizontal);
+        @apply(--layout-end);
+      }
+
+      #newTaskTextarea{
+        @apply(--layout-flex);
+      }
+
+      paper-toolbar ::shadow .toolbar-tools ::content > *{
+          margin: 0 8px;
+      }
+
+    </style>
+
+    <paper-toolbar>
+      <paper-icon-button icon="unfold-more" title="Get code" class="rotate" id="showMarkupBtn" on-click="_showMarkup"></paper-icon-button>
+
+      <paper-icon-button icon="assignment" title="Get solution" id="showSolutionBtn" on-click="_showSolution"></paper-icon-button>
+
+
+      <span class="separator"></span>
+
+      <paper-dropdown-menu label="Syntax">
+          <paper-menu class="dropdown-content" id="syntaxMenu" selected-item="{{syntaxModeItem}}">
+            <template is="dom-repeat" items="{{syntaxModes}}" as="mode">
+              <paper-item file$="[[mode.file]]">[[mode.name]]</paper-item>
+            </template>
+          </paper-menu>
+      </paper-dropdown-menu>&nbsp;
+
+       <paper-dropdown-menu label="Theme">
+          <paper-menu class="dropdown-content" id="themeMenu" selected-item="{{themeItem}}">
+            <template is="dom-repeat" items="{{themes}}" as="t">
+              <paper-item file$="[[t.file]]">[[t.name]]</paper-item>
+            </template>
+          </paper-menu>
+      </paper-dropdown-menu>
+
+      <span class="separator"></span>
+
+      <span id="editLabel" on-click="_setModeFromLabel" class$="{{_isEditLabelActive(mode)}}">Edit Text</span> <paper-toggle-button id="toggleBtn" on-change="_toggleMode" on-iron-change="_toggleMode"></paper-toggle-button> <span id="highlightLabel" on-click="_setModeFromLabel" class$="{{_isHighlightLabelActive(mode)}}">Highlight</span>
+
+      <div class="flex" ></div>
+       <h5><code style="padding: 4px 0 3px;">&lt;asq-highlight-q&gt;</code> <span style="color:#666;">editor</span></h5>
+
+    </paper-toolbar>
+
+    <section id="elementConf">
+      <paper-textarea id="stemTextarea" label="Stem (HTML is allowed; use responsibly)" value="{{stemTextareaValue}}"></paper-textarea>
+
+      <div id="newTaskContainer">
+           <paper-textarea id="newTaskTextarea" label="Task description (HTML is allowed"></paper-textarea>
+        <color-palette id="colorPalette" selected="0"></color-palette>
+        <paper-input id="colorName" label="colorName"></paper-input> &nbsp;  &nbsp;
+
+        <paper-icon-button icon="add-box" id="addTask" on-click="_addTask">Create task</paper-icon-button>
+      </div>
+    </section>
+
+    <!-- Duplicate color dialog -->
+    <paper-dialog id="sameColorDialog" layered="false">
+      <p>You already have a task with this color!</p>
+      <div class="buttons">
+        <paper-button dialog-confirm autofocus="">CLOSE</paper-button>
+      </div>
+    </paper-dialog>
+
+
+    <!-- markup dialog -->
+    <paper-dialog id="markupDialog" on-core-overlay-open-completed="coreOverlayOpenCompleted" backdrop="" layered="false">
+      <div id="aceContainer">
+        <ace-element id="markupEditor" theme="textmate" mode="html"></ace-element>
+      </div>
+      <div class="buttons">
+        <paper-button dialog-confirm autofocus="">CLOSE</paper-button>
+      </div>
+    </paper-dialog>
+
+    <!-- <hr> -->
+    <br><br><br><br>
+
+    <asq-highlight-q id="asqHighlight" theme="{{theme}}" mode="{{syntaxMode}}">
+      <asq-stem id="leStem"></asq-stem>
+      <template is="dom-repeat" items="{{tasks}}" as="t" index-as="idx">
+        <asq-hl-color-task color="{{t.color}}" idx$="{{idx}}" colorname="{{t.colorName}}">{{t.html}}<paper-icon-button icon="close" on-click="removeTask" for-idx="{{idx}}"</paper-icon-button></asq-hl-color-task>
+      </template>
+    </asq-highlight-q>
+  </template>
+  <script>
+
+  (function(){
+
+    var syntaxModes = [
+      {
+        file: 'coffee',
+        name: 'CoffeeScript'
+      },
+      {
+        file: 'c_cpp',
+        name: 'C/C++'
+      },
+      {
+        file: 'css',
+        name: 'CSS'
+      },
+      {
+        file: 'html',
+        name: 'HTML'
+      },
+      {
+        file: 'jade',
+        name: 'Jade'
+      },
+      {
+        file: 'java',
+        name: 'Java'
+      },
+      {
+        file: 'javascript',
+        name: 'Javascript'
+      },
+      {
+        file: 'json',
+        name: 'JSON'
+      },
+      {
+        file: 'less',
+        name: 'LESS'
+      },
+      {
+        file: 'lisp',
+        name: 'LISP'
+      },
+      {
+        file: 'php',
+        name: 'PHP'
+      },
+      {
+        file: 'python',
+        name: 'Python'
+      },
+      {
+        file: 'ruby',
+        name: 'Ruby'
+      },
+      {
+        file: 'sass',
+        name: 'SASS'
+      },
+      {
+        file: 'scss',
+        name: 'SCSS'
+      },
+      {
+        file: 'sql',
+        name: 'SQL'
+      },
+      {
+        file: 'xml',
+        name: 'XML'
+      },
+      {
+        file: 'yaml',
+        name: 'YAML'
+      }
+    ];
+
+    var themes = [
+      {
+        file: 'chrome',
+        name: 'Chrome'
+      },
+      {
+        file: 'clouds',
+        name: 'Clouds'
+      },
+      {
+        file: 'crimson_editor',
+        name: 'Crimson Editor'
+      },
+      {
+        file: 'dawn',
+        name: 'Dawn'
+      },
+      {
+        file: 'dreamweaver',
+        name: 'Dreamweaver'
+      },
+      {
+        file: 'eclipse',
+        name: 'Eclipse'
+      },
+      {
+        file: 'gitHub',
+        name: 'GitHub'
+      },
+      {
+        file: 'solarized_light',
+        name: 'Solarized Light'
+      },
+      {
+        file: 'textmate',
+        name: 'TextMate'
+      },
+      {
+        file: 'tomorrow',
+        name: 'Tomorrow'
+      },
+      {
+        file: 'xcode',
+        name: 'XCode'
+      },
+      {
+        file: 'kuroir',
+        name: 'Kuroir'
+      },
+      {
+        file: 'katzenmilch',
+        name: 'KatzenMilch'
+      },
+      {
+        file: 'ambiance',
+        name: 'Ambiance'
+      },
+      {
+        file: 'chaos',
+        name: 'Chaos'
+      },
+      {
+        file: 'clouds_midnight',
+        name: 'Clouds Midnight'
+      },
+      {
+        file: 'cobalt',
+        name: 'Cobalt'
+      },
+      {
+        file: 'idle_fingers',
+        name: 'idle Fingers'
+      },
+      {
+        file: 'kr_theme',
+        name: 'krTheme'
+      },
+      {
+        file: 'merbivore',
+        name: 'Merbivore'
+      },
+      {
+        file: 'merbivore_soft',
+        name: 'Merbivore Soft'
+      },
+      {
+        file: 'mono_industrial',
+        name: 'Mono Industrial'
+      },
+      {
+        file: 'monokai',
+        name: 'Monokai'
+      },
+      {
+        file: 'pastel_on_dark',
+        name: 'Pastel on dark'
+      },
+      {
+        file: 'solarized_dark',
+        name: 'Solarized Dark'
+      },
+      {
+        file: 'terminal',
+        name: 'Terminal'
+      },
+      {
+        file: 'tomorrow_night',
+        name: 'Tomorrow Night'
+      },
+      {
+        file: 'tomorrow_night_blue',
+        name: 'Tomorrow Night Blue'
+      },
+      {
+        file: 'tomorrow_night_bright',
+        name: 'Tomorrow Night Bright'
+      },
+      {
+        file: 'tomorrow_night_eighties',
+        name: 'Tomorrow Night 80s'
+      },
+      {
+        file: 'twilight',
+        name: 'Twilight'
+      },
+      {
+        file: 'vibrant_ink',
+        name: 'Vibrant Ink'
+      }
+    ];
+
+    Polymer({
+      is: 'asq-highlight-q-editor',
+
+      properties: {
+        stem: {
+          type: String,
+          value: '',
+          notify: true
+        },
+
+        stemTextareaValue: {
+          observer: '_stemTextareaChanged',
+          notify: true
+        },
+
+        syntaxModeItem: {
+          observer: '_syntaxModeItemChanged',
+          notify: true
+        },
+
+        syntaxModes: {
+          type: Array,
+          value: function(){ return  syntaxModes},
+          notify: true
+        },
+
+        syntaxMode: {
+          type: String,
+          value: '',
+          notify: true
+        },
+
+        themes: {
+          type: Array,
+          value: function(){ return  themes;},
+          notify: true
+        },
+
+        theme: {
+          type: String,
+          value: '',
+          notify: true
+        },
+
+        tasks: {
+          type: Array,
+          value: function(){return [];},
+        },
+
+        themeItem: {
+          observer: '_themeItemChanged',
+          notify: true
+        }
+      },
+      behaviors: [
+        qeaBehaviors.actionsBehavior,
+        qeaBehaviors.reduxStore,
+        qeaBehaviors.generalEditorsBehavior
+      ],
+
+      observers: ['_tasksChanged(tasks, asqHighlight)'],
+
+      attached: function () {
+        this.colors = Object.create(null);
+        //defaults
+        // this.syntaxMode = this.syntaxModes[0].file;
+        // this.theme = this.themes[0].file;
+
+        this.asqHighlight = Polymer.dom(this.$.asqHighlight.root).querySelector('asq-highlight-viewer-q');
+        this.aceHighlightManager = this.asqHighlight.$.aceHighlightManager;
+
+        // have to wait for ace-element to upgrade its internal editor
+        // so that aceHighlightManger has the correct instance
+        setTimeout(function(){
+          this._setMode('edit_text');
+          this.initialized = true;
+        }.bind(this), 1);
+      },
+
+      _syntaxModeItemChanged: function (newVal, oldVal) {
+        if(! newVal || newVal == oldVal) return;
+        this.syntaxMode = this.syntaxModeItem.getAttribute('file');
+      },
+
+      _toggleMode: function (event, detail) {
+        if(! this.initialized) return;
+        event.currentTarget.checked ? this._setMode('highlight'): this._setMode('edit_text')
+      },
+
+      _setMode: function(mode){
+        if (mode == 'highlight') {
+          this.mode = 'highlight'
+          this.aceHighlightManager.mode = this.aceHighlightManager.MODE_HIGHLIGHT;
+        } else if (mode == 'edit_text') {
+          this.mode = 'edit_text'
+          this.aceHighlightManager.mode = this.aceHighlightManager.MODE_EDIT_TEXT;
+        }else{
+          throw Error('invalid mode');
+        }
+      },
+
+      _themeItemChanged: function (newVal, oldVal) {
+        if(! newVal || newVal == oldVal) return;
+        this.theme = this.themeItem.getAttribute('file');
+      },
+
+      _addTask: function (evt) {
+        var color = this.$.colorPalette.selectedColor.color;
+        if (this.colors[color]) {
+          this.$.sameColorDialog.toggle();
+          return;
+        }
+
+        this.colors[color] = true;
+
+        var colorName = this.$.colorName.value || '';
+        colorName = colorName.trim() || color;
+
+        var html = this.$.newTaskTextarea.value || '';
+        html = html.trim() || 'Task #' + (this.tasks.length + 1);
+
+        this.push('tasks', {
+          color: color,
+          colorName: colorName,
+          html: html
+        });
+
+        //update palette
+        Polymer.dom.flush();
+        this.asqHighlight._populatePalette();
+      },
+
+      _tasksChanged: function (tasks, asqHighlight) {
+        asqHighlight.palette = tasks.map(function (task) {
+          return {
+            'color': task.color,
+            'name': task.colorName
+          };
+        }.bind(this));
+      },
+
+      removeTask: function (event, detail, sender) {
+        var idx = parseInt(event.currentTarget.forIdx);
+        var task = this.$$('[idx="' + idx+ '"]');
+        delete this.colors[task.color];
+        this.splice('tasks', idx, 1);
+        this.aceHighlightManager.removeMarkersByColor(task.color);
+
+        // update palette
+        setTimeout(this.asqHighlight._populatePalette.bind(this.asqHighlight), 1)
+      },
+
+      _stemTextareaChanged: function (_, event) {
+        this.stem = this.$.stemTextarea.value;
+        this.$.leStem.innerHTML = this.stem;
+      },
+
+      coreOverlayOpenCompleted: function (event, detail, sender) {
+        this.$.markupEditor.editor.resize();
+      },
+
+      getRanges: function () {
+        return this.aceHighlightManager.getHighlightRanges();
+      },
+
+      getMarkup: function () {
+
+        var html =  '  <asq-highlight-q ';
+        html += 'theme="' + this.theme + '" ';
+        html += 'mode="' + this.syntaxMode + '">\n';
+        html += '    <asq-solution>' + JSON.stringify(this.getRanges(), null, 2) + '</asq-solution>\n';
+        html += '    <asq-stem>' + this.stem + '</asq-stem>\n';
+        this.tasks.forEach(function (t) {
+          html += '    <asq-hl-color-task color="' + t.color + '" colorName="' + t.colorName + '">' + t.html + '</asq-hl-color-task>\n';
+        });
+        html += '    <code>';
+        html += this.asqHighlight.$.codeEditor.editor.session.getValue();
+        html += '</code>\n';
+        html += '  </asq-highlight-q>\n';
+        return html;
+      },
+
+      _setModeFromLabel: function (event, detail) {
+        this.$.toggleBtn.checked = (event.currentTarget.id == 'highlightLabel');
+      },
+
+      _showMarkup: function () {
+        this.$.markupEditor.editor.session.setValue(this.getMarkup());
+        this.$.markupDialog.toggle();
+      },
+
+      _showSolution: function () {
+        var solution = JSON.stringify(this.getRanges(), null, 2);
+        // this.$.markupEditor.editor.session.setValue(solution);
+        // this.$.markupDialog.toggle();
+        this._setSolution(solution);
+        this._saveQuestion(['stemTextareaValue', 'stem', 'syntaxModeItem','theme', 'tasks','themeItem', 'asqHighlight'])
+
+      },
+
+      _getFormattedCode: function () {
+        return this.getMarkup()
+      },
+
+      _isEditLabelActive: function (mode) {
+        return (mode == 'edit_text') ? 'active' : ''
+      },
+
+      _isHighlightLabelActive: function (mode) {
+        return (mode == 'highlight') ? 'active' : ''
+      }
+    });
+  })();
+  </script>
+</dom-module>

@@ -189,13 +189,17 @@
           return
         }
         this.toggleAttribute('active', true, this.$.spinner);
+
         Polymer.Base.importHref(this.resolveLocalPath(pageData.bowerName),
           (success)=>{
             let name = type || pageData.bowerName;
             let elem = this._createElement(name, true, {})
-            Polymer.dom(this.$.questionEditorPage).appendChild(elem)
-            this.toggleAttribute('active', false, this.$.spinner);
-            this._currentPage = 'questionEditor';
+            this.async(()=>{
+              Polymer.dom(this.$.questionEditorPage).appendChild(elem)
+              this.toggleAttribute('active', false, this.$.spinner);
+              this._currentPage = 'questionEditor';
+
+            }, 1000)
 
           },
           (error)=>{

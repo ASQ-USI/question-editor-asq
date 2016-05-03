@@ -34,6 +34,8 @@
     "polymer-tinymce": "*",
     "paper-menu-button": "PolymerElements/paper-menu-button#^1.0.0",
     "qea-property-editor": "ASQ-USI-Elements/qea-property-editor#master",
-    "asq-spinner": "ASQ-USI-Elements/asq-spinner#master"
+    "asq-spinner": "ASQ-USI-Elements/asq-spinner#master",
+    "asq-highlight-q-editor": "ASQ-USI-Elements/asq-highlight-q-editor#master"
+
   }
 }

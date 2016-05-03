@@ -28,6 +28,9 @@
       .handle:hover{
         cursor: move;
       }
+      #content{
+        position: relative;
+      }
     </style>
     <paper-material elevation=[[_elevation]] animated>
       <!-- pace where the text or question will be dinamically inserted -->
@@ -111,7 +114,7 @@
           canvas.modifyTextArea(this.elementId, this.getCode())
 
         }else {
-  
+
           let qInfo = {
             id: this.elementId,
             props: this.elementProps,
