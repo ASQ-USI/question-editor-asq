@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/Sortable/Sortable.html">
 <link rel="import" href="../../bower_components/qea-property-editor/qea-advanced-text-editor.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../behaviors/qea-app-behavior.html">
 <link rel="import" href="../../behaviors/qea-redux-store.html">
 <link rel="import" href="../../behaviors/qea-actions-behavior.html">
@@ -8,16 +9,16 @@
 
 <dom-module id="qea-canvas">
   <template>
-    <style>
+    <style include="iron-flex">
       :host {
-        display: block;
+       /* display: block;
         height: 100%;
-        width: calc(100% - 300px);
+        width: calc(100% - 300px);*/
         box-sizing: border-box;
       }
       #canvas{
-        width: 100%;
-        height: 100%;
+        /*width: 100%;
+        height: 100%;*/
         position: relative;
         padding: 5px;
         box-sizing: border-box;
@@ -28,15 +29,15 @@
 
     </style>
     <qea-advanced-text-editor id="textEditor"></qea-advanced-text-editor>
-    <div id="canvas" on-tap='_selectItem' on-mouseover='_onHovered' on-mouseout='_onUnhovered'>
-      <sortable-js handle=".handle" scroll  animation='200' force-Fallback='true' >
+    <div id="canvas" class="flex" on-tap="_selectItem" on-mouseover="_onHovered" on-mouseout="_onUnhovered">
+      <sortable-js handle=".handle" scroll  animation="200" force-Fallback="true" >
         <template is="dom-repeat" items={{objs}}  id="repeater">
           <qea-selector-highlighter
-            selected-Id=[[selectedElemId]]
-            element-Id=[[item.id]]
-            type=[[item.type]]
-            element-Props=[[item.props]]
-            content=[[item.html]]>
+            selected-Id="[[selectedElemId]]"
+            element-Id="[[item.id]]"
+            type="[[item.type]]"
+            element-Props="[[item.props]]"
+            content="[[item.html]]">
           </qea-selector-highlighter>
         </template>
       </sortable-js>

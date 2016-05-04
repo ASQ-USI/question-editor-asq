@@ -7,45 +7,49 @@
 <link rel="import" href="../qea-toolbar/qea-toolbar.html">
 <link rel="import" href="../../behaviors/qea-app-behavior.html">
 <link rel="import" href="../../bower_components/asq-spinner/asq-spinner.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 
 <dom-module id="qea-main-app">
   <template>
-    <style>
+    <style include="iron-flex iron-positioning">
       :host {
         display: block;
+        @apply(--layout-fit);
+        @apply(--layout-vertical);
       }
 
-      #canvas-container{
+/*      #canvas-container{
         position: absolute;
         top: 64px;
         left: 0;
         bottom: 0;
         right: 0;
-      }
+      }*/
       iron-pages {
-        width: 100%;
-        height: 100%;
+       /* width: 100%;
+        height: 100%;*/
       }
       iron-pages > div{
-        width: 100%;
-        height: 100%;
+        /*width: 100%;
+        height: 100%;*/
       }
       #nav-container{
         background: #fafafa;
         border-left: 1px solid #999;
-        position: fixed;
+        /*position: fixed;*/
         width: 300px;
-        top: 0;
+/*        top: 0;
         right: 0;
-        bottom: 0;
+        bottom: 0;*/
       }
       .tollbarIcon{
         margin: 0 10px;
         color: grey;
       }
       #spinner{
-        --asq-spinner-letter-height: 100px;
-        --asq-spinner-letter-width: 100px;
+        --asq-spinner-letter-height: 46px;
+        --asq-spinner-letter-width: 46px;
         position: absolute;
         top: 50%;
         left: 50%;
@@ -58,34 +62,35 @@
     <qea-toolbar current-Page=[[_currentPage]]></qea-toolbar>
 
 
-    <section id="canvas-container">
+    <section id="canvas-container" class="flex layout horizontal">
       <asq-spinner id='spinner'></asq-spinner>
 
       <!-- be sure to add the "page-name" attribute to all the new pages inserted -->
-      <iron-pages id='pageController' selected={{_currentPage}} attr-For-Selected="page-name">
+      <iron-pages id='pageController' selected={{_currentPage}} attr-For-Selected="page-name" class="flex layout horizontal">
 
-        <div class="page page0" page-name='landingPage'>
+        <div class="page flex page0" page-name='landingPage'>
           <qea-landing-page></qea-landing-page>
         </div>
 
-        <div class="page page1" page-name='canvas'>
+        <div class="page flex layout horizontal page1" page-name='canvas'>
           <qea-canvas id="qeaCanvas"
-            dropped-elem=[[_dropped]]
-            is-dragging=[[_isDragging]]>
+            class="flex layout horizontal"
+            dropped-elem="[[_dropped]]"
+            is-dragging="[[_isDragging]]">
           </qea-canvas>
           <nav id="nav-container">
             <qea-questions-list id="questions-list"></qea-questions-list>
           </nav>
         </div>
 
-        <div class="page page3" id='questionEditorPage' page-name='questionEditor'>
+        <div class="page flex layout horizontal page3" id='questionEditorPage' page-name="questionEditor">
 
         </div>
 
       </iron-pages>
     </section>
 
-    <paper-toast id="toast" text=[[_toastMessage]] duration='5000' ></paper-toast>
+    <paper-toast id="toast" text="[[_toastMessage]]" duration="5000" ></paper-toast>
 
   </template>
   <script>
@@ -195,7 +200,8 @@
             let name = type || pageData.bowerName;
             let elem = this._createElement(name, true, {})
             this.async(()=>{
-              Polymer.dom(this.$.questionEditorPage).appendChild(elem)
+              Polymer.dom(this.$.questionEditorPage).appendChild(elem);
+              elem.classList.add('flex');
               this.toggleAttribute('active', false, this.$.spinner);
               this._currentPage = 'questionEditor';
 

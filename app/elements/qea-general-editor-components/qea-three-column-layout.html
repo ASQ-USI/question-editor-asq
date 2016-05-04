@@ -1,29 +1,27 @@
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <dom-module id="qea-three-column-layout">
   <template>
-    <style>
+    <style include="iron-flex">
     :host {
-      display: flex;
-      position: relative;
-      height: 100%;
+      @apply(--layout-horizontal);
     }
     #leftPanel, #mainArea, #rightPanel{
-      height: 100%;
+      box-sizing: border-box;
+    }
+
+    #leftPanel,#rightPanel{
+      width: 400px;
+      padding: 5px;
     }
     #leftPanel{
-      overflow-y: auto;
-      box-sizing: border-box;
-      padding: 5px;
-      width: 400px;
       border-right: 1px solid #eee;
     }
     #mainArea{
+      @apply(--layout-flex);
       position: relative;
-      width: 100%;
-      box-sizing: border-box;
       padding: 40px;
     }
     #rightPanel{
-      width: 400px;
       border-left: 1px solid #eee;
     }
     #saveChanges{
