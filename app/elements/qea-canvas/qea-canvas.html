@@ -1,8 +1,9 @@
-<link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/Sortable/Sortable.html">
-<link rel="import" href="../../bower_components/qea-property-editor/qea-advanced-text-editor.html">
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../behaviors/qea-app-behavior.html">
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../../bower_components/Sortable/Sortable.html">
+<link rel="import" href="../../behaviors/qea-inspect-behavior.html">
 <link rel="import" href="../../behaviors/qea-redux-store.html">
 <link rel="import" href="../../behaviors/qea-actions-behavior.html">
 <link rel="import" href="../qea-selector-highlighter/qea-selector-highlighter.html">
@@ -47,29 +48,27 @@
   </template>
   <script>
   (function () {
-    'use strict'
+    'use strict';
 
-    let MyBehavior = {};
     class qeaCanvas {
 
       get behaviors() {
         return [
           qeaBehaviors.actionsBehavior,
-          qeaBehaviors.reduxStore
+          qeaBehaviors.reduxStore,
         ];
-
       }
 
-      beforeRegister(){
-        this.is = 'qea-canvas'
+      beforeRegister() {
+        this.is = 'qea-canvas';
         this.properties = {
-          isDragging:{
-            type: Boolean
+          isDragging: {
+            type: Boolean,
           },
-          selectedElemId:{
-            type:String
+          selectedElemId: {
+            type: String,
           },
-          objs:{
+          objs: {
             type: Array,
             statePath: 'elements'
           },
@@ -88,11 +87,12 @@
         }
       }
 
-      _selectItem(event){
-        for (var value of event.path) {
-          if(value.tagName && value.tagName.toLowerCase() === "qea-selector-highlighter"){
-            this.selectedElemId = value.elementId
-            return
+      _selectItem(event) {
+        let value;
+        for (value of event.path) {
+          if (value.tagName && value.tagName.toLowerCase() === 'qea-selector-highlighter') {
+            this.selectedElemId = value.elementId;
+            return;
           }
         }
         this.selectedElemId = null;
@@ -102,6 +102,7 @@
         this.toggleClass('qea-selected' , this.isDragging, this.$.canvas)
         this.isHover = true;
       }
+
       _onUnhovered() {
         this.toggleClass('qea-selected' , false, this.$.canvas);
         this.isHover = false
@@ -114,29 +115,27 @@
         }
       }
 
-
-      insertTextArea(){
-        this.$.textEditor.openTextDialog().then(
-          (text)=>{
-            if (text) {  this.dispatch('addElement', 'text', text)}
+      insertTextArea() {
+        this.$.textEditor.openDialog().then(
+          (text) => {
+            if (text) { this.dispatch('addElement', 'text', text); }
           }
         );
       }
 
-      modifyTextArea(id, code){
-        this.$.textEditor.openTextDialog(code).then(
-          (text)=>{
-            if (text) {  this.dispatch('editElement',id, text)}
+      modifyTextArea(id, code) {
+        this.$.textEditor.setContent(code);
+        this.$.textEditor.openDialog().then(
+          (text) => {
+            if (text) { this.dispatch('editElement', id, text); }
           }
         );
       }
-
-
 
     }
 
     Polymer(qeaCanvas);
-  })()
+  })();
 
   </script>
 </dom-module>

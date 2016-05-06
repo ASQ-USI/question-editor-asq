@@ -1,14 +1,14 @@
-<link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
-<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../qea-questions-list/qea-questions-list.html">
 <link rel="import" href="../qea-canvas/qea-canvas.html">
 <link rel="import" href="../qea-landing-page/qea-landing-page.html">
 <link rel="import" href="../qea-toolbar/qea-toolbar.html">
-<link rel="import" href="../../behaviors/qea-app-behavior.html">
-<link rel="import" href="../../bower_components/asq-spinner/asq-spinner.html">
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../behaviors/qea-app-behavior.html">
+<link rel="import" href="../../../bower_components/asq-spinner/asq-spinner.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
 
 <dom-module id="qea-main-app">
   <template>
@@ -94,7 +94,7 @@
 
   </template>
   <script>
-  (function() {
+  (function () {
     'use strict';
 
     class qeaMainApp {
@@ -106,40 +106,42 @@
         this.is = 'qea-main-app';
 
         this.listeners = {
-          "fireToast": "_openToast",
-          "changePage": "_changePage",
-          "dragStart": "_dragStart",
-          "dragStop" : "_dragStop"
-        },
+          'fireToast': '_openToast',
+          'changePage': '_changePage',
+        };
 
         this.properties = {
           _toastMessage: {
             type: String,
-            value: ''
+            value: '',
           },
           _isDragging: {
             type: Boolean,
-            value: false
+            value: false,
           },
           _dropped: {
             type: Object,
-            notify: true
+            notify: true,
           },
-          _currentPage:{
+          _propToChange: {
+            type: Object,
+            value: () => null,
+          },
+          props: {
+            type: Object,
+            notify: true,
+          },
+          _currentPage: {
             type: String,
-            value: 'canvas',
-            notify: true
+            value: 'landingPage',
+            notify: true,
           },
-          _spinner:{
-            type: Boolean,
-            value: false
-          }
-        }
+        };
       }
 
       _openToast(host, messageData) {
         this._toastMessage = messageData.text;
-        if (messageData.type && messageData.type == 'error') {
+        if (messageData.type && messageData.type === 'error') {
           this.$.toast.customStyle['--paper-toast-background-color'] = '#F44336';
           this.$.toast.updateStyles();
         }else {
@@ -149,34 +151,42 @@
         this.$.toast.open();
       }
 
+// <<<<<<< 33045c1bd6a218cb44c37ac87af39bb33292a388
 
-      _dragStart(host){
-        // receive the event from question-item when drag start
-        this._isDragging = true;
-      }
+//       _dragStart(host){
+//         // receive the event from question-item when drag start
+//         this._isDragging = true;
+//       }
 
-      _dragStop(host, droppedElem) {
-        // receive the event from question-item when drag stop
-        this._isDragging = false;
-        if (droppedElem) {
-          // render the dropped element
-          this._dropped = droppedElem;
-        }
+//       _dragStop(host, droppedElem) {
+//         // receive the event from question-item when drag stop
+//         this._isDragging = false;
+//         if (droppedElem) {
+//           // render the dropped element
+//           this._dropped = droppedElem;
+//         }
 
-      }
+//       }
 
-      _changePage(host, {selectedPage, pageData=null, questionInfo={id:null, props:{}, type:''}}){
-        for (var page of this.$.pageController.items) {
-          if (page.getAttribute('page-name') == selectedPage ){
-            if (selectedPage === 'questionEditor') {
-              this._moveToquestionPage(questionInfo, pageData);
-              return
-            }
-            this._currentPage = selectedPage;
-            return
+//       _changePage(host, {selectedPage, pageData=null, questionInfo={id:null, props:{}, type:''}}){
+//         for (var page of this.$.pageController.items) {
+//           if (page.getAttribute('page-name') == selectedPage ){
+//             if (selectedPage === 'questionEditor') {
+//               this._moveToquestionPage(questionInfo, pageData);
+//               return
+//             }
+//             this._currentPage = selectedPage;
+//             return
+// =======
+      _changePage(host, selectedPage = '') {
+        let page;
+        for (page of this.$.pageController.items) {
+          if (page.getAttribute('page-name') === selectedPage) {
+            this.$.pageController.selected = selectedPage;
+            return;
           }
         }
-        this.openToast(null, {text: `no page available with name: ${selectedPage}`, type: 'error'})
+        this.openToast(null, { text: `no page available with name: ${selectedPage}`, type: 'error' });
       }
 
       _moveToquestionPage({id, props, type}, pageData=null){

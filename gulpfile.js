@@ -1,116 +1,111 @@
 'use strict';
 
-const gulp = require('gulp'),
-  polylint = require('gulp-polylint'),
-  del = require('del'),
-  jshint = require('gulp-jshint'),
-  extract = require("gulp-html-extract"),
-  htmlreplace = require('gulp-html-replace'),
-  runSequence = require('run-sequence'),
-  jscs = require('gulp-jscs'),
-  browserSync = require('browser-sync').create(),
-  $ = require('gulp-load-plugins')(),
-  reload = browserSync.reload;
+const gulp = require('gulp');
+const plumber = require('gulp-plumber');
+const runSequence = require('run-sequence');
+const del = require('del');
+const eslint = require('gulp-eslint');
+const crisper = require('gulp-crisper');
+const gulpif = require('gulp-if');
+const vulcanize = require('gulp-vulcanize');
+const babel = require('gulp-babel');
+const htmlreplace = require('gulp-html-replace');
+const replace = require('gulp-replace');
+const browserSync = require('browser-sync').create();
+const reload = browserSync.reload;
 
+// Utility functions
+let ISDISTMODE = false;
 
-gulp.task('default', function() {
-  // place code for your default task here
-  runSequence('clean', 'js', 'vulcanize')
+gulp.task('default', () => {
+
 });
 
-// create a server with live reload
-gulp.task('serve',['bowertotmp', 'js'], function() {
+// clean the bild direcories
+gulp.task('clean', () => {
+  return del(['.transpiled', 'distribution']);
+});
+
+// create a web server with live reload
+gulp.task('serve', ['transpile'], () => {
   browserSync.init({
-      server: "./.tmp",
-      notify: false
+    server: ['.transpiled', './'],
+    notify: false,
   });
-  gulp.watch(["app/styles/**/*.css"], ['copyCss', reload])
-  gulp.watch(["app/**/*.html"], ['js',reload])
-})
-
-
-// create a serever from distribution folder
-gulp.task('serve:dist', function() {
-  runSequence('clean','js', 'vulcanize', ()=>{
-    browserSync.init({
-        server: "./dist",
-        notify: false
-    });
-  })
-
-})
-
-
-// delete .tmp and dist folder
-gulp.task('clean', function () {
-  return del([
-    './dist',
-    '.tmp'
-  ]).then(paths => {});
-})
-
-// transpile ES6 to ES5
-gulp.task('js',['copyCss'],function() {
-  return gulp.src(['app/**/*.{js,html,svg}', '!app/bower_components/**/*'])
-  .pipe($.sourcemaps.init())
-  .pipe($.if('*.html', $.crisper({scriptInHead: false}))) // Extract JS from .html files
-  .pipe($.if('*.js', $.babel({
-    presets: ['es2015']
-  })))
-  .pipe($.sourcemaps.write('.'))
-  .pipe(gulp.dest('./.tmp'))
-  // .pipe(gulp.dest('./dist'));
+  gulp.watch('app/**/*.{html, js}', ['transpile', reload]);
 });
 
-// optimize polymer components for distribution
-gulp.task('vulcanize',['bowertotmp'], function () {
-  gulp.src('./app/index.html')
-  .pipe(htmlreplace({
-        'app': '<link rel="import" href="./qea-main-app/qea-main-app.html">'
+// create a web server with live reload and linting
+gulp.task('serve:linter', ['transpile', 'linter'], () => {
+  browserSync.init({
+    server: ['.transpiled', './'],
+    notify: false,
+  });
+  gulp.watch('app/**/*.{html, js}', ['transpile', 'linter', reload]);
+});
+
+// tranpile javascript
+gulp.task('transpile', ['copyFiles'], () => {
+  return gulp.src(['app/**/*.html', '!app/bower_components/**/*'])
+    .pipe(gulpif(!ISDISTMODE, plumber()))
+    .pipe(crisper({
+      scriptInHead: false, // true is default
+      onlySplit: false,
     }))
-  .pipe(gulp.dest('./dist/'));
+    .pipe(babel({
+      presets: ['es2015'],
+      only: '*.js',
+    }))
+    .pipe(gulpif(!ISDISTMODE, plumber.stop()))
+    .pipe(gulp.dest('./.transpiled'));
+});
 
-  gulp.src([
-    'app/bower_components/{webcomponentsjs,platinum-sw,sw-toolbox,promise-polyfill}/**/*'
-  ]).pipe(gulp.dest('./dist/bower_components'));
 
-	return gulp.src('./.tmp/elements/qea-main-app/qea-main-app.html')
-		.pipe($.vulcanize({
-			stripComments: true,
+// linter that use Google's rooles
+gulp.task('linter', () => {
+  const src = ['app/**/*.{html, js}', '!app/test/**/*'];
+  if (ISDISTMODE) {
+    src.push('gulpfile.js');
+  }
+  gulp.src(src)
+  .pipe(eslint())
+  .pipe(eslint.format())
+  .pipe(gulpif(ISDISTMODE, eslint.failAfterError()));
+});
+
+gulp.task('dist', () => {
+  ISDISTMODE = true;
+  runSequence('clean', 'linter', 'transpile', 'vulcanize', 'copyFiles');
+});
+
+// optimize polymer compomponents
+gulp.task('vulcanize', () => {
+  return gulp.src('./.transpiled/elements/qea-main-app/qea-main-app.html')
+    .pipe(vulcanize({
+      stripComments: true,
       inlineCss: true,
-      inlineScripts: true
-		}))
-		.pipe(gulp.dest('./dist/qea-main-app'));
+      inlineScripts: true,
+    }))
+    .pipe(gulp.dest('./distribution/main-app'));
 });
 
+gulp.task('copyFiles', () => {
+  const destination = ISDISTMODE ? 'distribution' : '.transpiled';
+  if (ISDISTMODE) {
+    gulp.src('.transpiled/index.html')
+      .pipe(htmlreplace({
+        app: '<link rel="import" href="./qea-main-app/qea-main-app.html">',
+      }))
+      .pipe(gulp.dest(`${destination}`));
 
-// copy all bower_components in .tmp folder
-gulp.task('bowertotmp', function () {
-
-  gulp.src(['node_modules/redux/dist/redux.js'])
-    .pipe(gulp.dest('.tmp/script/'));
-
- return gulp.src(['app/bower_components/**/*'])
-   .pipe(gulp.dest('.tmp/bower_components/'));
-});
-
-
-// copy css files to dist and .tmp folder
-gulp.task('copyCss', ()=>{
-  return gulp.src(['app/styles/**/*'])
-    .pipe(gulp.dest('./.tmp/styles/'))
-    .pipe(gulp.dest('./dist/styles/'))
-});
-
-
-// linter for javascript
-// TODO revolve bug that cause wrong line number in error message
-//      correct number should be (line showned + line of script tag <script> - 1)
-gulp.task('lint', function() {
-  return gulp.src(['./app/elements/**/*.html','./app/elements/**/*.js'])
-  .pipe($.if('*.html', $.htmlExtract()))
-  .pipe(jshint({esversion: 6}))
-  .pipe(jscs())
-  .pipe($.jscsStylish.combineWithHintResults())
-  .pipe(jshint.reporter('jshint-stylish'));
+    gulp.src('./distribution/qea-main-app/qea-main-app.html')
+      .pipe(replace('../../images/', '../images/'))
+      .pipe(gulp.dest('./distribution/qea-main-app/'));
+  }
+  gulp.src('app/styles/**/*')
+    .pipe(gulp.dest(`${destination}/styles/`));
+  gulp.src('node_modules/redux/dist/redux.min.js')
+    .pipe(gulp.dest(`${destination}/script/`));
+  return gulp.src('app/images/**/*')
+    .pipe(gulp.dest(`${destination}/images/`));
 });

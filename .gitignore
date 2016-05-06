@@ -1,6 +1,6 @@
 
 node_modules
-dist
+distribution
 bower_components
-.tmp
+.transpiled
 .publish/
