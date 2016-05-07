@@ -10,7 +10,6 @@
     "strict": "off",
     "arrow-body-style": "off",
     "no-underscore-dangle": ["error", { "allowAfterThis": true }],
-    "quote-props": "off",
     "no-param-reassign": ["error", { "props": false }]
   },
   "env": {

@@ -63,7 +63,7 @@ gulp.task('transpile', ['copyFiles'], () => {
 
 // linter that use Google's rooles
 gulp.task('linter', () => {
-  const src = ['app/**/*.{html, js}', '!app/test/**/*'];
+  const src = ['app/**/*.{html,js}', '!app/test/**/*'];
   if (ISDISTMODE) {
     src.push('gulpfile.js');
   }
@@ -86,7 +86,7 @@ gulp.task('vulcanize', () => {
       inlineCss: true,
       inlineScripts: true,
     }))
-    .pipe(gulp.dest('./distribution/main-app'));
+    .pipe(gulp.dest('./distribution/qea-main-app/'));
 });
 
 gulp.task('copyFiles', () => {
@@ -95,12 +95,17 @@ gulp.task('copyFiles', () => {
     gulp.src('.transpiled/index.html')
       .pipe(htmlreplace({
         app: '<link rel="import" href="./qea-main-app/qea-main-app.html">',
+        webcomponents: './bower_components/webcomponentsjs/webcomponents-lite.js',
+        polymerRedux: '<link rel="import" href="./bower_components/polymer-redux/polymer-redux.html">',
       }))
       .pipe(gulp.dest(`${destination}`));
 
     gulp.src('./distribution/qea-main-app/qea-main-app.html')
       .pipe(replace('../../images/', '../images/'))
       .pipe(gulp.dest('./distribution/qea-main-app/'));
+    gulp.src(
+      ['bower_components/{webcomponentsjs,polymer-redux,polymer}/**/*']
+    ).pipe(gulp.dest('./distribution/bower_components/'));
   }
   gulp.src('app/styles/**/*')
     .pipe(gulp.dest(`${destination}/styles/`));
