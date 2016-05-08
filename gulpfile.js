@@ -80,37 +80,44 @@ gulp.task('dist', () => {
 
 // optimize polymer compomponents
 gulp.task('vulcanize', () => {
-  return gulp.src('./.transpiled/elements/qea-main-app/qea-main-app.html')
+  return gulp.src('./.transpiled/elements/elements.html')
     .pipe(vulcanize({
+      abspath: '',
       stripComments: true,
       inlineCss: true,
       inlineScripts: true,
+      addedImports: ['./bower_components/import-tinymce/import-tinymce.html'],
     }))
-    .pipe(gulp.dest('./distribution/qea-main-app/'));
+    .pipe(gulp.dest('./distribution/'));
 });
 
 gulp.task('copyFiles', () => {
   const destination = ISDISTMODE ? 'distribution' : '.transpiled';
   if (ISDISTMODE) {
+    // change paths
     gulp.src('.transpiled/index.html')
       .pipe(htmlreplace({
-        app: '<link rel="import" href="./qea-main-app/qea-main-app.html">',
+        app: '<link rel="import" href="./elements.html">',
         webcomponents: './bower_components/webcomponentsjs/webcomponents-lite.js',
-        polymerRedux: '<link rel="import" href="./bower_components/polymer-redux/polymer-redux.html">',
       }))
       .pipe(gulp.dest(`${destination}`));
 
+    // change image paths
     gulp.src('./distribution/qea-main-app/qea-main-app.html')
       .pipe(replace('../../images/', '../images/'))
       .pipe(gulp.dest('./distribution/qea-main-app/'));
+    // copy necessary bower components
     gulp.src(
-      ['bower_components/{webcomponentsjs,polymer-redux,polymer}/**/*']
+      ['bower_components/{webcomponentsjs,import-tinymce,tinymce}/**/*']
     ).pipe(gulp.dest('./distribution/bower_components/'));
   }
+  // copy styles
   gulp.src('app/styles/**/*')
     .pipe(gulp.dest(`${destination}/styles/`));
+  // copy script
   gulp.src('node_modules/redux/dist/redux.min.js')
     .pipe(gulp.dest(`${destination}/script/`));
+  // copy images
   return gulp.src('app/images/**/*')
     .pipe(gulp.dest(`${destination}/images/`));
 });
