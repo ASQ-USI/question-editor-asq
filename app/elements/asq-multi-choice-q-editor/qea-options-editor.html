@@ -1,0 +1,124 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/Sortable/Sortable.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
+<dom-module id="qea-options-editor">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      .optionItem{
+        display: flex;
+        align-items: center;
+      }
+      .remove{
+        color: red
+      }
+      .addItem{
+        opacity: 0.6;
+      }
+    </style>
+
+      <sortable-js id='sortableJs' handle=".handle" scroll  animation='200' force-Fallback='true' on-end='_optionMoved'>
+        <template is="dom-repeat" items={{_optionsList}}>
+          <div class="optionItem" id="34">
+            <paper-input value={{item.label}} no-Label-Float on-change='_changeOption'></paper-input>
+            <paper-icon-button class="move handle" icon="open-with"></paper-icon-button>
+            <paper-icon-button class='remove' icon="remove" on-tap='_optionRemoved'></paper-icon-button>
+          </div>
+        </template>
+      </sortable-js>
+      <div class="optionItem addItem">
+        <paper-input id='addInput' label='add an option ' on-change="_addOption"></paper-input>
+        <paper-icon-button icon="add" on-tap='_addOption'></paper-icon-button>
+      </div>
+  </template>
+  <script>
+  (function () {
+    'use strict'
+
+    class qeaOptionsEditor {
+
+      get behaviors() {
+        return [];
+      }
+
+      beforeRegister(){
+        this.is = 'qea-options-editor'
+        this.properties = {
+          _counterId: {
+            type: Number,
+            value: 0
+          },
+          _optionsList: {
+            type: Array,
+            value: ()=>[]
+          },
+          value: {
+            type: Array,
+            value: ()=>[],
+            notify: true
+          },
+          restore:{
+            type:Array,
+            observer: '_restoreState'
+          }
+
+        }
+      }
+
+      // function here
+      _addOption(e, manualValue){
+        let option;
+        if (manualValue) {
+          option = manualValue.label;
+        }else {
+          option = this.$.addInput.value;
+        }
+        this.push('_optionsList', {id: this._counterId, label:option} );
+        this.push('value', {id: this._counterId++, label:option} );
+        this.$.addInput.value = '';
+      }
+
+      _optionMoved(e){
+        if (e.oldIndex != undefined && e.newIndex != undefined) {
+          let dragItem = this._optionsList[e.newIndex];
+          let dropItem = this._optionsList[e.oldIndex];
+          this.splice('value',e.oldIndex, 1 );
+          this.splice('value',e.newIndex, 0, dragItem );
+        }
+      }
+
+      _optionRemoved(e){
+        this.splice('_optionsList',e.model.index, 1 );
+        var i;
+        for (i = 0; i < this.value.length; i++) {
+          if(this.value[i].id == e.model.item.id){break}
+        }
+        this.splice('value',i, 1 );
+      }
+
+      _restoreState(){
+        for (let opt of this.restore) {
+          this._addOption(null, opt)
+        }
+      }
+
+      _changeOption(e, old){
+        this.splice('_optionsList',e.model.index, 1 , {id:e.model.item.id, label:e.model.item.label});
+        var i;
+        for (i = 0; i < this.value.length; i++) {
+          if(this.value[i].id == e.model.item.id){break}
+        }
+        this.splice('value',i, 1 , {id:e.model.item.id, label:e.model.item.label});
+      }
+
+
+    }
+
+    Polymer(qeaOptionsEditor);
+  })()
+  </script>
+</dom-module>

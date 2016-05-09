@@ -24,7 +24,7 @@
 
 
         test('correctly render single element', function(done) {
-          myEl.value = {name : "im a single element"}
+          myEl.value = {label : "im a single element"}
 
           flush(function() {
             listItems = Polymer.dom(myEl.root).querySelectorAll('paper-item');
@@ -34,7 +34,7 @@
         });
 
         test('value renedered in single element', function (done) {
-          myEl.value = {name : "im a single element"}
+          myEl.value = {label : "im a single element"}
 
           flush(function() {
             listItems = Polymer.dom(myEl.root).querySelectorAll('paper-item');
@@ -56,7 +56,7 @@
         });
 
         test('values rendered in category element', function(done) {
-          myEl.value = {category: 'test', list: [{name : "im a child"}]}
+          myEl.value = {category: 'test', list: [{label : "im a child"}]}
 
           flush(function() {
             listItems = Polymer.dom(myEl.root).querySelectorAll('paper-item');

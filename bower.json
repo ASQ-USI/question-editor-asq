@@ -32,6 +32,10 @@
     "web-component-tester": "Polymer/web-component-tester#^4.2.2",
     "Sortable": "sortable.js#^1.4.2",
     "polymer-tinymce": "*",
-    "paper-menu-button": "PolymerElements/paper-menu-button#^1.0.0"
+    "paper-menu-button": "PolymerElements/paper-menu-button#^1.0.0",
+    "qea-property-editor": "ASQ-USI-Elements/qea-property-editor#master",
+    "asq-spinner": "ASQ-USI-Elements/asq-spinner#master",
+    "asq-highlight-q-editor": "ASQ-USI-Elements/asq-highlight-q-editor#master",
+    "iron-flex-layout": "PolymerElements/iron-flex-layout#^1.3.1"
   }
 }

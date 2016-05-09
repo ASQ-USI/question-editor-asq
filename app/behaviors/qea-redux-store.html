@@ -6,7 +6,7 @@ qeaBehaviors.reduxStore = PolymerRedux(store)
 let initialState = {
   id: 0, //id of the current page
   elements:[
-    // elements inside canvas using this format: {id, type:(text|question), html}.
+    // elements inside canvas using this format: {id, type:(text|question), html, props}.
     // The index of the array will represent the render order
   ]
 }
@@ -36,7 +36,8 @@ function elementsReducer(elementsList=[], action) {
       return [...elementsList, {
         id: action.elementId,
         type: action.elementType,
-        html: action.elementHtml
+        html: action.elementHtml,
+        props: action.elementProps
       }]
     case "REMOVE_ELEMENT":
       let index = 0;
@@ -55,7 +56,8 @@ function elementsReducer(elementsList=[], action) {
           return {
             id: action.elementId,
             type: action.elementType || elem.type,
-            html: action.elementHtml
+            html: action.elementHtml,
+            props: action.elementProps
           }
         }
       })

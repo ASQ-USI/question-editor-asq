@@ -51,7 +51,7 @@ gulp.task('clean', function () {
 
 // transpile ES6 to ES5
 gulp.task('js',['copyCss'],function() {
-  return gulp.src(['app/**/*.{js,html}', '!app/bower_components/**/*'])
+  return gulp.src(['app/**/*.{js,html,svg}', '!app/bower_components/**/*'])
   .pipe($.sourcemaps.init())
   .pipe($.if('*.html', $.crisper({scriptInHead: false}))) // Extract JS from .html files
   .pipe($.if('*.js', $.babel({
@@ -86,6 +86,7 @@ gulp.task('vulcanize',['bowertotmp'], function () {
 
 // copy all bower_components in .tmp folder
 gulp.task('bowertotmp', function () {
+
   gulp.src(['node_modules/redux/dist/redux.js'])
     .pipe(gulp.dest('.tmp/script/'));
 

@@ -67,12 +67,14 @@
           'editElement',
           state.elements[0].id,
           '<p>world</p>',
+          {},
           'question')
         state = myEl.getState();
         assert.equal(state.elements.length, 1);
         assert.equal(state.elements[0].type, 'question');
         assert.equal(state.elements[0].html, '<p>world</p>');
         myEl.dispatch('resetState');
+
       })
 
       test('move element' , function () {

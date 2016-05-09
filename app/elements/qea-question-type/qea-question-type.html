@@ -47,7 +47,7 @@
          <paper-item class="menu-trigger"> [[value.category]] &#9663</paper-item>
          <paper-menu class="menu-content sublist">
             <template is="dom-repeat" items="[[value.list]]">
-              <paper-item draggable='true' ondragstart="return false;" on-track="_draggingHandler">[[item.name]]</paper-item>
+              <paper-item draggable='true' ondragstart="return false;" on-track="_draggingHandler">[[item.label]]</paper-item>
             </template>
           </paper-menu>
        </paper-submenu>
@@ -55,7 +55,7 @@
 
     <!-- template for single element -->
     <template is="dom-if" if="{{!value.category }}">
-        <paper-item draggable='true' ondragstart="return false;" on-track="_draggingHandler">[[value.name]]</paper-item>
+        <paper-item draggable='true' ondragstart="return false;" on-track="_draggingHandler">[[value.label]]</paper-item>
     </template>
 
 
@@ -99,8 +99,8 @@
             this._currentlyDragging(e.detail);
             break;
           case 'end':
-            var name = e.model.item ? e.model.item.name : this.value.name;
-            this._stopDragging(e.detail, name);
+            var detail = e.model.item ? e.model.item : this.value;
+            this._stopDragging(e.detail, detail);
             break;
         }
       }
@@ -114,8 +114,8 @@
 
       }
 
-      _stopDragging(dragDetail, name){
-        var elemDet = {name: name, detail: dragDetail}
+      _stopDragging(dragDetail, detail){
+        var elemDet = {questionDetails: detail, dragDetails: dragDetail}
         this.fire('dragStop', elemDet);
         this.isDragging = '';
       }

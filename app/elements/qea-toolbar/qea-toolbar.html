@@ -29,9 +29,24 @@
         border-radius: 5px;
       }
 
+      #asqLogo{
+        height: 30px;
+        position: relative;
+        top: 3px;
+      }
+
+      #alpha{
+        font-size: 0.65em;
+        color: #7CB342;
+        font-weight: bold;
+        position: relative;
+        top: -10px;
+        left: 2px;
+      }
+
     </style>
     <paper-toolbar justify='start' >
-      <span class="title">question-editor-asq</span>
+      <span class="title"><img id="asqLogo" src="assets/svg/asq-logo.svg" alt="ASQ logo"> uEditor<span id="alpha">alpha</span></span>
 
       <template is="dom-if" if="[[_isVisible]]">
         <paper-icon-button icon="add-box" id="addText"

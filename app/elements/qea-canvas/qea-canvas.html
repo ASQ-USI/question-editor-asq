@@ -1,44 +1,47 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/paper-material/paper-material.html">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../bower_components/Sortable/Sortable.html">
-<link rel="import" href="../../behaviors/qea-inspect-behavior.html">
+<link rel="import" href="../../bower_components/qea-property-editor/qea-advanced-text-editor.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../behaviors/qea-app-behavior.html">
 <link rel="import" href="../../behaviors/qea-redux-store.html">
 <link rel="import" href="../../behaviors/qea-actions-behavior.html">
 <link rel="import" href="../qea-selector-highlighter/qea-selector-highlighter.html">
-<link rel="import" href="../qea-text-editor/qea-text-editor.html">
 
 <dom-module id="qea-canvas">
   <template>
-    <style>
+    <style include="iron-flex">
       :host {
-        display: block;
+       /* display: block;
         height: 100%;
-        width: calc(100% - 300px);
+        width: calc(100% - 300px);*/
         box-sizing: border-box;
-
-        padding: 5px;
       }
       #canvas{
-        width: 100%;
-        height: 100%;
+        /*width: 100%;
+        height: 100%;*/
         position: relative;
+        padding: 5px;
+        box-sizing: border-box;
+      }
+      .qea-selected{
+        border: 3px dashed #3F51B5;
       }
 
     </style>
-    <qea-text-editor id="textEditor"></qea-text-editor>
-    <div id="canvas" on-tap='_selectItem'>
-      <sortable-js handle=".handle" scroll  animation='200' force-Fallback='true' >
+    <qea-advanced-text-editor id="textEditor"></qea-advanced-text-editor>
+    <div id="canvas" class="flex" on-tap="_selectItem" on-mouseover="_onHovered" on-mouseout="_onUnhovered">
+      <sortable-js handle=".handle" scroll  animation="200" force-Fallback="true" >
         <template is="dom-repeat" items={{objs}}  id="repeater">
           <qea-selector-highlighter
-            selected-Id=[[selectedElemId]]
-            element-Id=[[item.id]]
-            type=[[item.type]]
-            content=[[item.html]]>
+            selected-Id="[[selectedElemId]]"
+            element-Id="[[item.id]]"
+            type="[[item.type]]"
+            element-Props="[[item.props]]"
+            content="[[item.html]]">
           </qea-selector-highlighter>
         </template>
       </sortable-js>
+
     </div>
 
   </template>
@@ -51,10 +54,10 @@
 
       get behaviors() {
         return [
-          qeaBehaviors.inspectBehavior,
           qeaBehaviors.actionsBehavior,
           qeaBehaviors.reduxStore
         ];
+
       }
 
       beforeRegister(){
@@ -69,6 +72,18 @@
           objs:{
             type: Array,
             statePath: 'elements'
+          },
+          _hovered:{
+            type: Boolean,
+            value: false
+          },
+          droppedElem:{
+            type: Object,
+            observer: '_notifyDrop'
+          },
+          isHover:{
+            type: Boolean,
+            value: false
           }
         }
       }
@@ -83,19 +98,25 @@
         this.selectedElemId = null;
       }
 
-      _importElement(elementName, notyfyImport=true){
-      // check if the element is already been imported
-        if (!this.$$(elementName)){
-          Polymer.Base.importHref(this.resolvePath(elementName),
-            ()=>{ if (notyfyImport){this._message(elementName+ ' imported')} },
-            ()=> {this._message('error while importing: '+ elementName); return 0}
-          )
-        }
-        return 1;
+      _onHovered() {
+        this.toggleClass('qea-selected' , this.isDragging, this.$.canvas)
+        this.isHover = true;
+      }
+      _onUnhovered() {
+        this.toggleClass('qea-selected' , false, this.$.canvas);
+        this.isHover = false
       }
 
+      _notifyDrop(el){
+        this.toggleClass('qea-selected' , false, this.$.canvas)
+        if (this.isHover) {
+          this.fire('changePage', {selectedPage:'questionEditor', pageData:el.questionDetails});
+        }
+      }
+
+
       insertTextArea(){
-        this.$.textEditor.openDialog().then(
+        this.$.textEditor.openTextDialog().then(
           (text)=>{
             if (text) {  this.dispatch('addElement', 'text', text)}
           }
@@ -103,18 +124,13 @@
       }
 
       modifyTextArea(id, code){
-        this.$.textEditor.setContent(code)
-        this.$.textEditor.openDialog().then(
+        this.$.textEditor.openTextDialog(code).then(
           (text)=>{
             if (text) {  this.dispatch('editElement',id, text)}
           }
         );
       }
 
-
-      _message(message){
-        this.fire('fireToast', {text: message})
-      }
 
 
     }
