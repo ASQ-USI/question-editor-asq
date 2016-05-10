@@ -1,4 +1,6 @@
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
 
 <dom-module id="qea-main-app">
   <template>
@@ -134,90 +136,76 @@
         if (messageData.type && messageData.type === 'error') {
           this.$.toast.customStyle['--paper-toast-background-color'] = '#F44336';
           this.$.toast.updateStyles();
-        }else {
-          this.$.toast.customStyle['--paper-toast-background-color'] = 'black'
+        } else {
+          this.$.toast.customStyle['--paper-toast-background-color'] = 'black';
           this.$.toast.updateStyles();
         }
         this.$.toast.open();
       }
 
-// <<<<<<< 33045c1bd6a218cb44c37ac87af39bb33292a388
+      _dragStart() {
+        // receive the event from question-item when drag start
+        this._isDragging = true;
+      }
 
-//       _dragStart(host){
-//         // receive the event from question-item when drag start
-//         this._isDragging = true;
-//       }
+      _dragStop(host, droppedElem) {
+        // receive the event from question-item when drag stop
+        this._isDragging = false;
+        if (droppedElem) {
+          // render the dropped element
+          this._dropped = droppedElem;
+        }
+      }
 
-//       _dragStop(host, droppedElem) {
-//         // receive the event from question-item when drag stop
-//         this._isDragging = false;
-//         if (droppedElem) {
-//           // render the dropped element
-//           this._dropped = droppedElem;
-//         }
-
-//       }
-
-//       _changePage(host, {selectedPage, pageData=null, questionInfo={id:null, props:{}, type:''}}){
-//         for (var page of this.$.pageController.items) {
-//           if (page.getAttribute('page-name') == selectedPage ){
-//             if (selectedPage === 'questionEditor') {
-//               this._moveToquestionPage(questionInfo, pageData);
-//               return
-//             }
-//             this._currentPage = selectedPage;
-//             return
-// =======
-      _changePage(host, selectedPage = '') {
-        let page;
-        for (page of this.$.pageController.items) {
+      _changePage(host, { selectedPage, pageData = null, questionInfo = { id: null, props: {}, type: '' } }) {
+        for (const page of this.$.pageController.items) {
           if (page.getAttribute('page-name') === selectedPage) {
-            this.$.pageController.selected = selectedPage;
+            if (selectedPage === 'questionEditor') {
+              this._moveToquestionPage(questionInfo, pageData);
+              return;
+            }
+            this._currentPage = selectedPage;
             return;
           }
         }
-        this.openToast(null, { text: `no page available with name: ${selectedPage}`, type: 'error' });
+        this._openToast(null, { text: `no page available with name: ${selectedPage}`, type: 'error' });
       }
 
-      _moveToquestionPage({id, props, type}, pageData=null){
+      _moveToquestionPage({ id, props, type }, pageData = null) {
         // this.resolvePath(type)
-        let oldEditors = Polymer.dom(this.$.questionEditorPage).childNodes
-        for (let edit of oldEditors) {
-          Polymer.dom(this.$.questionEditorPage).removeChild(edit)
+        const oldEditors = Polymer.dom(this.$.questionEditorPage).childNodes;
+        for (const edit of oldEditors) {
+          Polymer.dom(this.$.questionEditorPage).removeChild(edit);
         }
         if (!pageData) {
-
-          let name = type || pageData.bowerName;
-          let elem = this._createElement(name, true, {questionId:id, restoreState:props} )
-          Polymer.dom(this.$.questionEditorPage).appendChild(elem)
+          const name = type || pageData.bowerName;
+          const elem = this._createElement(name, true, { questionId: id, restoreState: props });
+          Polymer.dom(this.$.questionEditorPage).appendChild(elem);
           this._currentPage = 'questionEditor';
-          return
+          return;
         }
         this.toggleAttribute('active', true, this.$.spinner);
 
         Polymer.Base.importHref(this.resolveLocalPath(pageData.bowerName),
-          (success)=>{
-            let name = type || pageData.bowerName;
-            let elem = this._createElement(name, true, {})
-            this.async(()=>{
+          () => {
+            const name = type || pageData.bowerName;
+            const elem = this._createElement(name, true, {});
+            this.async(() => {
               Polymer.dom(this.$.questionEditorPage).appendChild(elem);
               elem.classList.add('flex');
               this.toggleAttribute('active', false, this.$.spinner);
               this._currentPage = 'questionEditor';
-
-            }, 1000)
-
+            }, 1000);
           },
-          (error)=>{
-            console.error('failed to import page '+pageData.bowerName)
+          () => {
+            console.error(`failed to import page ${pageData.bowerName}`);
           }
-        )
+        );
       }
 
-
-      resolveLocalPath(tagName){
-        let p = typeof __dirname == "undefined" ? '../..' : __dirname;
-        return `${p}/elements/${tagName.toLowerCase()}/${tagName.toLowerCase()}.html`
+      resolveLocalPath(tagName) {
+        const p = typeof __dirname === 'undefined' ? '../..' : __dirname;
+        return `${p}/elements/${tagName.toLowerCase()}/${tagName.toLowerCase()}.html`;
       }
 
 

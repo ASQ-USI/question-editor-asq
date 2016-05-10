@@ -2,8 +2,8 @@
 window.qeaBehaviors = window.qeaBehaviors || {};
 
 const initialState = {
-  id: 0, //id of the current page
-  elements:[
+  id: 0, // id of the current page
+  elements: [
     // elements inside canvas using this format: {id, type:(text|question), html, props}.
     // The index of the array will represent the render order
   ],
@@ -16,9 +16,9 @@ function elementsReducer(elementsList = [], action) {
         id: action.elementId,
         type: action.elementType,
         html: action.elementHtml,
-        props: action.elementProps
-      }]
-    case "REMOVE_ELEMENT":
+        props: action.elementProps,
+      }];
+    case 'REMOVE_ELEMENT': {
       let index = 0;
       for (index; index < elementsList.length; index++) {
         if (elementsList[index].id === action.elementId) { break; }
@@ -37,7 +37,7 @@ function elementsReducer(elementsList = [], action) {
           id: action.elementId,
           type: action.elementType || elem.type,
           html: action.elementHtml,
-          props: action.elementProps
+          props: action.elementProps,
         };
       });
       return arr;

@@ -1,9 +1,9 @@
-<link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/qea-property-editor/qea-property-editor-repeater.html">
-<link rel="import" href="../../bower_components/qea-property-editor/qea-property-editor.html">
-<link rel="import" href="../../bower_components/asq-multi-choice-q/asq-multi-choice-q.html">
-<link rel="import" href="../../bower_components/asq-option/asq-option.html">
-<link rel="import" href="../../bower_components/qea-property-editor/qea-advanced-editors.html">
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/qea-property-editor/qea-property-editor-repeater.html">
+<link rel="import" href="../../../bower_components/qea-property-editor/qea-property-editor.html">
+<link rel="import" href="../../../bower_components/asq-multi-choice-q/asq-multi-choice-q.html">
+<link rel="import" href="../../../bower_components/asq-option/asq-option.html">
+<link rel="import" href="../../../bower_components/qea-property-editor/qea-advanced-editors.html">
 <link rel="import" href="./qea-options-editor.html">
 <link rel="import" href="../qea-general-editor-components/qea-three-column-layout.html">
 <link rel="import" href="../qea-general-editor-components/qea-editors-behavior.html">
@@ -103,150 +103,153 @@
   </template>
   <script>
   (function () {
-    'use strict'
+    'use strict';
 
-    let questionProperties=[
+    const questionProperties = [
       {
-        name: "multi",
-        label: "multiple answer",
-        type: "boolean", //< Boolean | Number | String | Enum  >
-        description: `Decide the mode, single or multi.`,
-        default: "false"
+        name: 'multi',
+        label: 'multiple answer',
+        type: 'boolean',
+        description: 'Decide the mode, single or multi.',
+        default: 'false',
       },
       {
-        name: "disabled",
-        type: "boolean", //< Boolean | Number | String | Enum  >
-        description: `Disable or enable the element. Changes will be also propagated to inner propagated elements.`,
-        default: "false"
+        name: 'disabled',
+        type: 'boolean',
+        description: `Disable or enable the element.
+                      Changes will be also propagated to inner propagated elements.`,
+        default: 'false',
       },
       {
-        name: "selectable",
-        label: "Specify selectable elements",
-        type: "string", //< Boolean | Number | String | Enum  >
-        description: `This is a CSS selector sting.  If this is set, only items that matches the CSS selector are selectable.`,
-        isAdvancedProperty: "true"
+        name: 'selectable',
+        label: 'Specify selectable elements',
+        type: 'string',
+        description: `This is a CSS selector sting.  If this is set,
+                      only items that matches the CSS selector are selectable.`,
+        isAdvancedProperty: 'true',
       },
       {
-        name: "selected",
-        type: "string", //< Boolean | Number | String | Enum  >
-        description: `Gets or sets the selected element. The default is to use the index of the item.`,
-        isAdvancedProperty: "true"
+        name: 'selected',
+        type: 'string',
+        description: `Gets or sets the selected element.
+                      The default is to use the index of the item.`,
+        isAdvancedProperty: 'true',
       },
       {
-        name: "selectedClass",
-        type: "String", //< Boolean | Number | String | Enum  >
-        description: `The class to set on elements when selected.`,
-        default: "asq-selected",
-        isAdvancedProperty: "true"
+        name: 'selectedClass',
+        type: 'String',
+        description: 'The class to set on elements when selected.',
+        default: 'asq-selected',
+        isAdvancedProperty: 'true',
       },
-    ]
+    ];
     class asqMultiChoiceQEditor {
 
       get behaviors() {
         return [
           qeaBehaviors.actionsBehavior,
           qeaBehaviors.reduxStore,
-          qeaBehaviors.generalEditorsBehavior
+          qeaBehaviors.generalEditorsBehavior,
         ];
       }
 
-      beforeRegister(){
-        this.is = 'asq-multi-choice-q-editor'
-        this.observers= [
-          '_injctOpt(_optionsValue.splices)'
-        ]
+      beforeRegister() {
+        this.is = 'asq-multi-choice-q-editor';
+        this.observers = [
+          '_injctOpt(_optionsValue.splices)',
+        ];
         this.properties = {
           questionProps: {
             type: Array,
-            value: questionProperties
+            value: questionProperties,
           },
-          _optionsValue:{
+          _optionsValue: {
             type: Array,
-            value:()=>[],
-            observer: '_injctOpt'
+            value: () => [],
+            observer: '_injctOpt',
           },
-          qTitleVal:String,
+          qTitleVal: String,
           qDescVal: String,
-          qSolVal:String,
-          _optionsSetter: Array
-
-        }
+          qSolVal: String,
+          _optionsSetter: Array,
+        };
       }
 
       ready() {
         Polymer.dom.flush();
-        let el = Polymer.Base.create('qea-advanced-editors', {});
+        const el = Polymer.Base.create('qea-advanced-editors', {});
         Polymer.dom(this.$.leftPanel).appendChild(el);
       }
 
 
-      _getFormattedCode(){
-        let options = ''
-        for (let opt of this._optionsValue) {
-          options+=`<asq-option name='${opt.label}'>${opt.label}</asq-option>\n`
+      _getFormattedCode() {
+        let options = '';
+        let opt;
+        for (opt of this._optionsValue) {
+          options += `<asq-option name='${opt.label}'>${opt.label}</asq-option>\n`;
         }
-        let code =`
+        const code = `
         <asq-multi-choice-q id='multyQuestion'
-          ${this.qeaRepeatValues.multi == 'true'? 'multi': ''}
-          ${this.qeaRepeatValues.disabled == 'true'? 'disabled': ''}
+          ${this.qeaRepeatValues.multi === 'true' ? 'multi' : ''}
+          ${this.qeaRepeatValues.disabled === 'true' ? 'disabled' : ''}
           value='${this.qeaRepeatValues.value}'
-          selected-Class='${this.qeaRepeatValues.selectedClassc||''}'
-          selected='${this.qeaRepeatValues.selected||''}'
-          selectable='${this.qeaRepeatValues.selectable||''}'>
+          selected-Class='${this.qeaRepeatValues.selectedClassc || ''}'
+          selected='${this.qeaRepeatValues.selected || ''}'
+          selectable='${this.qeaRepeatValues.selectable || ''}'>
 
           <asq-stem>${this.qTitleVal}</asq-stem>
           ${this.qDescVal || ''}
 
           ${options}
           <asq-solution hidden>${this.questionSolution}</asq-solution>
-        </asq-multi-choice-q>`
-        return code
+        </asq-multi-choice-q>`;
+        return code;
       }
 
-      _setSolution1(){
-        this._setSolution(JSON.stringify(this.$.multyQuestion.value))
+      _setSolution1() {
+        this._setSolution(JSON.stringify(this.$.multyQuestion.value));
       }
 
-      _saveQuestion1(){
-        this._saveQuestion( ['qTitleVal','qDescVal', '_optionsValue'])
+      _saveQuestion1() {
+        this._saveQuestion(['qTitleVal', 'qDescVal', '_optionsValue']);
       }
 
-      _restoreQuestionState(state={}){
-        let allRepeaters = Polymer.dom(this.root).querySelectorAll('qea-property-editor-repeater');
-
-        for (var prop in state) {
-          if (prop == '_optionsValue') {
-            this._optionsSetter = state[prop]
-          }else {
-            this[prop] = state[prop]
+      _restoreQuestionState(state = {}) {
+        const allRepeaters = Polymer.dom(this.root).querySelectorAll('qea-property-editor-repeater');
+        let prop;
+        for (prop of Object.keys(state)) {
+          if (prop === '_optionsValue') {
+            this._optionsSetter = state[prop];
+          } else {
+            this[prop] = state[prop];
           }
         }
         // need to wait the rendering
         Polymer.dom.flush();
-        for (let repeater of allRepeaters) {
-          let qProps = Polymer.dom(repeater.root).querySelectorAll('qea-property-editor')
-          for (let spProp of qProps) {
-            spProp.value = state[repeater.id][spProp.name]
+        for (const repeater of allRepeaters) {
+          const qProps = Polymer.dom(repeater.root).querySelectorAll('qea-property-editor');
+          for (const spProp of qProps) {
+            spProp.value = state[repeater.id][spProp.name];
           }
         }
       }
 
-      _injctOpt(){
-        let optsArray = this._optionsValue;
-        let currentProps = Polymer.dom(this.$.multyQuestion).querySelectorAll('asq-option')
-        for (let child of currentProps) {
-          Polymer.dom(this.$.multyQuestion).removeChild(child)
+      _injctOpt() {
+        const optsArray = this._optionsValue;
+        const currentProps = Polymer.dom(this.$.multyQuestion).querySelectorAll('asq-option');
+        for (const child of currentProps) {
+          Polymer.dom(this.$.multyQuestion).removeChild(child);
         }
-        for (let opt of optsArray) {
-          let opt1 = Polymer.Base.create('asq-option', {name:opt.label})
-          Polymer.dom(opt1).appendChild(document.createTextNode(opt.label))
-          Polymer.dom(this.$.multyQuestion).appendChild(opt1)
+        for (const opt of optsArray) {
+          const opt1 = Polymer.Base.create('asq-option', { name: opt.label });
+          Polymer.dom(opt1).appendChild(document.createTextNode(opt.label));
+          Polymer.dom(this.$.multyQuestion).appendChild(opt1);
         }
       }
 
 
     }
     Polymer(asqMultiChoiceQEditor);
-  })()
+  })();
   </script>
 </dom-module>

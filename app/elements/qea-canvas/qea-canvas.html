@@ -1,4 +1,6 @@
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
 
 <dom-module id="qea-canvas">
   <template>
@@ -62,21 +64,21 @@
           },
           objs: {
             type: Array,
-            statePath: 'elements'
+            statePath: 'elements',
           },
-          _hovered:{
+          _hovered: {
             type: Boolean,
-            value: false
+            value: false,
           },
-          droppedElem:{
+          droppedElem: {
             type: Object,
-            observer: '_notifyDrop'
+            observer: '_notifyDrop',
           },
-          isHover:{
+          isHover: {
             type: Boolean,
-            value: false
-          }
-        }
+            value: false,
+          },
+        };
       }
 
       _selectItem(event) {
@@ -91,19 +93,19 @@
       }
 
       _onHovered() {
-        this.toggleClass('qea-selected' , this.isDragging, this.$.canvas)
+        this.toggleClass('qea-selected', this.isDragging, this.$.canvas);
         this.isHover = true;
       }
 
       _onUnhovered() {
-        this.toggleClass('qea-selected' , false, this.$.canvas);
-        this.isHover = false
+        this.toggleClass('qea-selected', false, this.$.canvas);
+        this.isHover = false;
       }
 
-      _notifyDrop(el){
-        this.toggleClass('qea-selected' , false, this.$.canvas)
+      _notifyDrop(el) {
+        this.toggleClass('qea-selected', false, this.$.canvas);
         if (this.isHover) {
-          this.fire('changePage', {selectedPage:'questionEditor', pageData:el.questionDetails});
+          this.fire('changePage', { selectedPage: 'questionEditor', pageData: el.questionDetails });
         }
       }
 
