@@ -11,6 +11,7 @@ const vulcanize = require('gulp-vulcanize');
 const babel = require('gulp-babel');
 const htmlreplace = require('gulp-html-replace');
 const replace = require('gulp-replace');
+const rename = require('gulp-rename');
 const browserSync = require('browser-sync').create();
 const reload = browserSync.reload;
 
@@ -91,7 +92,7 @@ gulp.task('vulcanize', () => {
     .pipe(gulp.dest('./distribution/'));
 });
 
-gulp.task('copyFiles', () => {
+gulp.task('copyFiles', ['copyAssets'], () => {
   const destination = ISDISTMODE ? 'distribution' : '.transpiled';
   if (ISDISTMODE) {
     // change paths
@@ -102,10 +103,6 @@ gulp.task('copyFiles', () => {
       }))
       .pipe(gulp.dest(`${destination}`));
 
-    // change image paths
-    gulp.src('./distribution/qea-main-app/qea-main-app.html')
-      .pipe(replace('../../images/', '../images/'))
-      .pipe(gulp.dest('./distribution/qea-main-app/'));
     // copy necessary bower components
     gulp.src(
       ['bower_components/{webcomponentsjs,import-tinymce,tinymce}/**/*']
@@ -117,6 +114,30 @@ gulp.task('copyFiles', () => {
   // copy script
   gulp.src('node_modules/redux/dist/redux.min.js')
     .pipe(gulp.dest(`${destination}/script/`));
+  // copy images
+  return gulp.src('app/images/**/*')
+    .pipe(gulp.dest(`${destination}/images/`));
+});
+
+
+gulp.task('copyAssets', () => {
+  const destination = ISDISTMODE ? 'distribution' : '.transpiled';
+  if (ISDISTMODE) {
+    // change image paths
+    gulp.src('./distribution/qea-main-app/qea-main-app.html')
+    // .pipe(replace('../../images/', '../images/'))
+      .pipe(replace(/="[^\s]*assets\//gi, '="./assets/'))
+      .pipe(gulp.dest('./distribution/qea-main-app/'));
+
+    gulp.src('app/elements/**/assets/**/*')
+      .pipe(rename((path) => {
+        path.dirname = path.dirname.match(/\/assets.*/)[0] || 'assets';
+      }))
+      .pipe(gulp.dest(`${destination}/`));
+  } else {
+    gulp.src('app/elements/**/assets/**/*')
+      .pipe(gulp.dest(`${destination}/elements/`));
+  }
   // copy images
   return gulp.src('app/images/**/*')
     .pipe(gulp.dest(`${destination}/images/`));

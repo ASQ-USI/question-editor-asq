@@ -94,8 +94,8 @@
             // this._currentlyDragging(e.detail);
             break;
           case 'end': {
-            const name = e.model.item ? e.model.item.name : this.value.name;
-            this._stopDragging(e.detail, name);
+            const detail = e.model.item ? e.model.item : this.value;
+            this._stopDragging(e.detail, detail);
             break;
           }
           default:
@@ -110,8 +110,8 @@
       // _currentlyDragging(dragDetail) {
       // }
 
-      _stopDragging(dragDetail, name) {
-        const elemDet = { name, detail: dragDetail };
+      _stopDragging(dragDetail, detail) {
+        const elemDet = { questionDetails: detail, dragDetails: dragDetail };
         this.fire('dragStop', elemDet);
         this.isDragging = '';
       }
