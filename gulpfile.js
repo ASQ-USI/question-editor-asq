@@ -125,8 +125,8 @@ gulp.task('copyAssets', () => {
   if (ISDISTMODE) {
     // change image paths
     gulp.src('./distribution/qea-main-app/qea-main-app.html')
-    // .pipe(replace('../../images/', '../images/'))
-      .pipe(replace(/="[^\s]*assets\//gi, '="./assets/'))
+      .pipe(replace('../../images/', '../images/'))
+      .pipe(replace(/="[^\s]*assets\//, '="./assets/'))
       .pipe(gulp.dest('./distribution/qea-main-app/'));
 
     gulp.src('app/elements/**/assets/**/*')

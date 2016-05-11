@@ -1,4 +1,6 @@
 <script>
+/* eslint-disable object-shorthand */
+
 /**
 This behavior will help you in the creation of a custom editor for an ASQ question type.
 
@@ -50,7 +52,7 @@ qeaBehaviors.generalEditorsBehavior = {
   /**
   * Toggle the visibility of advanced questions
   */
-  _showAdvanced: () => {
+  _showAdvanced: function () {
     this.viewAdvanced = this.viewAdvanced === 'true' ? 'false' : 'true';
     this.$.advanced.textContent = this.viewAdvanced === 'true' ? 'hide advanced' : 'show all';
   },
@@ -59,7 +61,7 @@ qeaBehaviors.generalEditorsBehavior = {
   * Function responsible to restore all the values
   * @param {Object} state last state of the question editor.
   */
-  _restoreQuestionState: (state = {}) => {
+  _restoreQuestionState: function (state = {}) {
     const allRepeaters = Polymer.dom(this.root).querySelectorAll('qea-property-editor-repeater');
     let prop;
     for (prop of Object.keys(state)) {
@@ -82,7 +84,7 @@ qeaBehaviors.generalEditorsBehavior = {
   * @param {Array<String>=} propertyToInclude array containing all the custom properties to be savd
   * @return {Object} An object who has as keys the properties you have passed and some default ones
   */
-  _getQuestionState: (propertyToInclude) => {
+  _getQuestionState: function (propertyToInclude) {
     let props = propertyToInclude || [];
     props.push('viewAdvanced');
     props.push('qeaRepeatValues');
@@ -100,7 +102,7 @@ qeaBehaviors.generalEditorsBehavior = {
   * @param {String} solution The soluton for the question Default value of questionSolution,
   * @param {Array<String>=} propertyToInclude array containing all the custom properties to be savd
   */
-  _saveQuestion: (propertiesToSave, solution = this.questionSolution) => {
+  _saveQuestion: function (propertiesToSave, solution = this.questionSolution) {
     if (!solution && solution !== false || solution === '') {
       this.fire('fireToast', { text: "you haven't provided a solution for this question", type: 'error' });
       return false;
@@ -121,7 +123,7 @@ qeaBehaviors.generalEditorsBehavior = {
   * since each editor is specific for a question, you'll neet to override this fnction in every editor
   * @return {Strng}
   */
-  _getFormattedCode: () => {
+  _getFormattedCode: function () {
     return '';
   },
 
@@ -131,7 +133,7 @@ qeaBehaviors.generalEditorsBehavior = {
   * @param {String} slValue solution value.
   * @return {Boolean} true if solution set without problem false otherwise
   */
-  _setSolution: (slValue) => {
+  _setSolution: function (slValue) {
     if (!slValue && slValue !== false || slValue === '') {
       this.fire('fireToast', { text: "you haven't provided a solution for this question", type: 'error' });
       return false;
