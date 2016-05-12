@@ -1,17 +1,16 @@
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
 
 <dom-module id="qea-landing-page">
   <template>
     <style>
       :host {
         display: block;
-        width: 100%;
-        height: 100%;
+        @apply(--layout-horizontal);
       }
       .container{
         position: relative;
-        width: 100%;
-        height: 100%;
+        @apply(--layout-flex);
       }
       .container paper-fab{
         position: absolute;
