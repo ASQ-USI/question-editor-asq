@@ -4,7 +4,7 @@
   "description": "question editor for ASQ wab app",
   "main": "electron.js",
   "scripts": {
-    "test": "gulp && wct app/test"
+    "test": "gulp transpile && wct app/test"
   },
   "repository": {
     "type": "git",
