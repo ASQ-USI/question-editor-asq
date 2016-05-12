@@ -110,7 +110,7 @@
       }
 
       insertTextArea() {
-        this.$.textEditor.openDialog().then(
+        this.$.textEditor.openTextDialog().then(
           (text) => {
             if (text) { this.dispatch('addElement', 'text', text); }
           }
@@ -119,7 +119,7 @@
 
       modifyTextArea(id, code) {
         this.$.textEditor.setContent(code);
-        this.$.textEditor.openDialog().then(
+        this.$.textEditor.openTextDialog().then(
           (text) => {
             if (text) { this.dispatch('editElement', id, text); }
           }

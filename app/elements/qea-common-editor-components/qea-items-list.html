@@ -17,6 +17,7 @@ Examples:
       display: block;
     }
     .optionItem{
+      padding-left: 20px;
       display: flex;
       align-items: center;
     }
@@ -103,11 +104,9 @@ Examples:
 
 
       _addItem(e, manualValue) {
-        let option;
-        if (manualValue) {
-          option = manualValue.label;
-        } else {
-          option = this.$.addInput.value;
+        const option = manualValue ? manualValue.label : this.$.addInput.value;
+        if (!option) {
+          return;
         }
         this.push('_optionsList', { id: this._counterId, label: option });
         this.push('value', { id: this._counterId++, label: option });
