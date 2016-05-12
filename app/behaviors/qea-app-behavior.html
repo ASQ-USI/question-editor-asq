@@ -4,45 +4,37 @@ qeaBehaviors.appBehavior = {
   properties: {
     _analyzerRef: {
       type: Object,
-      value: ()=> {return null}
-    }
+      value: () => null,
+    },
   },
 
-  attached: function() {
-    let a = document.querySelector('qea-property-analyzer');
-    this._analyzerRef = a ? a : null
-  },
-
-  resolvePath(tagName){
-    let p = typeof __dirname == "undefined" ? '../..' : __dirname;
-    return `${p}/bower_components/${tagName.toLowerCase()}/${tagName.toLowerCase()}.html`
+  resolvePath(tagName) {
+    const p = typeof __dirname === 'undefined' ? '../..' : __dirname;
+    return `${p}/bower_components/${tagName.toLowerCase()}/${tagName.toLowerCase()}.html`;
   },
 
 
-  _importElement(elementName, notyfyImport=true){
+  _importElement(elementName, notyfyImport = true) {
   // check if the element is already been imported
-    if (!this.$$(elementName)){
+    if (!this.$$(elementName)) {
       Polymer.Base.importHref(this.resolvePath(elementName),
-        ()=>{ if (notyfyImport){this._message(elementName+ ' imported')} },
-        ()=> {this.fire('fireToast',{text:`error while importing: ${elementName}`, type:error}); return 0}
-      )
+        () => { if (notyfyImport) { this._message(`${elementName} imported`); } },
+        () => { this.fire('fireToast', { text: `error while importing: ${elementName}`, type: 'error' }); }
+      );
     }
     return 1;
   },
 
 
   // function rensponsable to generate DOM elements
-  _createElement(elementName, isPolymerElem=true, elemProperties={}) {
+  _createElement(elementName, isPolymerElem = true, elemProperties = {}) {
     let elem;
     if (isPolymerElem) {
       elem = Polymer.Base.create(elementName, elemProperties);
-    }else {
-      elem = document.createElement(elementName)
+    } else {
+      elem = document.createElement(elementName);
     }
     return elem;
-  }
-
-
-
-}
+  },
+};
 </script>

@@ -1,6 +1,4 @@
-<link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
 
 <dom-module id="qea-landing-page">
   <template>
@@ -23,35 +21,34 @@
         bottom: 40px;
       }
     </style>
-    <div class="container">  
+    <div class="container">
       <paper-fab  icon="add" on-tap="_newPresentation"></paper-fab>
     </div>
 
   </template>
   <script>
   (function () {
-    'use strict'
+    'use strict';
 
-    let MyBehavior = {};
     class qeaLandingPage {
 
       get behaviors() {
         return [];
       }
 
-      beforeRegister(){
-        this.is = 'qea-landing-page'
-        this.properties = {}        
+      beforeRegister() {
+        this.is = 'qea-landing-page';
+        this.properties = {};
       }
 
       // go to new page
-      _newPresentation(){
-        this.fire('changePage', {selectedPage:'canvas'});
+      _newPresentation() {
+        this.fire('changePage', { selectedPage: 'canvas' });
       }
 
     }
 
     Polymer(qeaLandingPage);
-  })()
+  })();
   </script>
 </dom-module>

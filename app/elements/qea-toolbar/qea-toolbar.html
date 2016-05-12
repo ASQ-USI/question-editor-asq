@@ -1,9 +1,4 @@
-<link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
 
 <dom-module id="qea-toolbar">
   <template>
@@ -70,30 +65,29 @@
   </template>
   <script>
   (function () {
-    'use strict'
+    'use strict';
 
-    let MyBehavior = {};
     class qeaToolbar {
 
       get behaviors() {
         return [];
       }
 
-      beforeRegister(){
-        this.is = 'qea-toolbar'
+      beforeRegister() {
+        this.is = 'qea-toolbar';
         this.properties = {
-          currentPage:{
+          currentPage: {
             observer: '_showChecker',
-            type:String
+            type: String,
           },
-          _isVisible:{
+          _isVisible: {
             type: Boolean,
-            value: false
-          }
-        }
+            value: false,
+          },
+        };
       }
 
-      _showChecker(currentPage){
+      _showChecker(currentPage) {
         switch (currentPage) {
           case 'canvas':
             this._isVisible = true;
@@ -105,15 +99,15 @@
         }
       }
 
-      _insertText(){
-        let canvas = Polymer.dom( this.parentNode.root).querySelector('qea-canvas');
-        canvas.insertTextArea()
+      _insertText() {
+        const canvas = Polymer.dom(this.parentNode.root).querySelector('qea-canvas');
+        canvas.insertTextArea();
       }
 
 
     }
 
     Polymer(qeaToolbar);
-  })()
+  })();
   </script>
 </dom-module>

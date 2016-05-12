@@ -1,23 +1,23 @@
-<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
 
-<link rel="import" href="../../bower_components/iron-dropdown/iron-dropdown.html">
-<link rel="import" href="../../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
-<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../../bower_components/paper-input/paper-input.html">
-<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
-<link rel="import" href="../../bower_components/paper-item/paper-item.html">
-<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
-<link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
-<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../../bower_components/iron-dropdown/iron-dropdown.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../../bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../../bower_components/paper-toolbar/paper-toolbar.html">
 
 <link rel="import" href="./asq-highlight-q-editor-styles.html">
-<link rel="import" href="../../bower_components/asq-highlight-q/asq-highlight-q.html">
-<link rel="import" href="../../bower_components/asq-highlight-q/elements/asq-hl-color-task/asq-hl-color-task.html">
-<link rel="import" href="../../bower_components/asq-highlight-q/elements/color-palette.html">
+<link rel="import" href="../../../bower_components/asq-highlight-q/asq-highlight-q.html">
+<link rel="import" href="../../../bower_components/asq-highlight-q/elements/asq-hl-color-task/asq-hl-color-task.html">
+<link rel="import" href="../../../bower_components/asq-highlight-q/elements/color-palette.html">
 
 <!-- new imports -->
 <link rel="import" href="../../behaviors/qea-redux-store.html">
@@ -52,9 +52,9 @@
     </style>
 
     <paper-toolbar>
-      <paper-icon-button icon="unfold-more" title="Get code" class="rotate" id="showMarkupBtn" on-click="_showMarkup"></paper-icon-button>
+      <!-- <paper-icon-button icon="unfold-more" title="Get code" class="rotate" id="showMarkupBtn" on-click="_showMarkup"></paper-icon-button> -->
 
-      <paper-icon-button icon="assignment" title="Get solution" id="showSolutionBtn" on-click="_showSolution"></paper-icon-button>
+      <paper-icon-button icon="save" title="Save" id="saveBtn" on-click="_saveQt"></paper-icon-button>
 
 
       <span class="separator"></span>
@@ -106,14 +106,14 @@
 
 
     <!-- markup dialog -->
-    <paper-dialog id="markupDialog" on-core-overlay-open-completed="coreOverlayOpenCompleted" backdrop="" layered="false">
+    <!-- <paper-dialog id="markupDialog" on-core-overlay-open-completed="coreOverlayOpenCompleted" backdrop="" layered="false">
       <div id="aceContainer">
         <ace-element id="markupEditor" theme="textmate" mode="html"></ace-element>
       </div>
       <div class="buttons">
         <paper-button dialog-confirm autofocus="">CLOSE</paper-button>
       </div>
-    </paper-dialog>
+    </paper-dialog> -->
 
     <!-- <hr> -->
     <br><br><br><br>
@@ -492,15 +492,12 @@
         this.$.leStem.innerHTML = this.stem;
       },
 
-      coreOverlayOpenCompleted: function (event, detail, sender) {
-        this.$.markupEditor.editor.resize();
-      },
 
       getRanges: function () {
         return this.aceHighlightManager.getHighlightRanges();
       },
 
-      getMarkup: function () {
+      _getFormattedCode: function () {
 
         var html =  '  <asq-highlight-q ';
         html += 'theme="' + this.theme + '" ';
@@ -521,22 +518,10 @@
         this.$.toggleBtn.checked = (event.currentTarget.id == 'highlightLabel');
       },
 
-      _showMarkup: function () {
-        this.$.markupEditor.editor.session.setValue(this.getMarkup());
-        this.$.markupDialog.toggle();
-      },
-
-      _showSolution: function () {
+      _saveQt: function () {
         var solution = JSON.stringify(this.getRanges(), null, 2);
-        // this.$.markupEditor.editor.session.setValue(solution);
-        // this.$.markupDialog.toggle();
         this._setSolution(solution);
         this._saveQuestion(['stemTextareaValue', 'stem', 'syntaxModeItem','theme', 'tasks','themeItem', 'asqHighlight'])
-
-      },
-
-      _getFormattedCode: function () {
-        return this.getMarkup()
       },
 
       _isEditLabelActive: function (mode) {
@@ -545,7 +530,9 @@
 
       _isHighlightLabelActive: function (mode) {
         return (mode == 'highlight') ? 'active' : ''
-      }
+      },
+
+
     });
   })();
   </script>

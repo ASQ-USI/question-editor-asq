@@ -1,6 +1,5 @@
-<link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../qea-question-type/qea-question-type.html">
-<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
 
 <dom-module id="qea-questions-list">
   <template>
@@ -41,9 +40,7 @@
   </template>
   <script>
   (function () {
-    'use strict'
-
-    let MyBehavior = {};
+    'use strict';
 
     class qeaQuestionsList {
 
@@ -51,43 +48,35 @@
         return [];
       }
 
-      beforeRegister(){
+      beforeRegister() {
         this.is = 'qea-questions-list';
 
         this.properties = {
-          questions:{
+          questions: {
             type: Array,
-            value: function () {
-              return [
+            value: () => [
                 // ex of sub menu
                 // {category: 'sub item', list: [
-                //   {name: "asq-text-input-q"},
-                //   {name: "asq-multi-choice-q"}
+                //   {label: "asq-text-input-q"},
+                //   {label: "asq-multi-choice-q"}
                 // ]},
-
-
-                { label: "text input",
-                  bowerName: "asq-text-input-q-editor",
+                { label: 'text input',
+                  bowerName: 'asq-text-input-q-editor',
                 },
-                { label: "multi choice",
-                  bowerName: "asq-multi-choice-q-editor"
+                { label: 'multi choice',
+                  bowerName: 'asq-multi-choice-q-editor',
                 },
-                { label: "highlighter",
-                  bowerName: "asq-highlight-q-editor"
+                { label: 'highlighter',
+                  bowerName: 'asq-highlight-q-editor',
                 },
-
-              ]
-            }
-          }
+            ],
+          },
         };
-
       }
 
     }
     Polymer(qeaQuestionsList);
-
-
-  })()
+  })();
 
   </script>
 </dom-module>

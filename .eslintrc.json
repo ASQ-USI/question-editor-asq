@@ -1,0 +1,34 @@
+/* if the google style is to aggressive use  "eslint:recommended" as extension */
+{
+  "extends":  "airbnb-base",
+  "rules": {
+    "no-console": ["warn", { "allow": ["warn", "error"] }],
+    "new-cap": ["error", {"capIsNewExceptions": ["Polymer", "PolymerRedux"]}],
+    "max-len": ["warn", 110, { "ignoreComments": true , "ignoreTrailingComments": true ,"ignoreUrls": true}],
+    "wrap-iife": ["error", "any"],
+    "func-names": "off",
+    "strict": "off",
+    "arrow-body-style": "off",
+    "no-underscore-dangle": ["error", { "allowAfterThis": true }],
+    "no-param-reassign": ["error", { "props": false }]
+  },
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "plugins": [
+    "html"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 6
+  },
+  "globals": {
+    "Redux": false,
+    "PolymerRedux": false,
+    "qeaBehaviors": false,
+    "__dirname": false,
+    "Polymer": false,
+    "Promise": false,
+    "require": false
+  }
+}

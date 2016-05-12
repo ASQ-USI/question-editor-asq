@@ -17,7 +17,7 @@ $ npm test
 ### Long method
 First you need to transpile to ES5
 ```
-$ gulp
+$ gulp transpile
 ```
 
 If you want to run all test on all the browser installed on your system, move into the app folder and execute

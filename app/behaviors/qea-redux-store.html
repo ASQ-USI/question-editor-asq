@@ -1,85 +1,86 @@
 <script>
 window.qeaBehaviors = window.qeaBehaviors || {};
-let store = Redux.createStore(appReducer)
-qeaBehaviors.reduxStore = PolymerRedux(store)
 
-let initialState = {
-  id: 0, //id of the current page
-  elements:[
+const initialState = {
+  id: 0, // id of the current page
+  elements: [
     // elements inside canvas using this format: {id, type:(text|question), html, props}.
     // The index of the array will represent the render order
-  ]
-}
+  ],
+};
 
-
-function appReducer(state=initialState, action) {
-
+function elementsReducer(elementsList = [], action) {
   switch (action.type) {
-
-    case "ADD_ELEMENT":
-    case "REMOVE_ELEMENT":
-    case "EDIT_ELEMENT":
-    case "MOVE_ELEMENT":
-      return Object.assign({}, state, {
-        elements: elementsReducer(state.elements, action)
-      })
-    case "RESET_STATE":
-      state = undefined;
-    default:
-      return state;
-  }
-}
-
-function elementsReducer(elementsList=[], action) {
-  switch (action.type) {
-    case "ADD_ELEMENT":
+    case 'ADD_ELEMENT':
       return [...elementsList, {
         id: action.elementId,
         type: action.elementType,
         html: action.elementHtml,
-        props: action.elementProps
-      }]
-    case "REMOVE_ELEMENT":
+        props: action.elementProps,
+      }];
+    case 'REMOVE_ELEMENT': {
       let index = 0;
       for (index; index < elementsList.length; index++) {
-        if(elementsList[index].id == action.elementId) {break}
+        if (elementsList[index].id === action.elementId) { break; }
       }
       return [
         ...elementsList.slice(0, index),
-        ...elementsList.slice(index + 1)
-      ]
-    case "EDIT_ELEMENT":
-      let arr = elementsList.map((elem, index)=>{
-        if (elem.id != action.elementId) {
+        ...elementsList.slice(index + 1),
+      ];
+    }
+    case 'EDIT_ELEMENT': {
+      const arr = elementsList.map((elem) => {
+        if (elem.id !== action.elementId) {
           return elem;
-        }else {
-          return {
-            id: action.elementId,
-            type: action.elementType || elem.type,
-            html: action.elementHtml,
-            props: action.elementProps
-          }
         }
-      })
+        return {
+          id: action.elementId,
+          type: action.elementType || elem.type,
+          html: action.elementHtml,
+          props: action.elementProps,
+        };
+      });
       return arr;
+    }
     // change the index of the selected element in the elements array in order
     // to change the render position
-    case "MOVE_ELEMENT":
-      if (action.newIndex < 0 || action.newIndex > (elementsList.length - 1))
-        {return elementsList}
-
-      let oldIndex = 0
-      for (oldIndex; oldIndex < elementsList.length; oldIndex++) {
-        if(elementsList[oldIndex].id == action.elementId) {break}
+    case 'MOVE_ELEMENT': {
+      if (action.newIndex < 0 || action.newIndex > (elementsList.length - 1)) {
+        return elementsList;
       }
-      let newArray = elementsList.slice();
-      let value = newArray.splice(oldIndex,1)
-      newArray.splice(action.newIndex ,0, value[0])
+
+      let oldIndex = 0;
+      for (oldIndex; oldIndex < elementsList.length; oldIndex++) {
+        if (elementsList[oldIndex].id === action.elementId) { break; }
+      }
+      const newArray = elementsList.slice();
+      const value = newArray.splice(oldIndex, 1);
+      newArray.splice(action.newIndex, 0, value[0]);
       return newArray;
+    }
     default:
       return elementsList;
   }
 }
 
+function appReducer(state = initialState, action) {
+  switch (action.type) {
+
+    case 'ADD_ELEMENT':
+    case 'REMOVE_ELEMENT':
+    case 'EDIT_ELEMENT':
+    case 'MOVE_ELEMENT':
+      return Object.assign({}, state, {
+        elements: elementsReducer(state.elements, action),
+      });
+    case 'RESET_STATE':
+      state = undefined; // eslint-disable-line no-param-reassign
+      return state;
+    default:
+      return state;
+  }
+}
+const store = Redux.createStore(appReducer);
+qeaBehaviors.reduxStore = PolymerRedux(store);
 
 </script>

@@ -1,10 +1,10 @@
-<link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/qea-property-editor/qea-property-editor-repeater.html">
-<link rel="import" href="../../bower_components/qea-property-editor/qea-property-editor.html">
-<link rel="import" href="../../bower_components/asq-text-input-q/asq-text-input-q.html">
-<link rel="import" href="../../bower_components/asq-stem/asq-stem.html">
-<link rel="import" href="../../bower_components/asq-solution/asq-solution.html">
-<link rel="import" href="../../bower_components/qea-property-editor/qea-advanced-editors.html">
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/qea-property-editor/qea-property-editor-repeater.html">
+<link rel="import" href="../../../bower_components/qea-property-editor/qea-property-editor.html">
+<link rel="import" href="../../../bower_components/asq-text-input-q/asq-text-input-q.html">
+<link rel="import" href="../../../bower_components/asq-stem/asq-stem.html">
+<link rel="import" href="../../../bower_components/asq-solution/asq-solution.html">
+<link rel="import" href="../../../bower_components/qea-property-editor/qea-advanced-editors.html">
 <link rel="import" href="../../behaviors/qea-redux-store.html">
 <link rel="import" href="../../behaviors/qea-actions-behavior.html">
 <link rel="import" href="../qea-general-editor-components/qea-three-column-layout.html">
@@ -87,40 +87,40 @@
   </template>
   <script>
   (function () {
-    'use strict'
+    'use strict';
 
-    let questionProperties=[
+    const questionProperties = [
       {
-        name: "label",
-        label:'Input label',
-        type: "string", //< Boolean | Number | String | Enum  >
+        name: 'label',
+        label: 'Input label',
+        type: 'string',
         description: `The label for this input. It normally appears as grey text
                 inside the text input and disappears once the user enters text.`,
-        isAdvancedProperty: "false"
+        isAdvancedProperty: 'false',
       },
       {
-        name: "disabled",
-        label:'Disable input',
-        type: "Boolean", //< Boolean | Number | String | Enum  >
-        description: `Set to true to style the element as disabled.`,
+        name: 'disabled',
+        label: 'Disable input',
+        type: 'Boolean',
+        description: 'Set to true to style the element as disabled.',
         default: 'true',
-        isAdvancedProperty: "false"
+        isAdvancedProperty: 'false',
       },
       {
-        name: "value",
-        label:'Input value',
-        type: "string", //< Boolean | Number | String | Enum  >
-        description: "The current value of the input.",
-        isAdvancedProperty: "false"
+        name: 'value',
+        label: 'Input value',
+        type: 'string',
+        description: 'The current value of the input.',
+        isAdvancedProperty: 'false',
       },
       {
-        name: "floatingLabel",
-        label:'move label hover text',
-        type: "Boolean", //< Boolean | Number | String | Enum  >
-        description: `If true, the label will "float" above the text input once the
+        name: 'floatingLabel',
+        label: 'move label hover text',
+        type: 'Boolean',
+        description: `If true, the label will 'float' above the text input once the
                       user enters text instead of disappearing.`,
-        default: "false",
-        isAdvancedProperty: 'true'
+        default: 'false',
+        isAdvancedProperty: 'true',
       },
     ];
     class asqTextInputQEditor {
@@ -129,59 +129,57 @@
         return [
           qeaBehaviors.actionsBehavior,
           qeaBehaviors.reduxStore,
-          qeaBehaviors.generalEditorsBehavior
+          qeaBehaviors.generalEditorsBehavior,
         ];
       }
 
-      beforeRegister(){
-        this.is = 'asq-text-input-q-editor'
+      beforeRegister() {
+        this.is = 'asq-text-input-q-editor';
         this.properties = {
           questionProps: {
             type: Array,
-            value: questionProperties
+            value: questionProperties,
           },
-          _solutionBt:{
+          _solutionBt: {
             type: String,
-            value: 'set solution'
+            value: 'set solution',
           },
-          qTitleVal:String,
-          qDescVal: String
-
-        }
+          qTitleVal: String,
+          qDescVal: String,
+        };
       }
 
       ready() {
         Polymer.dom.flush();
-        let el = Polymer.Base.create('qea-advanced-editors', {});
+        const el = Polymer.Base.create('qea-advanced-editors', {});
         Polymer.dom(this.$.leftPanel).appendChild(el);
-
       }
 
-      _getFormattedCode(){
-        let code = `<asq-text-input-q
-            label="${this.qeaRepeatValues.label }"
-            ${this.qeaRepeatValues.disabled? 'disabled='+this.qeaRepeatValues.disabled : ''}
-            value="${this.qeaRepeatValues.value }"
-            ${this.qeaRepeatValues.floatingLabel? 'floating-Label='+this.qeaRepeatValues.floatingLabel : ''}>
+      _getFormattedCode() {
+        const code = `<asq-text-input-q
+            label="${this.qeaRepeatValues.label}"
+            ${this.qeaRepeatValues.disabled ? `disabled= ${this.qeaRepeatValues.disabled}` : ''}
+            value="${this.qeaRepeatValues.value}"
+            ${this.qeaRepeatValues.floatingLabel ? `floating-Label= ${this.qeaRepeatValues.floatingLabel}` : ''}>
 
             <asq-stem>${this.qTitleVal || ''}</asq-stem>
             ${this.qDescVal || ''}
             <asq-solution hidden>${this.questionSolution || ''}</asq-solution>
-          </asq-text-input-q>`
+          </asq-text-input-q>`;
         return code;
       }
 
-      _setSolution1(){
-        this._setSolution(this.qeaRepeatValues.value)
+      _setSolution1() {
+        this._setSolution(this.qeaRepeatValues.value);
       }
 
-      _saveQuestion1(){
-        this._saveQuestion( ['qTitleVal','qDescVal'])
+      _saveQuestion1() {
+        this._saveQuestion(['qTitleVal', 'qDescVal']);
       }
 
     }
 
     Polymer(asqTextInputQEditor);
-  })()
+  })();
   </script>
 </dom-module>

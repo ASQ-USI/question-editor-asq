@@ -2,47 +2,46 @@
   window.qeaBehaviors = window.qeaBehaviors || {};
   qeaBehaviors.actionsBehavior = {
     actions: {
-      addElement: function(type, html, properties){
-          var _idGenerator = function(){
-            let S4 = function() {
-              return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
-            };
-            return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
-          }
-          return {
-              type: 'ADD_ELEMENT',
-              elementId: _idGenerator(),
-              elementType: type,
-              elementHtml: html,
-              elementProps: properties
+      addElement: (type, html) => {
+        const idGenerator = () => {
+          const s4 = () => {
+            return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
           };
+          return `${s4() + s4()}-${s4()}-${s4()}-${s4()}-${s4() + s4() + s4()}`;
+        };
+        return {
+          type: 'ADD_ELEMENT',
+          elementId: idGenerator(),
+          elementType: type,
+          elementHtml: html,
+        };
       },
-      removeElement: function(id) {
-          return {
-              type: 'REMOVE_ELEMENT',
-              elementId: id
-          };
+      removeElement: (id) => {
+        return {
+          type: 'REMOVE_ELEMENT',
+          elementId: id,
+        };
       },
       // type is optional
-      editElement: function(id, html, properties, type) {
-          return {
-              type: 'EDIT_ELEMENT',
-              elementId: id ,
-              elementType: type,
-              elementHtml: html,
-              elementProps: properties
-          };
+      editElement: (id, html, properties, type) => {
+        return {
+          type: 'EDIT_ELEMENT',
+          elementId: id,
+          elementType: type,
+          elementHtml: html,
+          elementProps: properties,
+        };
       },
-      moveElement: function(id, newIndex) {
-          return {
-              type: 'MOVE_ELEMENT',
-              elementId: id,
-              newIndex: newIndex
-          };
+      moveElement: (id, newIndex) => {
+        return {
+          type: 'MOVE_ELEMENT',
+          elementId: id,
+          newIndex: newIndex, // eslint-disable-line object-shorthand
+        };
       },
-      resetState: function () {
-        return { type: 'RESET_STATE'}
-      }
-    }
-  }
+      resetState: () => {
+        return { type: 'RESET_STATE' };
+      },
+    },
+  };
 </script>
