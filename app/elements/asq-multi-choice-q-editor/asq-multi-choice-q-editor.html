@@ -4,11 +4,11 @@
 <link rel="import" href="../../../bower_components/asq-multi-choice-q/asq-multi-choice-q.html">
 <link rel="import" href="../../../bower_components/asq-option/asq-option.html">
 <link rel="import" href="../../../bower_components/qea-property-editor/qea-advanced-editors.html">
-<link rel="import" href="./qea-options-editor.html">
-<link rel="import" href="../qea-general-editor-components/qea-three-column-layout.html">
-<link rel="import" href="../qea-general-editor-components/qea-editors-behavior.html">
+<link rel="import" href="../qea-common-editor-components/qea-editors-behavior.html">
+<link rel="import" href="../qea-common-editor-components/qea-three-column-layout.html">
 <link rel="import" href="../../behaviors/qea-redux-store.html">
 <link rel="import" href="../../behaviors/qea-actions-behavior.html">
+<link rel="import" href="../qea-common-editor-components/qea-items-list.html">
 
 <dom-module id="asq-multi-choice-q-editor">
   <template>
@@ -41,13 +41,15 @@
 
 
       <div class="sectionTitle"> option list </div>
-      <qea-options-editor
-        restore=[[_optionsSetter]]
-        value={{_optionsValue}}>
-      </qea-options-editor>
+      <qea-items-list
+        new-Item-Label="Insert an option"
+        sortable
+        restore="[[_optionsSetter]]"
+        value="{{_optionsValue}}">
+      </qea-items-list>
 
       <div class="sectionTitle">
-        qestion properties
+        question properties
       </div>
       <!-- list of question properties -->
       <qea-property-editor-repeater id="qeaRepeatValues"

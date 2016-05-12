@@ -1,0 +1,163 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../../bower_components/qea-property-editor/qea-property-editor-repeater.html">
+<link rel="import" href="../../../bower_components/asq-buckets-q/asq-buckets-q.html">
+<link rel="import" href="../qea-common-editor-components/qea-three-column-layout.html">
+<link rel="import" href="../qea-common-editor-components/qea-three-column-layout.html">
+<link rel="import" href="../qea-common-editor-components/qea-editors-behavior.html">
+<link rel="import" href="../../../bower_components/qea-property-editor/qea-property-editor.html">
+<link rel="import" href="../../../bower_components/asq-stem/asq-stem.html">
+<link rel="import" href="../../../bower_components/qea-property-editor/qea-advanced-editors.html">
+<link rel="import" href="../../../bower_components/asq-solution/asq-solution.html">
+<link rel="import" href="../qea-common-editor-components/qea-items-list.html">
+
+<dom-module id="asq-buckets-q-editor">
+  <template>
+    <style include="iron-flex"></style>
+    <style include="qea-three-column-layout">
+      :host {
+      }
+
+    </style>
+
+    <!-- leftPanel -->
+    <div id="leftPanel">
+      <qea-advanced-editors></qea-advanced-editors>
+      <!-- title property-->
+      <qea-property-editor
+        name="title"
+        label="Stem"
+        type="string"
+        default="Title"
+        value="{{qTitleVal}}">
+      </qea-property-editor>
+
+      <div class="sectionTitle">
+        bucket list
+      </div>
+      <qea-items-list
+        new-Item-Label="Insert new buckets"
+        sortable
+        restore="[[_bucketsListRestore]]"
+        value="{{_bucketsListValue}}">
+      </qea-items-list>
+
+      <div class="sectionTitle">
+        label list
+      </div>
+      <qea-items-list
+        new-Item-Label="Insert new labels"
+        restore="[[_labelsListValueRestore]]"
+        value="{{_labelsListValue}}">
+      </qea-items-list>
+
+
+      <div class="sectionTitle">
+        Question properties
+      </div>
+      <!-- list of question properties -->
+      <qea-property-editor-repeater id="qeaRepeatValues"
+        property-Array=[[questionProps]]
+        values={{qeaRepeatValues}}
+        is-Advanced-User=[[viewAdvanced]]>
+      </qea-property-editor-repeater>
+
+      <div id="advanced" on-tap="_showAdvanced">
+        show all
+      </div>
+    </div>
+
+    <div id="mainArea">
+      <asq-buckets-q role="viewer"
+        disabled="[[qeaRepeatValues.disabled]]"
+        mode="[[qeaRepeatValues.mode]]"
+        x-matchable="div[buckets]"
+        y-matchable="div[labels]"
+        attr-for-matched="[[qeaRepeatValues.attrForMatched]]"
+        matched-attribute="matched"
+        matched-class="label-success">
+        <asq-stem><span inner-H-T-M-L="[[qTitleVal]]"></span></asq-stem>
+
+        <div buckets >
+          <div s-name="test" bucket><b>test</b></div>
+          <template is="dom-repeat" items="[[_bucketsListValue]]">
+            <div s-name="[[item.label]]" bucket><b>[[item.label]]</b></div>
+          </template>
+        </div>
+
+        <div labels class="labels">
+          <div s-name="testLabel" label class="label-primary">testLabel</div>
+          <template is="dom-repeat" items="[[_labelsListValue]]">
+            <div s-name="[[item.label]]" label class="label-primary">[[item.label]]</div>
+          </template>
+        </div>
+      </asq-buckets-q>
+    </div>
+
+    <!-- Right Panel -->
+    <div id="rightPanel">
+
+    </div>
+
+  </template>
+  <script>
+  (function () {
+    'use strict';
+    const questionProperties = [
+      {
+        name: 'disabled',
+        type: 'boolean', // < Boolean | Number | String | Enum  >
+        description: '',
+        default: 'false',
+      },
+      {
+        name: 'mode',
+        label: 'Sets relationship',
+        type: 'string', // < Boolean | Number | String | Enum  >
+        description: `The mode is to define the relationship between two sets.
+                      It can be 1-1, m-m, a-m, m-b or a-b. a and b are any
+                      postive integer number.`,
+        default: 'm-m',
+        isAdvancedProperty: 'false;',
+      },
+      {
+        name: 'attrForMatched',
+        type: 'string', // < Boolean | Number | String | Enum  >
+        description: 'The attribute value of an element for matched.',
+        default: 's-name',
+        isAdvancedProperty: 'true',
+      },
+    ];
+    class asqBucketsQEditor {
+
+      get behaviors() {
+        return [qeaBehaviors.generalEditorsBehavior];
+      }
+
+      beforeRegister() {
+        this.is = 'asq-buckets-q-editor';
+        this.properties = {
+          questionProps: {
+            type: Array,
+            value: questionProperties,
+          },
+          _bucketsListValue: {
+            type: Array,
+            value: () => [],
+          },
+          _labelsListValue: {
+            type: Array,
+            value: () => [],
+          },
+        };
+      }
+
+      // function here
+
+    }
+
+    Polymer(asqBucketsQEditor);
+  })();
+  </script>
+</dom-module>
