@@ -23,6 +23,9 @@
       }
 
     </style>
+    <qea-advanced-code-editor id="codeEditor"
+      mode="xml"
+      ></qea-advanced-code-editor>
     <qea-advanced-text-editor id="textEditor"></qea-advanced-text-editor>
     <div id="canvas" class="flex" on-tap="_selectItem" on-mouseover="_onHovered" on-mouseout="_onUnhovered">
       <sortable-js handle=".handle" scroll  animation="200" force-Fallback="true" >
@@ -141,8 +144,9 @@
             `;
           }
         }
-        code = code.replace(/^\s*[\r\n]/gm, '');
-        console.log(code);
+        code = code.replace(/^\s*[\r\n\t]/gm, '');
+        code = code.replace(/^[^\S\r\n]+/gm, '');
+        this.$.codeEditor.openCodeDialog(code);
       }
 
     }
