@@ -18,6 +18,31 @@
     <style include="qea-three-column-layout">
       :host {
       }
+      div[labels], div[buckets]{
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+        @apply(--layout-wrap);
+      }
+      div[buckets]>div{
+        @apply(--layout-vertical);
+        min-width: 150px;
+        min-height: 150px;
+        border: 1px solid gray;
+        margin: 1px;
+        text-align: center;
+        border-radius: 5px;
+      }
+
+      div[labels]> div{
+        margin: 2px;
+        padding: 8px;
+        border: 1px solid grey;
+        border-radius: 5px;
+      }
+
+      div.label.dragging {
+        opacity: 0.6;
+      }
 
     </style>
 
@@ -29,6 +54,7 @@
         name="title"
         label="Stem"
         type="string"
+        widget-type="text-code"
         default="Title"
         value="{{qTitleVal}}">
       </qea-property-editor>
@@ -84,12 +110,14 @@
           </template>
         </div>
 
-        <div labels class="labels">
+        <div labels >
           <div s-name="testLabel" label class="label-primary">testLabel</div>
           <template is="dom-repeat" items="[[_labelsListValue]]">
             <div s-name="[[item.label]]" label class="label-primary">[[item.label]]</div>
           </template>
         </div>
+
+        <asq-solution hidden>[[questionSolution]]</asq-solution>
       </asq-buckets-q>
     </div>
 
@@ -105,6 +133,7 @@
     const questionProperties = [
       {
         name: 'disabled',
+        label: 'drag & drop disabled',
         type: 'boolean', // < Boolean | Number | String | Enum  >
         description: 'disable the ability to drag labels',
         default: 'false',

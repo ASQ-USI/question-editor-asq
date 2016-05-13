@@ -9,6 +9,7 @@
 <link rel="import" href="../../behaviors/qea-actions-behavior.html">
 <link rel="import" href="../qea-common-editor-components/qea-three-column-layout.html">
 <link rel="import" href="../qea-common-editor-components/qea-editors-behavior.html">
+<link rel="import" href="../qea-common-editor-components/qea-user-responce.html">
 
 
 <dom-module id="asq-text-input-q-editor">
@@ -17,6 +18,7 @@
     <style>
 
     </style>
+    <qea-user-responce></qea-user-responce>
 
     <!-- leftPanel -->
     <div id="leftPanel">
@@ -104,7 +106,7 @@
         label: 'Disable input',
         type: 'Boolean',
         description: 'Set to true to style the element as disabled.',
-        default: 'true',
+        default: 'false',
         isAdvancedProperty: 'false',
       },
       {

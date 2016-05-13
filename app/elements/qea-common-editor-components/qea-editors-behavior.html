@@ -103,8 +103,9 @@ qeaBehaviors.generalEditorsBehavior = {
   * @param {Array<String>=} propertyToInclude array containing all the custom properties to be savd
   */
   _saveQuestion: function (propertiesToSave, solution = this.questionSolution) {
+    const toast = Polymer.dom(this.root).querySelector('qea-user-responce');
     if (!solution && solution !== false || solution === '') {
-      this.fire('fireToast', { text: "you haven't provided a solution for this question", type: 'error' });
+      toast.notifyError('Error', "you haven't provided a solution for this question");
       return false;
     }
     const code = this._getFormattedCode();
@@ -134,21 +135,17 @@ qeaBehaviors.generalEditorsBehavior = {
   * @return {Boolean} true if solution set without problem false otherwise
   */
   _setSolution: function (slValue) {
+    const toast = Polymer.dom(this.root).querySelector('qea-user-responce');
     if (!slValue && slValue !== false || slValue === '') {
-      this.fire('fireToast', { text: "you haven't provided a solution for this question", type: 'error' });
-      return false;
+      toast.notifyError('Error', "you haven't provided a solution for this question");
+      return;
     }
     this.questionSolution = '';
-    const a = confirm(
-      `The solution is:
-          ${slValue}
-      is it correct?`);
-    if (a) {
-      this.fire('fireToast', { text: 'Solution correcly created' });
-      this.questionSolution = slValue;
-      return true;
-    }
-    return false;
+    toast.notifyConfirm('Is the solution correct?', `Solution:  ${slValue}`).then((resp) => {
+      if (resp) {
+        this.questionSolution = slValue;
+      }
+    });
   },
 };
 </script>

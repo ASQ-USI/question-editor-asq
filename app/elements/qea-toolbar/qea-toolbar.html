@@ -47,7 +47,12 @@
         <paper-icon-button icon="add-box" id="addText"
           class="tollbarIcons" on-tap='_insertText'>
         </paper-icon-button>
+        <paper-icon-button icon="code" id="showCode"
+          class="tollbarIcons" on-tap='_showCode'>
+        </paper-icon-button>
         <paper-tooltip for='addText' animation-Delay='200'>insert text area</paper-tooltip>
+        <paper-tooltip for='showCode' animation-Delay='200'>show generated code</paper-tooltip>
+
 
         <paper-icon-button icon="undo" id="undo" class="tollbarIcons" disabled></paper-icon-button>
         <paper-tooltip for='undo' animation-Delay='200'>undo</paper-tooltip>
@@ -104,7 +109,10 @@
         canvas.insertTextArea();
       }
 
-
+      _showCode() {
+        const canvas = Polymer.dom(this.parentNode.root).querySelector('qea-canvas');
+        canvas.showCode();
+      }
     }
 
     Polymer(qeaToolbar);

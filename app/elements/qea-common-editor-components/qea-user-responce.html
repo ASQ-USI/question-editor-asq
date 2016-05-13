@@ -1,0 +1,189 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/paper-toast/paper-toast.html">
+
+<dom-module id="qea-user-responce">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      .default, .confirm{
+        --paper-toast-background-color: #424242;
+        --paper-toast-color: #FAFAFA;
+      }
+      .error{
+        background: #F44336;
+      }
+      .buttons{
+        margin-top: 10px;
+        text-align: right;
+      }
+
+      paper-button#confirm{
+        color: #8BC34A;
+      }
+
+    </style>
+
+    <paper-toast duration="[[duration]]" opened="{{opened}}" text="{{text}}" class$="{{_styleClass}}" id="toast">
+      <template is="dom-if" if="[[_showLabel]]">
+        <h3 inner-h-t-m-l="[[_label]]"></h3>
+      </template>
+      <template is="dom-if" if="[[_showBody]]">
+        <div inner-h-t-m-l="[[_body]]"></div>
+      </template>
+      <template is="dom-if" if="[[_showButtons]]">
+        <div class="buttons">
+          <paper-button  id="cancel" on-tap='_closeToast' data="cancel">cancel</paper-button>
+          <paper-button  id="confirm" on-tap='_closeToast' data="confirm">confirm</paper-button>
+        </div>
+      </template>
+    </paper-toast>
+  </template>
+  <script>
+  (function () {
+    'use strict';
+
+    class qeaUserResponce {
+
+      get behaviors() {
+        return [];
+      }
+
+      beforeRegister() {
+        this.is = 'qea-user-responce';
+        this.properties = {
+          /**
+          * The duration in milliseconds to show the toast.
+          * Set to 0, a negative number, or Infinity, to disable the toast auto-closing.
+          */
+          duration: {
+            type: Number,
+            value: 3000,
+          },
+          /**
+          * True if the overlay is currently displayed.
+          */
+          opened: {
+            type: Boolean,
+            value: false,
+            notify: true,
+          },
+          _label: {
+            type: String,
+            value: '',
+          },
+          _body: {
+            type: String,
+            value: '',
+          },
+          _styleClass: {
+            type: String,
+            value: 'default',
+          },
+          _showButtons: {
+            type: Boolean,
+            value: false,
+          },
+          _showLabel: {
+            type: Boolean,
+            value: false,
+          },
+          _showBody: {
+            type: Boolean,
+            value: false,
+          },
+        };
+      }
+
+      /**
+      * function used to show a default tost
+      * @param {String} label Title of the message. will have the <h3> style
+      * @param {String} body of the message
+      * @param {Object} properties Properties to be set before opening the toast
+      *          ex {duration : 3000}
+      */
+      notify(label = '', body = '', properties) {
+        this._show(label, body);
+        this.$.toast.withBackdrop = false;
+        this.duration = 3000;
+        this._styleClass = 'default';
+        if (!properties) {
+          this.opened = true;
+        } else {
+          this.$.toast.show(properties);
+        }
+      }
+
+      /**
+      * function used to show an error tost (red background)
+      * @param {String} label Title of the message. will have the <h3> style
+      * @param {String} body of the message
+      * @param {Object} properties Properties to be set before opening the toast
+      *          ex {duration : 3000}
+      */
+      notifyError(label = '', body = '', properties) {
+        this._show(label, body);
+        this.$.toast.withBackdrop = false;
+        this.duration = 3000;
+        this._styleClass = 'error';
+        if (!properties) {
+          this.opened = true;
+        } else {
+          this.$.toast.show(properties);
+        }
+      }
+
+      _closeToast(e) {
+        const resp = e.target.getAttribute('data');
+        this.fire('closeToast', resp);
+      }
+
+      /**
+      * function used to show confirm tost (with buttons)
+      * @param {String} label Title of the message. will have the <h3> style
+      * @param {String} body of the message
+      * @param {Object} properties Properties to be set before opening the toast
+      *          ex {duration : 3000}
+      * @return Promise with a Boolean as parameter. true = confirm, false = cancel
+      */
+      notifyConfirm(label = '', body = '', properties) {
+        this._show(label, body);
+        this.duration = 0;
+        this._styleClass = 'confirm';
+        this._showButtons = true;
+        this.$.toast.withBackdrop = true;
+        if (!properties) {
+          this.opened = true;
+        } else {
+          this.$.toast.show(properties);
+        }
+        return new Promise((responce) => {
+          function onCloseToast(resp) {
+            this.opened = false;
+            this.removeEventListener('closeToast', onCloseToast);
+            this._showButtons = false;
+            responce(resp.detail === 'confirm');
+          }
+          this.addEventListener('closeToast', onCloseToast);
+        });
+      }
+
+
+      _show(label, body) {
+        this._label = label;
+        this._body = body;
+        if (label) {
+          this._showLabel = true;
+        }
+        if (body) {
+          this._showBody = true;
+        }
+      }
+
+    }
+
+    Polymer(qeaUserResponce);
+  })();
+  </script>
+</dom-module>
