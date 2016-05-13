@@ -147,5 +147,18 @@ qeaBehaviors.generalEditorsBehavior = {
       }
     });
   },
+
+  /**
+  * function use to abort the editing of a question and move back to the canvas page
+  */
+  _cancel: function () {
+    const toast = Polymer.dom(this.root).querySelector('qea-user-responce');
+    toast.notifyConfirm('Do you really want to exit?', 'all the chenges will be lost').then((resp) => {
+      if (resp) {
+        this.fire('changePage', { selectedPage: 'canvas' });
+      }
+    });
+  },
+
 };
 </script>
