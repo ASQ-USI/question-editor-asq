@@ -502,18 +502,18 @@
 
       _getFormattedCode: function () {
 
-        var html =  '  <asq-highlight-q ';
-        html += 'theme="' + this.theme + '" ';
-        html += 'mode="' + this.syntaxMode + '">\n';
-        html += '    <asq-solution>' + JSON.stringify(this.getRanges(), null, 2) + '</asq-solution>\n';
-        html += '    <asq-stem>' + this.stem + '</asq-stem>\n';
+        var html =  '\t<asq-highlight-q ';
+        html += '\ttheme="' + this.theme + '" ';
+        html += '\tmode="' + this.syntaxMode + '">\n';
+        html += '  \t\t<asq-solution>' + JSON.stringify(this.getRanges(), null, 2) + '</asq-solution>\n';
+        html += '    \t\t<asq-stem>' + this.stem + '</asq-stem>\n';
         this.tasks.forEach(function (t) {
-          html += '    <asq-hl-color-task color="' + t.color + '" colorName="' + t.colorName + '">' + t.html + '</asq-hl-color-task>\n';
+          html += '   \t\t<asq-hl-color-task color="' + t.color + '" colorName="' + t.colorName + '">' + t.html + '</asq-hl-color-task>\n';
         });
-        html += '    <code>';
+        html += '   \t\t<code>';
         html += this.asqHighlight.$.codeEditor.editor.session.getValue();
-        html += '</code>\n';
-        html += '  </asq-highlight-q>\n';
+        html += '\t\t</code>\n';
+        html += '  \t</asq-highlight-q>\n';
         return html;
       },
 
@@ -523,7 +523,9 @@
 
       _saveQt: function () {
         var solution = JSON.stringify(this.getRanges(), null, 2);
-        this._setSolution(solution);
+        this.questionSolution = solution;
+
+        // this._setSolution(solution);
         this._saveQuestion(['stemTextareaValue', 'stem', 'syntaxModeItem','theme', 'tasks','themeItem', 'asqHighlight'])
       },
 

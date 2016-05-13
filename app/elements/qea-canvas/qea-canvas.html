@@ -24,6 +24,7 @@
 
     </style>
     <qea-advanced-code-editor id="codeEditor"
+      label="Copy this code"
       mode="xml"
       ></qea-advanced-code-editor>
     <qea-advanced-text-editor id="textEditor"></qea-advanced-text-editor>
@@ -144,8 +145,8 @@
             `;
           }
         }
-        code = code.replace(/^\s*[\r\n\t]/gm, '');
-        code = code.replace(/^[^\S\r\n]+/gm, '');
+        code = code.replace(/^\s*[\r\n]/gm, '');
+        code = code.replace(/^ +/gm, '');
         this.$.codeEditor.openCodeDialog(code);
       }
 

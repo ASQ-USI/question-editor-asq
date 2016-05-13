@@ -25,7 +25,7 @@
 
     </style>
 
-    <paper-toast duration="[[duration]]" opened="{{opened}}" text="{{text}}" class$="{{_styleClass}}" id="toast">
+    <paper-toast duration="{{duration}}" opened="{{opened}}" text="{{text}}" class$="{{_styleClass}}" id="toast">
       <template is="dom-if" if="[[_showLabel]]">
         <h3 inner-h-t-m-l="[[_label]]"></h3>
       </template>
@@ -107,6 +107,7 @@
         this._show(label, body);
         this.$.toast.withBackdrop = false;
         this.duration = 3000;
+        this._showButtons = false;
         this._styleClass = 'default';
         if (!properties) {
           this.opened = true;
@@ -126,6 +127,7 @@
         this._show(label, body);
         this.$.toast.withBackdrop = false;
         this.duration = 3000;
+        this._showButtons = false;
         this._styleClass = 'error';
         if (!properties) {
           this.opened = true;

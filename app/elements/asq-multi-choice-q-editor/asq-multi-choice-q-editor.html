@@ -70,7 +70,6 @@
     <div id="mainArea">
       <div class="explanation">
         To modify the elements in this area, change the values in the left column
-        <button type="button" name="button" on-tap='_getFormattedCode'>get code</button>
       </div>
 
       <asq-multi-choice-q id='multyQuestion'
@@ -191,23 +190,23 @@
         let options = '';
         let opt;
         for (opt of this._optionsValue) {
-          options += `<asq-option name='${opt.label}'>${opt.label}</asq-option>\n`;
+          options += `\t\t<asq-option name='${opt.label}'>${opt.label}</asq-option>\n`;
         }
         const code = `
-        <asq-multi-choice-q id='multyQuestion'
-          ${this.qeaRepeatValues.multi === 'true' ? 'multi' : ''}
-          ${this.qeaRepeatValues.disabled === 'true' ? 'disabled' : ''}
-          value='${this.qeaRepeatValues.value}'
-          selected-Class='${this.qeaRepeatValues.selectedClassc || ''}'
-          selected='${this.qeaRepeatValues.selected || ''}'
-          selectable='${this.qeaRepeatValues.selectable || ''}'>
+        \t<asq-multi-choice-q id='multyQuestion'
+          \t${this.qeaRepeatValues.multi === 'true' ? 'multi' : ''}
+          \t${this.qeaRepeatValues.disabled === 'true' ? 'disabled' : ''}
+          \tvalue='${JSON.stringify(this.$.multyQuestion.value)}'
+          \tselected-Class='${this.qeaRepeatValues.selectedClassc || ''}'
+          \tselected='${this.qeaRepeatValues.selected || ''}'
+          \tselectable='${this.qeaRepeatValues.selectable || ''}'>
 
-          <asq-stem>${this.qTitleVal}</asq-stem>
-          ${this.qDescVal || ''}
+          \t\t<asq-stem>${this.qTitleVal}</asq-stem>
+          \t\t${this.qDescVal || ''}
 
           ${options}
-          <asq-solution hidden>${this.questionSolution}</asq-solution>
-        </asq-multi-choice-q>`;
+          \t\t<asq-solution hidden>${this.questionSolution}</asq-solution>
+        \t</asq-multi-choice-q>`;
         return code;
       }
 

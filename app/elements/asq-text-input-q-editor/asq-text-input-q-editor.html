@@ -61,7 +61,6 @@
     <div id="mainArea">
       <div class="explanation">
         To modify the elements in this area, change the values in the left column
-        <button type="button" name="button" on-tap='_getFormattedCode'>get code</button>
       </div>
 
       <asq-text-input-q
@@ -160,16 +159,16 @@
       }
 
       _getFormattedCode() {
-        const code = `<asq-text-input-q
-            label="${this.qeaRepeatValues.label}"
-            ${this.qeaRepeatValues.disabled ? `disabled= ${this.qeaRepeatValues.disabled}` : ''}
-            value="${this.qeaRepeatValues.value}"
-            ${this.qeaRepeatValues.floatingLabel ? `floating-Label= ${this.qeaRepeatValues.floatingLabel}` : ''}>
+        const code = `\t<asq-text-input-q
+            \tlabel="${this.qeaRepeatValues.label}"
+            \t${this.qeaRepeatValues.disabled ? `disabled= ${this.qeaRepeatValues.disabled}` : ''}
+            \tvalue="${this.qeaRepeatValues.value}"
+            \t${this.qeaRepeatValues.floatingLabel ? `floating-Label= ${this.qeaRepeatValues.floatingLabel}` : ''}>
 
-            <asq-stem>${this.qTitleVal || ''}</asq-stem>
-            ${this.qDescVal || ''}
-            <asq-solution hidden>${this.questionSolution || ''}</asq-solution>
-          </asq-text-input-q>`;
+            \t\t<asq-stem>${this.qTitleVal || ''}</asq-stem>
+            \t\t${this.qDescVal || ''}
+            \t\t<asq-solution hidden>${this.questionSolution || ''}</asq-solution>
+          \t</asq-text-input-q>`;
         return code;
       }
 
