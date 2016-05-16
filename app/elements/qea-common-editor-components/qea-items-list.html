@@ -1,4 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
+
 <!--
 The purpose of `qea-items-list` is to offer a simple way to create a list of string with the possiblity to add, edit, remove or sort them
 
@@ -21,8 +23,15 @@ Examples:
       display: flex;
       align-items: center;
     }
-    .remove{
-      color: red
+    .icons{
+      color: grey;
+      opacity: 0.6;
+    }
+    .move:hover{
+      color: black;
+    }
+    .remove:hover{
+      color: red;
     }
     .addItem{
       opacity: 0.6;
@@ -34,9 +43,9 @@ Examples:
         <div class="optionItem" id="34">
           <paper-input value={{item.label}} no-Label-Float on-change="_itemUpdated"></paper-input>
           <template is="dom-if" if="[[sortable]]">
-            <paper-icon-button class="move handle" icon="open-with"></paper-icon-button>
+            <paper-icon-button class="move icons handle" icon="communication:import-export"></paper-icon-button>
           </template>
-          <paper-icon-button class="remove" icon="remove" on-tap="_itemRemoved"></paper-icon-button>
+          <paper-icon-button class="remove icons" icon="clear" on-tap="_itemRemoved"></paper-icon-button>
         </div>
       </template>
     </sortable-js>

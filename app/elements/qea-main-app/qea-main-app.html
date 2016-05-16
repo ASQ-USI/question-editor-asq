@@ -178,6 +178,7 @@
         if (!pageData) {
           const name = type || pageData.bowerName;
           const elem = this._createElement(name, true, { questionId: id, restoreState: props });
+          elem.classList.add('flex');
           Polymer.dom(this.$.questionEditorPage).appendChild(elem);
           this._currentPage = 'questionEditor';
           return;

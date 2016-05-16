@@ -122,8 +122,7 @@
       }
 
       modifyTextArea(id, code) {
-        this.$.textEditor.setContent(code);
-        this.$.textEditor.openTextDialog().then(
+        this.$.textEditor.openTextDialog(code).then(
           (text) => {
             if (text) { this.dispatch('editElement', id, text); }
           }
