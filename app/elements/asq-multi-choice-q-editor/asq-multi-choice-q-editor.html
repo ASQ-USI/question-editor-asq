@@ -24,23 +24,14 @@
 
 
       <!-- title property-->
-      <qea-property-editor
+      <qea-property-editor id="stemEditor"
         name='title'
         label="question Title"
         type='string'
+        widget-Type='text-code'
         default='Title'
         value={{qTitleVal}}>
       </qea-property-editor>
-
-      <!-- description property-->
-      <qea-property-editor
-        name='Question Description'
-        type='string'
-        widget-Type='text-code'
-        default={{qDescVal}}
-        value={{qDescVal}}>
-      </qea-property-editor>
-
 
       <div class="sectionTitle"> option list </div>
       <qea-items-list
@@ -81,11 +72,10 @@
         selectable=[[qeaRepeatValues.selectable]]>
 
         <asq-stem><span id="stemContent" inner-H-t-m-l={{qTitleVal}}></span></asq-stem>
-        <div id='questionDescription' inner-H-t-m-l={{qDescVal}}></div>
 
-        <!-- <template is="dom-repeat" items="[[_optionsValue]]">
+        <template is="dom-repeat" items="[[_optionsValue]]">
           <asq-option name='[[item.label]]'>[[item.label]]</asq-option>
-        </template> -->
+        </template>
 
 
 
@@ -159,9 +149,6 @@
 
       beforeRegister() {
         this.is = 'asq-multi-choice-q-editor';
-        this.observers = [
-          '_injctOpt(_optionsValue.splices)',
-        ];
         this.properties = {
           questionProps: {
             type: Array,
@@ -170,10 +157,8 @@
           _optionsValue: {
             type: Array,
             value: () => [],
-            observer: '_injctOpt',
           },
           qTitleVal: String,
-          qDescVal: String,
           qSolVal: String,
           _optionsSetter: Array,
         };
@@ -202,7 +187,6 @@
           \tselectable='${this.qeaRepeatValues.selectable || ''}'>
 
           \t\t<asq-stem>${this.qTitleVal}</asq-stem>
-          \t\t${this.qDescVal || ''}
 
           ${options}
           \t\t<asq-solution hidden>${this.questionSolution}</asq-solution>
@@ -215,7 +199,7 @@
       }
 
       _saveQuestion1() {
-        this._saveQuestion(['qTitleVal', 'qDescVal', '_optionsValue']);
+        this._saveQuestion(['qTitleVal', '_optionsValue']);
       }
 
       _restoreQuestionState(state = {}) {
@@ -237,20 +221,6 @@
           }
         }
       }
-
-      _injctOpt() {
-        const optsArray = this._optionsValue;
-        const currentProps = Polymer.dom(this.$.multyQuestion).querySelectorAll('asq-option');
-        for (const child of currentProps) {
-          Polymer.dom(this.$.multyQuestion).removeChild(child);
-        }
-        for (const opt of optsArray) {
-          const opt1 = Polymer.Base.create('asq-option', { name: opt.label });
-          Polymer.dom(opt1).appendChild(document.createTextNode(opt.label));
-          Polymer.dom(this.$.multyQuestion).appendChild(opt1);
-        }
-      }
-
 
     }
     Polymer(asqMultiChoiceQEditor);

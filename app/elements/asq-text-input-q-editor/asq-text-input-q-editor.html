@@ -24,21 +24,13 @@
     <div id="leftPanel">
 
       <!-- title property-->
-      <qea-property-editor
+      <qea-property-editor id="stemEditor"
         name='title'
         label="Stem"
         type='string'
-        default='Title'
-        value={{qTitleVal}}>
-      </qea-property-editor>
-
-      <!-- description property-->
-      <qea-property-editor
-        name='Question Description'
-        type='string'
         widget-Type='text-code'
-        default={{qDescVal}}
-        value={{qDescVal}}>
+        default='Stem'
+        value={{qTitleVal}}>
       </qea-property-editor>
 
       <div class="sectionTitle">
@@ -70,7 +62,6 @@
         floating-Label=[[qeaRepeatValues.floatingLabel]]>
 
         <asq-stem><span id="stemContent" inner-H-t-m-l={{qTitleVal}}></span></asq-stem>
-        <div id='questionDescription' inner-H-t-m-l={{qDescVal}}></div>
 
         <asq-solution hidden>[[questionSolution]]</asq-solution>
       </asq-text-input-q>
@@ -148,7 +139,6 @@
             value: 'set solution',
           },
           qTitleVal: String,
-          qDescVal: String,
         };
       }
 
@@ -160,13 +150,11 @@
 
       _getFormattedCode() {
         const code = `\t<asq-text-input-q
-            \tlabel="${this.qeaRepeatValues.label}"
+            \tlabel="${this.qeaRepeatValues.label || ''}"
             \t${this.qeaRepeatValues.disabled ? `disabled= ${this.qeaRepeatValues.disabled}` : ''}
             \tvalue="${this.qeaRepeatValues.value}"
             \t${this.qeaRepeatValues.floatingLabel ? `floating-Label= ${this.qeaRepeatValues.floatingLabel}` : ''}>
-
             \t\t<asq-stem>${this.qTitleVal || ''}</asq-stem>
-            \t\t${this.qDescVal || ''}
             \t\t<asq-solution hidden>${this.questionSolution || ''}</asq-solution>
           \t</asq-text-input-q>`;
         return code;
@@ -177,7 +165,7 @@
       }
 
       _saveQuestion1() {
-        this._saveQuestion(['qTitleVal', 'qDescVal']);
+        this._saveQuestion(['qTitleVal']);
       }
 
     }
