@@ -60,24 +60,38 @@
       beforeRegister() {
         this.is = 'qea-canvas';
         this.properties = {
+          /**
+          * Whether the user is dragging an item into the canvas.
+          */
           isDragging: {
             type: Boolean,
           },
+          /**
+          * id of the selected element
+          */
           selectedElemId: {
             type: String,
           },
+          /**
+          * Questions or text to be rendered in canvas. This Prop is set by the redux store
+          * @type {[{id:String, type:String, html:String, props: Object}, ...]}
+          */
           objs: {
             type: Array,
             statePath: 'elements',
           },
-          _hovered: {
-            type: Boolean,
-            value: false,
-          },
+          /**
+          * Object representing the values described in qea-questions-list for the dropped question.
+          *
+          * @type {{ label: String, bowerName: String}}
+          */
           droppedElem: {
             type: Object,
             observer: '_notifyDrop',
           },
+          /**
+          * Whether the user is hovering the canvas.
+          */
           isHover: {
             type: Boolean,
             value: false,

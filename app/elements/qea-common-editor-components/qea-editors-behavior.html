@@ -54,7 +54,9 @@ qeaBehaviors.generalEditorsBehavior = {
   */
   _showAdvanced: function () {
     this.viewAdvanced = this.viewAdvanced === 'true' ? 'false' : 'true';
-    this.$.advanced.textContent = this.viewAdvanced === 'true' ? 'hide advanced' : 'show all';
+    if (this.$.advanced) {
+      this.$.advanced.textContent = this.viewAdvanced === 'true' ? 'hide advanced' : 'show all';
+    }
   },
 
   /**

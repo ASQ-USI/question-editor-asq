@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script src="../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../bower_components/web-component-tester/browser.js"></script>
+    <script src="../../.transpiled/script/redux.min.js"></script>
+
+    <!-- import the element to test -->
+    <link rel="import" href="../../.transpiled/elements/elements.html">
+
+  </head>
+  <body>
+    <!-- use the document as a place to set up your fixtures -->
+    <test-fixture id="qea-main-app-fixture">
+      <template>
+        <qea-main-app ></qea-main-app>
+      </template>
+    </test-fixture>
+    <script>
+      suite('<qea-main-app>', function() {
+        var myEl;
+        setup(function() {
+          myEl = fixture('qea-main-app-fixture');
+          myEl._currentPage = 'landingPage';
+          stub('qea-main-app', {
+            resolveLocalPath: function(a) {
+              return '../../.transpiled/elements/'+a+'/'+a+'.html';
+            }
+          });
+        });
+
+        test('changePage event brings to the correct page', function() {
+          assert.equal(myEl.$$('iron-pages').selected, 'landingPage')
+          myEl.fire('changePage', {selectedPage: 'canvas'})
+          assert.equal(myEl.$$('iron-pages').selected, 'canvas')
+        });
+
+        test('paper-toast reacts to fireToast event', function () {
+          assert.equal(myEl.$$('paper-toast').opened, false);
+          myEl.fire('fireToast', {text: 'test', type: 'error'});
+          assert.equal(myEl.$$('paper-toast').opened, true);
+          assert.equal(myEl.$$('paper-toast').text, 'test');
+        })
+
+        test('moves to the correct questionEditor page when question is dropped in canvas', function(done) {
+
+          // test with one more editor
+          assert.equal(myEl.$$('iron-pages').selected, 'landingPage')
+          assert.equal(myEl.$$('#questionEditorPage>asq-text-input-q-editor'), null)
+
+          myEl.fire('changePage', {selectedPage: 'questionEditor',
+            pageData: { label: 'text input',bowerName: 'asq-text-input-q-editor'}
+          })
+
+          flush(function () {
+            Polymer.Base.async(function(){
+              assert.equal(myEl.$$('iron-pages').selected, 'questionEditor')
+              assert.notEqual(myEl.$$('#questionEditorPage>asq-text-input-q-editor'), null)
+              done()
+            }, 2000)
+
+          })
+
+        });
+      });
+    </script>
+  </body>
+</html>

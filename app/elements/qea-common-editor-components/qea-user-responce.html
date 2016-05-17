@@ -25,12 +25,12 @@
 
     </style>
 
-    <paper-toast duration="{{duration}}" opened="{{opened}}" text="{{text}}" class$="{{_styleClass}}" id="toast">
+    <paper-toast duration="{{_duration}}" opened="{{opened}}" text="{{text}}" class$="{{_styleClass}}" id="toast">
       <template is="dom-if" if="[[_showLabel]]">
-        <h3 inner-h-t-m-l="[[_label]]"></h3>
+        <h3 class="label" inner-h-t-m-l="[[_label]]"></h3>
       </template>
       <template is="dom-if" if="[[_showBody]]">
-        <div inner-h-t-m-l="[[_body]]"></div>
+        <div class="body" inner-h-t-m-l="[[_body]]"></div>
       </template>
       <template is="dom-if" if="[[_showButtons]]">
         <div class="buttons">
@@ -57,7 +57,7 @@
           * The duration in milliseconds to show the toast.
           * Set to 0, a negative number, or Infinity, to disable the toast auto-closing.
           */
-          duration: {
+          _duration: {
             type: Number,
             value: 3000,
           },
@@ -106,7 +106,7 @@
       notify(label = '', body = '', properties) {
         this._show(label, body);
         this.$.toast.withBackdrop = false;
-        this.duration = 3000;
+        this._duration = 3000;
         this._showButtons = false;
         this._styleClass = 'default';
         if (!properties) {
@@ -126,7 +126,7 @@
       notifyError(label = '', body = '', properties) {
         this._show(label, body);
         this.$.toast.withBackdrop = false;
-        this.duration = 3000;
+        this._duration = 3000;
         this._showButtons = false;
         this._styleClass = 'error';
         if (!properties) {
@@ -151,7 +151,7 @@
       */
       notifyConfirm(label = '', body = '', properties) {
         this._show(label, body);
-        this.duration = 0;
+        this._duration = 0;
         this._styleClass = 'confirm';
         this._showButtons = true;
         this.$.toast.withBackdrop = true;

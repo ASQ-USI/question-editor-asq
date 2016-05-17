@@ -1,5 +1,5 @@
-<link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/iron-icons/communication-icons.html">
 
 <!--
 The purpose of `qea-items-list` is to offer a simple way to create a list of string with the possiblity to add, edit, remove or sort them
@@ -40,7 +40,7 @@ Examples:
 
     <sortable-js id="sortableJs" handle=".handle" scroll  animation="200" force-Fallback="true" on-end="_itemMoved">
       <template is="dom-repeat" items={{_optionsList}}>
-        <div class="optionItem" id="34">
+        <div class="optionItem">
           <paper-input value={{item.label}} no-Label-Float on-change="_itemUpdated"></paper-input>
           <template is="dom-if" if="[[sortable]]">
             <paper-icon-button class="move icons handle" icon="communication:import-export"></paper-icon-button>
@@ -51,7 +51,7 @@ Examples:
     </sortable-js>
     <div class="optionItem addItem">
       <paper-input id="addInput" label="[[newItemLabel]]" on-change="_addItem"></paper-input>
-      <paper-icon-button icon="add" on-tap="_addItem"></paper-icon-button>
+      <paper-icon-button id="addIcon" icon="add" on-tap="_addItem"></paper-icon-button>
     </div>
 
   </template>
@@ -113,7 +113,12 @@ Examples:
 
 
       _addItem(e, manualValue) {
-        const option = manualValue ? manualValue.label : this.$.addInput.value;
+        let option;
+        if (manualValue && manualValue.label !== undefined) {
+          option = manualValue.label;
+        } else {
+          option = this.$.addInput.value;
+        }
         if (!option) {
           return;
         }
