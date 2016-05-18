@@ -1,6 +1,8 @@
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../../bower_components/app-route/app-location.html">
 
 <dom-module id="qea-main-app">
   <template>
@@ -30,20 +32,20 @@
     </style>
 
 
-    <qea-toolbar current-Page=[[_currentPage]]></qea-toolbar>
+    <qea-toolbar current-Page="[[pageData.page]]"></qea-toolbar>
 
 
     <section id="canvas-container" class="flex layout horizontal">
       <asq-spinner id='spinner'></asq-spinner>
 
       <!-- be sure to add the "page-name" attribute to all the new pages inserted -->
-      <iron-pages id='pageController' selected={{_currentPage}} attr-For-Selected="page-name" class="flex layout horizontal">
+      <iron-pages id='pageController' selected="{{pageData.page}}" attr-For-Selected="page-name" class="flex layout horizontal" fallback-Selection="404">
 
-        <div class="page page0 layout horizontal flex" page-name='landingPage'>
+        <section class="page page0 layout horizontal flex" page-name='landingPage'>
           <qea-landing-page class="flex"></qea-landing-page>
-        </div>
+        </section>
 
-        <div class="page flex layout horizontal page1" page-name='canvas'>
+        <section class="page flex layout horizontal page1" page-name='canvas'>
           <qea-canvas id="qeaCanvas"
             class="flex layout horizontal"
             dropped-elem="[[_dropped]]"
@@ -52,16 +54,25 @@
           <nav id="nav-container">
             <qea-questions-list id="questions-list"></qea-questions-list>
           </nav>
-        </div>
+        </section>
 
-        <div class="page flex layout horizontal page3" id='questionEditorPage' page-name="questionEditor">
+        <section class="page flex layout horizontal page3" id='questionEditorPage' page-name="questionEditor"></section>
 
-        </div>
-
+        <section class="page flex layout horizontal page4" page-name="404">
+          <qea-404-page></qea-404-page>
+        </section>
       </iron-pages>
     </section>
 
     <qea-user-response id="notify"></qea-user-response>
+
+    <!-- router -->
+    <app-location route="{{route}}" use-hash-as-path></app-location>
+    <app-route route="{{route}}"
+                pattern="/:page"
+                data="{{pageData}}"
+                tail="{{pageTail}}"></app-route>
+    <!-- /router -->
 
   </template>
   <script>
@@ -96,6 +107,12 @@
             value: 'landingPage',
           },
         };
+      }
+
+      attached() {
+        if (!this.route.path) {
+          this.set('route.path', '/landingPage');
+        }
       }
 
       _openToast(host, { type = 'default', text = '', properties }) {
@@ -135,7 +152,7 @@
               this._moveToquestionPage(questionInfo, pageData);
               return;
             }
-            this._currentPage = selectedPage;
+            this.set('route.path', `/${selectedPage}`);
             return;
           }
         }
@@ -161,7 +178,7 @@
           const elem = this._createElement(name, true, { questionId: id, restoreState: props });
           elem.classList.add('flex');
           Polymer.dom(this.$.questionEditorPage).appendChild(elem);
-          this._currentPage = 'questionEditor';
+          this.set('route.path', '/questionEditor');
           return;
         }
         this.toggleAttribute('active', true, this.$.spinner);
@@ -175,7 +192,7 @@
               Polymer.dom(this.$.questionEditorPage).appendChild(elem);
               elem.classList.add('flex');
               this.toggleAttribute('active', false, this.$.spinner);
-              this._currentPage = 'questionEditor';
+              this.set('route.path', '/questionEditor');
             }, 1000);
           },
           () => {

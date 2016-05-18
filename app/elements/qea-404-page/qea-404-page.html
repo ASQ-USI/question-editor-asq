@@ -1,0 +1,60 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<dom-module id="qea-404-page">
+  <template>
+    <style>
+      :host {
+        display: block;
+        padding: 60px;
+        color: #565a5c;
+      }
+      h1{
+        font-family: Circular,"Helvetica Neue",Helvetica,Arial,sans-serif;
+        font-size: 145px;
+        font-weight: 900;
+        margin: 20px 0;
+      }
+      h2{
+        font-weight: normal;
+        font-size: 32px;
+        margin-top: 25px;
+        margin-bottom: 15px;
+      }
+      a{
+        color: #ff5a5f;
+        text-decoration: none;
+      }
+      a:hover{
+        text-decoration: underline;
+      }
+    </style>
+
+    <h1>Oops!</h1>
+    <h2>
+      We can't seem to find the page you're looking for.
+    </h2>
+    <a href="#/landingPage">home</a>
+
+  </template>
+  <script>
+  (function () {
+    'use strict';
+
+    class qea404Page {
+
+      get behaviors() {
+        return [];
+      }
+
+      beforeRegister() {
+        this.is = 'qea-404-page';
+        this.properties = {};
+      }
+
+      // function here
+
+    }
+
+    Polymer(qea404Page);
+  })();
+  </script>
+</dom-module>
