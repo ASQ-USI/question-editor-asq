@@ -74,6 +74,14 @@
                 tail="{{pageTail}}"></app-route>
     <!-- /router -->
 
+    <!-- router -->
+    <app-location route="{{route}}" use-hash-as-path></app-location>
+    <app-route route="{{route}}"
+                pattern="/:page"
+                data="{{pageData}}"
+                tail="{{pageTail}}"></app-route>
+    <!-- /router -->
+
   </template>
   <script>
   (function () {
