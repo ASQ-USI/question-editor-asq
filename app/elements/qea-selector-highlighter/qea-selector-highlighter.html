@@ -134,6 +134,10 @@
         this.dispatch('addElement', this.type, this.content, this.elementProps);
       }
 
+      _cloneComponent() {
+        this.dispatch('addElement', this.type, this.content, this.elementProps);
+      }
+
       getCode() {
         return this.content;
       }
