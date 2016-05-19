@@ -39,6 +39,7 @@
         <div class="controlPanel">
           <div id="lineSeparator"></div>
           <iron-icon  class="handle control" icon="open-with"></iron-icon>
+          <paper-button class="control" id="cloneBT" on-tap='_cloneComponent'>clone</paper-button>
           <paper-button class="control" id="editBT" on-tap='_editComponent'>edit</paper-button>
           <paper-button class="control" id='removeBT' on-tap='_removeComponet'>remove</paper-button>
         </div>
@@ -125,6 +126,10 @@
           this.dispatch('removeElement', this.elementId);
           this.fire('fireToast', { text: 'element removed' });
         }
+      }
+
+      _cloneComponent() {
+        this.dispatch('addElement', this.type, this.content, this.elementProps);
       }
 
       getCode() {
