@@ -30,25 +30,22 @@
   <template>
     <style include="asq-highlight-q-editor-styles"></style>
     <style>
-      :host{
-        @apply(--layout-vertical);
-        @apply(--layout-fit);
-        --paper-toolbar-background: #CFD8DC;
-        --paper-toolbar-color: #000;
-      }
+    :host{
+      @apply(--layout-vertical);
+    }
 
-      #newTaskContainer{
-        @apply(--layout-horizontal);
-        @apply(--layout-end);
-      }
+    #newTaskContainer{
+      @apply(--layout-horizontal);
+      @apply(--layout-end);
+    }
 
-      #newTaskTextarea{
-        @apply(--layout-flex);
-      }
+    #newTaskTextarea{
+      @apply(--layout-flex);
+    }
 
-      paper-toolbar ::shadow .toolbar-tools ::content > *{
-          margin: 0 8px;
-      }
+    .ptb-margin{
+        margin: 0 8px;
+    }
 
     </style>
     <qea-user-responce></qea-user-responce>
@@ -62,7 +59,9 @@
 
       <span class="separator"></span>
 
-      <paper-dropdown-menu label="Syntax">
+      <paper-input class="ptb-margin" label="font-size" value="{{fontSize}}"></paper-input>
+
+      <paper-dropdown-menu class="ptb-margin" label="Syntax">
           <paper-menu class="dropdown-content" id="syntaxMenu" selected-item="{{syntaxModeItem}}">
             <template is="dom-repeat" items="{{syntaxModes}}" as="mode">
               <paper-item file$="[[mode.file]]">[[mode.name]]</paper-item>
@@ -70,7 +69,7 @@
           </paper-menu>
       </paper-dropdown-menu>&nbsp;
 
-       <paper-dropdown-menu label="Theme">
+       <paper-dropdown-menu class="ptb-margin" label="Theme">
           <paper-menu class="dropdown-content" id="themeMenu" selected-item="{{themeItem}}">
             <template is="dom-repeat" items="{{themes}}" as="t">
               <paper-item file$="[[t.file]]">[[t.name]]</paper-item>
@@ -109,19 +108,19 @@
 
 
     <!-- markup dialog -->
-    <!-- <paper-dialog id="markupDialog" on-core-overlay-open-completed="coreOverlayOpenCompleted" backdrop="" layered="false">
+    <paper-dialog id="markupDialog" on-core-overlay-open-completed="coreOverlayOpenCompleted" backdrop="" layered="false">
       <div id="aceContainer">
         <ace-element id="markupEditor" theme="textmate" mode="html"></ace-element>
       </div>
       <div class="buttons">
         <paper-button dialog-confirm autofocus="">CLOSE</paper-button>
       </div>
-    </paper-dialog> -->
+    </paper-dialog>
 
     <!-- <hr> -->
     <br><br><br><br>
 
-    <asq-highlight-q id="asqHighlight" theme="{{theme}}" mode="{{syntaxMode}}">
+    <asq-highlight-q id="asqHighlight" theme="{{theme}}" mode="{{syntaxMode}}" font-size="{{fontSize}}">
       <asq-stem id="leStem"></asq-stem>
       <template is="dom-repeat" items="{{tasks}}" as="t" index-as="idx">
         <asq-hl-color-task color="{{t.color}}" idx$="{{idx}}" colorname="{{t.colorName}}">{{t.html}}<paper-icon-button icon="close" on-click="removeTask" for-idx="{{idx}}"</paper-icon-button></asq-hl-color-task>
@@ -495,6 +494,9 @@
         this.$.leStem.innerHTML = this.stem;
       },
 
+      coreOverlayOpenCompleted: function (event, detail, sender) {
+        this.$.markupEditor.editor.resize();
+      },
 
       getRanges: function () {
         return this.aceHighlightManager.getHighlightRanges();
