@@ -257,16 +257,10 @@
         this._saveQuestion(['_bucketsListValue', '_labelsListValue']);
       }
 
-
-      /**
-      * TODO modify asq-buckets-q in order call these functions automatically when a label or backet
-      * is dinamically injected inside asq-buckets-q
-      */
       _updateLabelsandBackets() {
         Polymer.dom.flush();
         const viewer = Polymer.dom(this.$.asqBuckets.root).querySelector('asq-buckets-q-viewer');
-        viewer._setYItems(); // eslint-disable-line no-underscore-dangle
-        viewer._initItems(); // eslint-disable-line no-underscore-dangle
+        viewer._updateItems(); // eslint-disable-line no-underscore-dangle
       }
 
       _restoreQuestionState(state = {}) {
