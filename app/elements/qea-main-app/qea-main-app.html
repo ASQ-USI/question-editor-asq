@@ -61,7 +61,7 @@
       </iron-pages>
     </section>
 
-    <paper-toast id="toast" text="[[_toastMessage]]" duration="5000" ></paper-toast>
+    <qea-user-response id="notify"></qea-user-response>
 
   </template>
   <script>
@@ -84,10 +84,6 @@
         };
 
         this.properties = {
-          _toastMessage: {
-            type: String,
-            value: '',
-          },
           _isDragging: {
             type: Boolean,
             value: false,
@@ -97,21 +93,17 @@
           },
           _currentPage: {
             type: String,
-            value: 'canvas',
+            value: 'landingPage',
           },
         };
       }
 
-      _openToast(host, messageData) {
-        this._toastMessage = messageData.text;
-        if (messageData.type && messageData.type === 'error') {
-          this.$.toast.customStyle['--paper-toast-background-color'] = '#F44336';
-          this.$.toast.updateStyles();
+      _openToast(host, { type = 'default', text = '', properties }) {
+        if (type === 'error') {
+          this.$.notify.notifyError('', text, properties);
         } else {
-          this.$.toast.customStyle['--paper-toast-background-color'] = 'black';
-          this.$.toast.updateStyles();
+          this.$.notify.notify('', text, properties);
         }
-        this.$.toast.open();
       }
 
       _dragStart() {

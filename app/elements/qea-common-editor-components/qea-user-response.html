@@ -1,7 +1,7 @@
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../../bower_components/paper-toast/paper-toast.html">
 
-<dom-module id="qea-user-responce">
+<dom-module id="qea-user-response">
   <template>
     <style>
       :host {
@@ -44,14 +44,14 @@
   (function () {
     'use strict';
 
-    class qeaUserResponce {
+    class qeaUserResponse {
 
       get behaviors() {
         return [];
       }
 
       beforeRegister() {
-        this.is = 'qea-user-responce';
+        this.is = 'qea-user-response';
         this.properties = {
           /**
           * The duration in milliseconds to show the toast.
@@ -185,7 +185,7 @@
 
     }
 
-    Polymer(qeaUserResponce);
+    Polymer(qeaUserResponse);
   })();
   </script>
 </dom-module>

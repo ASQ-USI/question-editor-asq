@@ -45,14 +45,14 @@
 
         test('user should be able to set a solution', function() {
           var a = Polymer.dom(myEl.root).querySelectorAll('paper-button');
-          var solutionBt = null
+          var solutionBtn = null
           for (var i = 0; i < a.length; i++) {
             if (a[i].textContent.toLowerCase() == 'set solution') {
-              solutionBt = a[i];
+              solutionBtn = a[i];
               break;
             }
           }
-          assert.notEqual(solutionBt, null, 'no set solution button founded');
+          assert.notEqual(solutionBtn, null, 'no set solution button founded');
           assert.notEqual(myEl._setSolution, undefined, 'no _setSolutions function founded');
         });
 

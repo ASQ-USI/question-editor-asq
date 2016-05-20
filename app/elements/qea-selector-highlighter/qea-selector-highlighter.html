@@ -28,6 +28,7 @@
         position: relative;
       }
     </style>
+    <qea-user-response id="notify"></qea-user-response>
     <paper-material elevation=[[_elevation]] animated>
       <!-- pace where the text or question will be dinamically inserted -->
       <div id="content">
@@ -119,12 +120,13 @@
       }
 
       _removeComponet() {
-        const confirmation = confirm('Do you really want to delete this element ??');
-        if (confirmation) {
-          // delete the element
-          this.dispatch('removeElement', this.elementId);
-          this.fire('fireToast', { text: 'element removed' });
-        }
+        this.$.notify.notifyConfirm('Do you really want to delete this element ??')
+          .then((resp) => {
+            if (resp) {
+              this.dispatch('removeElement', this.elementId);
+              this.fire('fireToast', { text: 'element removed' });
+            }
+          });
       }
 
       getCode() {

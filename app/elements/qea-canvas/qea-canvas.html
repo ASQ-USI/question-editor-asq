@@ -30,7 +30,7 @@
     <qea-advanced-text-editor id="textEditor"></qea-advanced-text-editor>
     <div id="canvas" class="flex" on-tap="_selectItem" on-mouseover="_onHovered" on-mouseout="_onUnhovered">
       <sortable-js handle=".handle" scroll  animation="200" force-Fallback="true" >
-        <template is="dom-repeat" items={{objs}}  id="repeater">
+        <template is="dom-repeat" items={{nodesObjects}}  id="repeater">
           <qea-selector-highlighter
             selected-Id="[[selectedElemId]]"
             element-Id="[[item.id]]"
@@ -76,7 +76,7 @@
           * Questions or text to be rendered in canvas. This Prop is set by the redux store
           * @type {[{id:String, type:String, html:String, props: Object}, ...]}
           */
-          objs: {
+          nodesObjects: {
             type: Array,
             statePath: 'elements',
           },
