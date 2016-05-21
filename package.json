@@ -33,6 +33,7 @@
     "run-sequence": "^1.1.5"
   },
   "dependencies": {
+    "connect-history-api-fallback": "^1.2.0",
     "redux": "^3.4.0"
   }
 }

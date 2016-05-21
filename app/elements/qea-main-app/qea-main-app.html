@@ -32,14 +32,13 @@
     </style>
 
 
-    <qea-toolbar current-Page="[[pageData.page]]"></qea-toolbar>
+    <qea-toolbar current-Page="[[routeData.page]]"></qea-toolbar>
 
 
     <section id="canvas-container" class="flex layout horizontal">
       <asq-spinner id='spinner'></asq-spinner>
-
       <!-- be sure to add the "page-name" attribute to all the new pages inserted -->
-      <iron-pages id='pageController' selected="{{pageData.page}}" attr-For-Selected="page-name" class="flex layout horizontal" fallback-Selection="404">
+      <iron-pages id='pageController' selected="{{_page}}" attr-For-Selected="page-name" class="flex layout horizontal" fallback-Selection="404">
 
         <section class="page page0 layout horizontal flex" page-name='landingPage'>
           <qea-landing-page class="flex"></qea-landing-page>
@@ -67,19 +66,13 @@
     <qea-user-response id="notify"></qea-user-response>
 
     <!-- router -->
-    <app-location route="{{route}}" use-hash-as-path></app-location>
-    <app-route route="{{route}}"
-                pattern="/:page"
-                data="{{pageData}}"
-                tail="{{pageTail}}"></app-route>
-    <!-- /router -->
-
-    <!-- router -->
-    <app-location route="{{route}}" use-hash-as-path></app-location>
-    <app-route route="{{route}}"
-                pattern="/:page"
-                data="{{pageData}}"
-                tail="{{pageTail}}"></app-route>
+    <app-location route="{{route}}" ></app-location>
+    <app-route
+       route="{{route}}"
+       pattern="/:page"
+       data="{{routeData}}"
+       tail="{{subroute}}">
+    </app-route>
     <!-- /router -->
 
   </template>
@@ -101,8 +94,14 @@
           dragStart: '_dragStart',
           dragStop: '_dragStop',
         };
-
+        this.observers = [
+          '_routePageChanged(routeData.page)',
+        ];
         this.properties = {
+          _page: {
+            type: String,
+            reflectToAttribute: true,
+          },
           _isDragging: {
             type: Boolean,
             value: false,
@@ -118,7 +117,7 @@
       }
 
       attached() {
-        if (!this.route.path) {
+        if (!this.route.path || this.route.path === '/') {
           this.set('route.path', '/landingPage');
         }
       }
@@ -143,6 +142,10 @@
           // render the dropped element
           this._dropped = droppedElem;
         }
+      }
+
+      _routePageChanged(page) {
+        this._page = page || 'landingPage';
       }
 
       /**

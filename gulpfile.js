@@ -12,6 +12,7 @@ const babel = require('gulp-babel');
 const htmlreplace = require('gulp-html-replace');
 const replace = require('gulp-replace');
 const rename = require('gulp-rename');
+const historyApiFallback = require('connect-history-api-fallback');
 const browserSync = require('browser-sync').create();
 const reload = browserSync.reload;
 
@@ -30,7 +31,13 @@ gulp.task('clean', () => {
 // create a web server with live reload
 gulp.task('serve', ['transpile'], () => {
   browserSync.init({
-    server: ['.transpiled', './'],
+    server: {
+      baseDir: '.transpiled',
+      routes: {
+        '/bower_components': 'bower_components',
+      },
+      middleware: [historyApiFallback()],
+    },
     notify: false,
   });
   gulp.watch('app/**/*.{html, js}', ['transpile', reload]);
@@ -39,7 +46,13 @@ gulp.task('serve', ['transpile'], () => {
 // create a web server with live reload and linting
 gulp.task('serve:linter', ['transpile', 'linter'], () => {
   browserSync.init({
-    server: ['.transpiled', './'],
+    server: {
+      baseDir: '.transpiled',
+      routes: {
+        '/bower_components': 'bower_components',
+      },
+      middleware: [historyApiFallback()],
+    },
     notify: false,
   });
   gulp.watch('app/**/*.{html, js}', ['transpile', 'linter', reload]);
