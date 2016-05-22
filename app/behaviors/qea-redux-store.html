@@ -2,7 +2,7 @@
 window.qeaBehaviors = window.qeaBehaviors || {};
 
 const initialState = {
-  id: 0, // id of the current page
+  id: 1234, // id of the current page
   elements: [
     // elements inside canvas using this format: {id, type:(text|question), html, props}.
     // The index of the array will represent the render order
@@ -74,7 +74,7 @@ function appReducer(state = initialState, action) {
         elements: elementsReducer(state.elements, action),
       });
     case 'RESET_STATE':
-      state = undefined; // eslint-disable-line no-param-reassign
+      state = { id: 1234, elements: action.state }; // eslint-disable-line no-param-reassign
       return state;
     default:
       return state;

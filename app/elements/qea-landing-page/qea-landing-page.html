@@ -19,8 +19,31 @@
         right: 40px;
         bottom: 40px;
       }
+      .card{
+        margin: 20px;
+        /*--paper-card:{
+          width: 250px;
+          height: 170px
+        }*/
+      }
+      #remove{
+        color: #f44336
+      }
     </style>
+    <iron-localstorage name="my-app-storage"
+      value="{{exerciseStore}}">
+    </iron-localstorage>
     <div class="container">
+      <template is="dom-if" if="[[_checkStore(exerciseStore)]]">
+        <paper-card heading="[[exerciseStore.eid]]" class="card">
+          <div class="card-content">we have foud a presentation<br> do
+            you whant to restore it?</div>
+          <div class="card-actions">
+            <paper-button id="remove" on-tap="_remove">remove</paper-button>
+            <paper-button id="restore" on-tap="_restore">restore</paper-button>
+          </div>
+        </paper-card>
+      </template>
       <paper-fab  icon="add" on-tap="_newPresentation"></paper-fab>
     </div>
 
@@ -37,12 +60,32 @@
 
       beforeRegister() {
         this.is = 'qea-landing-page';
-        this.properties = {};
+        this.properties = {
+          exerciseStore: {
+            type: Object,
+            value: () => { return {}; },
+          },
+        };
       }
 
       // go to new page
       _newPresentation() {
-        this.fire('changePage', { selectedPage: 'canvas' });
+        this.fire('changePage', { selectedPage: 'canvas', exerciseId: Math.floor((Math.random() * 10000)) });
+      }
+
+      _checkStore(store = {}) {
+        if (store && store.elements) {
+          return (store.elements.length > 0);
+        }
+        return false;
+      }
+
+      _restore() {
+        this.fire('changePage', { selectedPage: 'canvas', exerciseId: this.exerciseStore.eid });
+      }
+
+      _remove() {
+        this.exerciseStore = null;
       }
 
     }

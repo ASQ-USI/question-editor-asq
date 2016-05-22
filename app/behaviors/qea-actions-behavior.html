@@ -40,8 +40,8 @@
           newIndex: newIndex, // eslint-disable-line object-shorthand
         };
       },
-      resetState: () => {
-        return { type: 'RESET_STATE' };
+      resetState: (state = null) => {
+        return { type: 'RESET_STATE', state };
       },
     },
   };

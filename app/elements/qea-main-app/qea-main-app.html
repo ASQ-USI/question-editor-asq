@@ -32,7 +32,7 @@
     </style>
 
 
-    <qea-toolbar current-Page="[[routeData.page]]"></qea-toolbar>
+    <qea-toolbar current-Page="[[_page]]"></qea-toolbar>
 
 
     <section id="canvas-container" class="flex layout horizontal">
@@ -118,7 +118,7 @@
 
       attached() {
         if (!this.route.path || this.route.path === '/') {
-          this.set('route.path', '/landingPage');
+          this.set('route.path', '/home');
         }
       }
 
@@ -144,8 +144,38 @@
         }
       }
 
-      _routePageChanged(page) {
-        this._page = page || 'landingPage';
+      _routePageChanged(page = '/home') {
+        switch (page.toLowerCase()) {
+          case 'home':
+          case 'splash':
+          case '':
+            this._page = 'landingPage';
+            break;
+          case 'exercise':
+            this._page = 'canvas';
+            break;
+          case 'question':
+            this._page = 'questionEditor';
+            break;
+          default:
+            this._page = '404';
+        }
+      }
+
+      _setRoute(internalPage, id = '') {
+        switch (internalPage) {
+          case 'landingPage':
+            this.set('route.path', '/home');
+            break;
+          case 'canvas':
+            this.set('route.path', `/exercise/${id}`);
+            break;
+          case 'questionEditor':
+            this.set('route.path', `/question/${id}/edit`);
+            break;
+          default:
+            this.set('route.path', '/404');
+        }
       }
 
       /**
@@ -156,14 +186,15 @@
       *        pageData: Object contained the informations defined in qea-questions-list. Defined only when drag a question.
       *        questionInfo: Object containing the informations of an already created question
       */
-      _changePage(host, { selectedPage, pageData = null, questionInfo = { id: null, props: {}, type: '' } }) {
+      _changePage(host, { selectedPage, pageData = null,
+        questionInfo = { id: null, props: {}, type: '' }, exerciseId }) {
         for (const page of this.$.pageController.items) {
           if (page.getAttribute('page-name') === selectedPage) {
             if (selectedPage === 'questionEditor') {
               this._moveToquestionPage(questionInfo, pageData);
               return;
             }
-            this.set('route.path', `/${selectedPage}`);
+            this._setRoute(selectedPage, exerciseId);
             return;
           }
         }
@@ -189,7 +220,7 @@
           const elem = this._createElement(name, true, { questionId: id, restoreState: props });
           elem.classList.add('flex');
           Polymer.dom(this.$.questionEditorPage).appendChild(elem);
-          this.set('route.path', '/questionEditor');
+          this._setRoute('questionEditor');
           return;
         }
         this.toggleAttribute('active', true, this.$.spinner);
@@ -203,7 +234,7 @@
               Polymer.dom(this.$.questionEditorPage).appendChild(elem);
               elem.classList.add('flex');
               this.toggleAttribute('active', false, this.$.spinner);
-              this.set('route.path', '/questionEditor');
+              this._setRoute('questionEditor');
             }, 1000);
           },
           () => {

@@ -23,6 +23,21 @@
       }
 
     </style>
+    <!-- router -->
+    <app-location route="{{route}}" ></app-location>
+    <app-route
+       route="{{route}}"
+       pattern="/exercise/:eid"
+       data="{{routeData}}"
+       tail="{{subroute}}">
+    </app-route>
+    <!-- /router -->
+
+    <iron-localstorage name="my-app-storage"
+      value="{{exerciseStore}}"
+      on-iron-localstorage-load-empty="_initializeDefaultExercise">
+    </iron-localstorage>
+
     <qea-advanced-code-editor id="codeEditor"
       label="Copy this code"
       mode="xml"
@@ -59,6 +74,9 @@
 
       beforeRegister() {
         this.is = 'qea-canvas';
+        this.observers = [
+          '_restoreExercise(routeData.eid)',
+        ];
         this.properties = {
           /**
           * Whether the user is dragging an item into the canvas.
@@ -79,6 +97,7 @@
           nodesObjects: {
             type: Array,
             statePath: 'elements',
+            observer: 'saveStorage',
           },
           /**
           * Object representing the values described in qea-questions-list for the dropped question.
@@ -95,6 +114,9 @@
           isHover: {
             type: Boolean,
             value: false,
+          },
+          exerciseStore: {
+            type: Object,
           },
         };
       }
@@ -161,6 +183,27 @@
         code = code.replace(/^\s*[\r\n]/gm, '');
         code = code.replace(/^ +/gm, '');
         this.$.codeEditor.openCodeDialog(code);
+      }
+
+      _restoreExercise(eid) {
+        // 8994196350
+        this.async(() => {
+          if (this.exerciseStore && this.exerciseStore.eid && this.exerciseStore.eid === eid) {
+            // restore
+            this.dispatch('resetState', this.exerciseStore.elements);
+          } else if (eid) {
+            this.set('exerciseStore.elements', []);
+            this.set('exerciseStore.eid', eid);
+          }
+        }, 200);
+      }
+
+      _initializeDefaultExercise() {
+        this.exerciseStore = { eid: null };
+      }
+
+      saveStorage(arrayOfNode = []) {
+        this.set('exerciseStore.elements', arrayOfNode);
       }
 
     }
