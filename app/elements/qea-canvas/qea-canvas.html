@@ -167,19 +167,11 @@
 
       showCode() {
         const elements = Polymer.dom(this.root).querySelectorAll('qea-selector-highlighter');
-        let code = '';
+        let code = '<asq-exercise>\n';
         for (const elem of elements) {
-          if (elem.type === 'text') {
-            code += elem.getCode();
-          } else {
-            code +=
-            `
-            <asq-exercise>
-              ${elem.getCode()}
-            </asq-exercise>
-            `;
-          }
+          code += elem.getCode();
         }
+        code += '\n</asq-exercise>';
         code = code.replace(/^\s*[\r\n]/gm, '');
         code = code.replace(/^ +/gm, '');
         this.$.codeEditor.openCodeDialog(code);

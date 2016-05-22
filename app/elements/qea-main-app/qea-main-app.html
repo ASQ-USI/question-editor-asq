@@ -220,7 +220,7 @@
           const elem = this._createElement(name, true, { questionId: id, restoreState: props });
           elem.classList.add('flex');
           Polymer.dom(this.$.questionEditorPage).appendChild(elem);
-          this._setRoute('questionEditor');
+          this._setRoute('questionEditor', id);
           return;
         }
         this.toggleAttribute('active', true, this.$.spinner);
