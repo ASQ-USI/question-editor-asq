@@ -46,7 +46,6 @@ qeaBehaviors.generalEditorsBehavior = {
     * Property containing the solution of the question
     */
     questionSolution: String,
-
   },
 
   /**
@@ -107,7 +106,7 @@ qeaBehaviors.generalEditorsBehavior = {
   _saveQuestion: function (propertiesToSave, solution = this.questionSolution) { // eslint-disable-line consistent-return
     const toast = Polymer.dom(this.root).querySelector('qea-user-response');
     if (!solution && solution !== false || solution === '') {
-      toast.notifyConfirm('Worning', `<p>you haven't provided a solution for this question.</p> 
+      toast.notifyConfirm('Worning', `<p>you haven't provided a solution for this question.</p>
         <p>Do you want to continue anyway?</p>`)
         .then((resp) => {
           if (resp) {

@@ -15,7 +15,11 @@
   <template>
     <style include="qea-three-column-layout"></style>
     <style>
-
+      .multyChoiceOption{
+        display: block;
+        padding: 5px;
+        margin: 5px 0;
+      }
     </style>
     <qea-user-response></qea-user-response>
 
@@ -71,13 +75,10 @@
         selected=[[qeaRepeatValues.selected]]
         selectable=[[qeaRepeatValues.selectable]]>
 
-        <asq-stem><span id="stemContent" inner-H-t-m-l={{qTitleVal}}></span></asq-stem>
-
+        <asq-stem class="multiChoiceStem"><span id="stemContent" inner-H-t-m-l={{qTitleVal}}></span></asq-stem>
         <template is="dom-repeat" items="[[_optionsValue]]">
-          <asq-option name='[[item.label]]'>[[item.label]]</asq-option>
+          <asq-option name='[[item.label]]' class="multyChoiceOption">[[item.label]]</asq-option>
         </template>
-
-
 
         <asq-solution hidden>[[solution]]</asq-solution>
       </asq-multi-choice-q>
@@ -175,9 +176,16 @@
         let options = '';
         let opt;
         for (opt of this._optionsValue) {
-          options += `\t\t<asq-option name='${opt.label}'>${opt.label}</asq-option>\n`;
+          options += `\t\t<asq-option name="${opt.label}"class="multyChoiceOption">${opt.label}</asq-option>\n`;
         }
         const code = `
+        <style>
+          .multyChoiceOption{
+            display: block;
+            padding: 5px;
+            margin: 5px 0;
+          }
+        </style>
         \t<asq-multi-choice-q id='multiQuestion'
           \t${this.qeaRepeatValues.multi === 'true' ? 'multi' : ''}
           \t${this.qeaRepeatValues.disabled === 'true' ? 'disabled' : ''}

@@ -38,7 +38,7 @@
     <section id="canvas-container" class="flex layout horizontal">
       <asq-spinner id='spinner'></asq-spinner>
       <!-- be sure to add the "page-name" attribute to all the new pages inserted -->
-      <iron-pages id='pageController' selected="{{_page}}" attr-For-Selected="page-name" class="flex layout horizontal" fallback-Selection="404">
+      <iron-pages id='pageController' selected="{{_page}}" attr-for-selected="page-name" class="flex layout horizontal" fallback-selection="404">
 
         <section class="page page0 layout horizontal flex" page-name='landingPage'>
           <qea-landing-page class="flex"></qea-landing-page>
@@ -55,7 +55,9 @@
           </nav>
         </section>
 
-        <section class="page flex layout horizontal page3" id='questionEditorPage' page-name="questionEditor"></section>
+        <section class="page flex layout horizontal page3" id='questionEditorPage' page-name="questionEditor">
+          <!-- <qea-editor-page></qea-editor-page> -->
+        </section>
 
         <section class="page flex layout horizontal page4" page-name="404">
           <qea-404-page></qea-404-page>
