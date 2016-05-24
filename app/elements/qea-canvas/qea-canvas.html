@@ -9,6 +9,7 @@
 <link rel="import" href="../../../bower_components/Sortable/Sortable.html">
 <link rel="import" href="../../behaviors/qea-redux-store.html">
 <link rel="import" href="../../behaviors/qea-actions-behavior.html">
+<link rel="import" href="../../behaviors/qea-app-behavior.html">
 <link rel="import" href="../qea-selector-highlighter/qea-selector-highlighter.html">
 
 <dom-module id="qea-canvas">
@@ -28,11 +29,11 @@
       }
 
     </style>
+
     <!-- router -->
-    <app-location route="{{route}}" ></app-location>
     <app-route
        route="{{route}}"
-       pattern="/exercise/:eid"
+       pattern="/:eid"
        data="{{routeData}}"
        tail="{{subroute}}">
     </app-route>
@@ -72,6 +73,7 @@
 
       get behaviors() {
         return [
+          qeaBehaviors.appBehavior,
           qeaBehaviors.actionsBehavior,
           qeaBehaviors.reduxStore,
         ];
@@ -80,9 +82,12 @@
       beforeRegister() {
         this.is = 'qea-canvas';
         this.observers = [
-          '_restoreExercise(routeData.eid)',
+          '_loadExercise(routeData.eid, exerciseStore)',
         ];
         this.properties = {
+          exerciseId: {
+            type: String,
+          },
           /**
           * Whether the user is dragging an item into the canvas.
           */
@@ -150,7 +155,10 @@
       _notifyDrop(el) {
         this.toggleClass('qea-selected', false, this.$.canvas);
         if (this.isHover) {
-          this.fire('changePage', { selectedPage: 'questionEditor', pageData: el.questionDetails });
+          const a = el.questionDetails;
+          this.fire('changePage',
+            { pageURL: `/question/new_question/edit?editor=${a.bowerName}&eid=${this.exerciseId}` }
+          );
         }
       }
 
@@ -182,17 +190,24 @@
         this.$.codeEditor.openCodeDialog(code);
       }
 
-      _restoreExercise(eid) {
-        // 8994196350
-        this.async(() => {
-          if (this.exerciseStore && this.exerciseStore.eid && this.exerciseStore.eid === eid) {
-            // restore
-            this.dispatch('resetState', this.exerciseStore.elements);
-          } else if (eid) {
+      _loadExercise(eid, localStore) {
+        if (eid) {
+          if (eid === 'new') {
+            // create new
+            const newEid = this.__idGenerator();
+            this.exerciseId = newEid;
+            this.set('exerciseStore.eid', newEid);
             this.set('exerciseStore.elements', []);
-            this.set('exerciseStore.eid', eid);
+            this.set('routeData.eid', `${newEid}`);
+          } else if (localStore.eid && localStore.eid === eid) {
+            // restore
+            this.exerciseId = eid;
+            this.dispatch('resetState', this.exerciseStore.elements);
+          } else {
+            this.fire('fireToast', { text: "We can't find an exercice with that id", type: 'error' });
+            this.fire('changePage', { pageURL: '404' });
           }
-        }, 200);
+        }
       }
 
       _initializeDefaultExercise() {

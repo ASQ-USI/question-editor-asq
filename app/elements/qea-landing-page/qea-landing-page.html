@@ -4,6 +4,7 @@
 <link rel="import" href="../../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../../bower_components/app-route/app-location.html">
 <link rel="import" href="../qea-common-editor-components/qea-user-response.html">
 
 <dom-module id="qea-landing-page">
@@ -26,15 +27,12 @@
       }
       .card{
         margin: 20px;
-        /*--paper-card:{
-          width: 250px;
-          height: 170px
-        }*/
       }
       #remove{
         color: #f44336
       }
     </style>
+    <app-location route="{{route}}" ></app-location>
     <qea-user-response id="notify"></qea-user-response>
 
     <iron-localstorage name="my-app-storage"
@@ -56,7 +54,7 @@
           </div>
         </paper-card>
       </template>
-      <paper-fab  icon="add" on-tap="_newPresentation"></paper-fab>
+      <paper-fab  icon="add" on-tap="_newExercise"></paper-fab>
     </div>
 
   </template>
@@ -81,17 +79,16 @@
       }
 
       // go to new page
-      _newPresentation() {
+      _newExercise() {
         if (this._checkStore(this.exerciseStore)) {
           this.$.notify.notifyConfirm('Warning', 'if you continue presentation will be overridden')
             .then((responce) => {
               if (responce) {
-                this.fire('changePage', { selectedPage: 'canvas',
-                  exerciseId: Math.floor((Math.random() * 10000)) });
+                this.set('route.path', '/exercise/new');
               }
             });
         } else {
-          this.fire('changePage', { selectedPage: 'canvas', exerciseId: Math.floor((Math.random() * 10000)) });
+          this.set('route.path', '/exercise/new');
         }
       }
 
@@ -103,7 +100,7 @@
       }
 
       _restore() {
-        this.fire('changePage', { selectedPage: 'canvas', exerciseId: this.exerciseStore.eid });
+        this.set('route.path', `/exercise/${this.exerciseStore.eid}`);
       }
 
       _remove() {

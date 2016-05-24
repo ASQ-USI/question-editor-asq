@@ -11,10 +11,14 @@ qeaBehaviors.generalEditorsBehavior = {
   properties: {
     /**
     * The id of the question. DON'T MODIFY
-    * It will be automatically set and it will be set only if you are modifing an
-    * already existing question.
+    * It will be automatically set
     */
     questionId: String,
+    /**
+    * The id of the exercise that contains this question. DON'T MODIFY
+    * It will be automatically set
+    */
+    exerciseId: String,
     /**
     * Object useful to store the result of a qea-property-editor-repeater.
     * if you add more qea-property-editor-repeater be sure to assign an id to them,
@@ -87,6 +91,7 @@ qeaBehaviors.generalEditorsBehavior = {
   */
   _getQuestionState: function (propertyToInclude) {
     let props = propertyToInclude || [];
+    props.push('exerciseId');
     props.push('viewAdvanced');
     props.push('qeaRepeatValues');
     if (this.questionSolution) { props.push('questionSolution'); }
@@ -117,7 +122,7 @@ qeaBehaviors.generalEditorsBehavior = {
             } else {
               this.dispatch('addElement', this.tagName.toLowerCase(), code, state);
             }
-            this.fire('changePage', { selectedPage: 'canvas' });
+            this._previousPage();
             return true;
           }
           return false;
@@ -130,7 +135,7 @@ qeaBehaviors.generalEditorsBehavior = {
       } else {
         this.dispatch('addElement', this.tagName.toLowerCase(), code, state);
       }
-      this.fire('changePage', { selectedPage: 'canvas' });
+      this._previousPage();
       return true;
     }
   },
@@ -173,9 +178,17 @@ qeaBehaviors.generalEditorsBehavior = {
     toast.notifyConfirm('Do you really want to exit?', 'all the chenges will be lost')
       .then((resp) => {
         if (resp) {
-          this.fire('changePage', { selectedPage: 'canvas' });
+          this._previousPage();
         }
       });
+  },
+
+  _previousPage() {
+    if (this.exerciseId) {
+      this.fire('changePage', { pageURL: `/exercise/${this.exerciseId}` });
+    } else {
+      this.fire('changePage', { pageURL: '/home' });
+    }
   },
 
 };

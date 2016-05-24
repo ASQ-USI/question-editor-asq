@@ -13,7 +13,7 @@ qeaBehaviors.appBehavior = {
     return `${p}/bower_components/${tagName.toLowerCase()}/${tagName.toLowerCase()}.html`;
   },
 
-  idGenerator() {
+  __idGenerator() {
     const s4 = () => {
       return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
     };
