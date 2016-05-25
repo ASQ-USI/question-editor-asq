@@ -4,7 +4,8 @@
   "description": "question editor for ASQ wab app",
   "main": "electron.js",
   "scripts": {
-    "test": "gulp transpile && wct app/test"
+    "test": "gulp transpile && wct app/test",
+    "start" "gulp serve"
   },
   "repository": {
     "type": "git",
@@ -30,7 +31,8 @@
     "gulp-rename": "^1.2.2",
     "gulp-replace": "^0.5.4",
     "gulp-vulcanize": "^6.1.0",
-    "run-sequence": "^1.1.5"
+    "run-sequence": "^1.1.5",
+    "web-component-tester": "^4.2.2"
   },
   "dependencies": {
     "connect-history-api-fallback": "^1.2.0",
