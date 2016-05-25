@@ -51,7 +51,7 @@
           });
           myEl._cancel()
           flush(function () {
-            myEl.$$('qea-user-responce').$$('#confirm').click();
+            myEl.$$('qea-user-response').$$('#confirm').click();
           })
         })
 
@@ -59,7 +59,7 @@
           assert.equal(myEl.questionSolution , undefined);
           myEl._setSolution('test')
           flush(function () {
-            myEl.$$('qea-user-responce').$$('#confirm').click();
+            myEl.$$('qea-user-response').$$('#confirm').click();
             Polymer.Base.async(function () {
               assert.equal(myEl.questionSolution , 'test');
               done()

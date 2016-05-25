@@ -1,0 +1,122 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/asq-spinner/asq-spinner.html">
+<link rel="import" href="../../behaviors/qea-app-behavior.html">
+
+<dom-module id="qea-qeditor-page">
+  <template>
+    <style include="iron-flex">
+      :host {
+        display: block;
+      }
+    </style>
+    <!-- router -->
+
+    <app-route
+      query-params="{{query}}"
+      route="{{route}}"
+      pattern="/:qid/edit"
+      data="{{routeData}}">
+    </app-route>
+
+    <iron-localstorage name="my-app-storage"
+      value="{{exerciseStore}}">
+    </iron-localstorage>
+
+    <div id="editorContainer" class="flex layout horizontal">
+
+    </div>
+  </template>
+  <script>
+  (function () {
+    'use strict';
+
+    class qeaQeditorPage {
+
+      get behaviors() {
+        return [qeaBehaviors.appBehavior];
+      }
+
+      beforeRegister() {
+        this.is = 'qea-qeditor-page';
+        this.observers = [
+          '_questionChanged(routeData.qid, exerciseStore, query.editor, query.eid)',
+        ];
+        this.properties = {};
+      }
+
+      _questionChanged(qid, b, c, d) {
+        if (qid) {
+          if (qid === 'new_question') {
+            // create new question
+            const newQid = this.__idGenerator();
+            this.push('exerciseStore.elements', { elementId: newQid });
+            this.set('routeData.qid', newQid);
+            this._importHtml(null, c, d);
+          } else {
+            // restore
+            this._importHtml(qid, c, d);
+          }
+        } else if (qid === '') {
+          this.set('route.path', '404');
+        }
+      }
+
+      _importHtml(qid, editor, eid) {
+        Polymer.Base.importHref(
+          this._resolveLocalPath(editor),
+          this._successImport(qid, editor, eid),
+          () => {
+            this.fire('fireToast', { text: 'Wrong or unspecified editor for that question', type: 'error' });
+          }, false);
+      }
+
+      _successImport(qid, editor, eid) {
+        const oldEditors = Polymer.dom(this.$.editorContainer).childNodes;
+        for (const edit of oldEditors) {
+          Polymer.dom(this.$.editorContainer).removeChild(edit);
+        }
+        let props = {};
+        if (qid) {
+          // restore
+          props = this._searchQuestion(qid);
+        }
+        if (props === null) {
+          this.fire('fireToast', { text: "We can't find that question", type: 'error' });
+          return;
+        }
+        props.exerciseId = eid;
+        // create
+        const elem = Polymer.Base.create(editor, props);
+        elem.classList.add('flex');
+        this.async(() => {
+          Polymer.dom(this.$.editorContainer).appendChild(elem);
+        }, 1000);
+      }
+
+      _resolveLocalPath(tagName = '') {
+        const p = typeof __dirname === 'undefined' ? '../..' : __dirname;
+        return `${p}/elements/${tagName.toLowerCase()}/${tagName.toLowerCase()}.html`;
+      }
+
+      _searchQuestion(qid) {
+        if (this.exerciseStore) {
+          for (const question of this.exerciseStore.elements) {
+            if (question.questionId === qid) {
+              return question;
+            }
+          }
+        }
+
+        return null;
+      }
+
+    }
+
+    Polymer(qeaQeditorPage);
+  })();
+  </script>
+</dom-module>

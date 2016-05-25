@@ -1,4 +1,8 @@
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/paper-tooltip/paper-tooltip.html">
 
 <dom-module id="qea-toolbar">
   <template>
@@ -94,10 +98,9 @@
 
       _showChecker(currentPage) {
         switch (currentPage) {
-          case 'canvas':
+          case 'exercise':
             this._isVisible = true;
             break;
-          case 'landingPage':
           default:
             this._isVisible = false;
             return;

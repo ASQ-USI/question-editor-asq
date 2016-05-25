@@ -9,15 +9,19 @@
 <link rel="import" href="../../behaviors/qea-redux-store.html">
 <link rel="import" href="../../behaviors/qea-actions-behavior.html">
 <link rel="import" href="../qea-common-editor-components/qea-items-list.html">
-<link rel="import" href="../qea-common-editor-components/qea-user-responce.html">
+<link rel="import" href="../qea-common-editor-components/qea-user-response.html">
 
 <dom-module id="asq-multi-choice-q-editor">
   <template>
     <style include="qea-three-column-layout"></style>
     <style>
-
+      .multyChoiceOption{
+        display: block;
+        padding: 5px;
+        margin: 5px 0;
+      }
     </style>
-    <qea-user-responce></qea-user-responce>
+    <qea-user-response></qea-user-response>
 
     <!-- leftPanel -->
     <div id="leftPanel">
@@ -63,7 +67,7 @@
         To modify the elements in this area, change the values in the left column
       </div>
 
-      <asq-multi-choice-q id='multyQuestion'
+      <asq-multi-choice-q id='multiQuestion'
         multi=[[qeaRepeatValues.multi]]
         disabled=[[qeaRepeatValues.disabled]]
         value={{qeaRepeatValues.value}}
@@ -71,21 +75,18 @@
         selected=[[qeaRepeatValues.selected]]
         selectable=[[qeaRepeatValues.selectable]]>
 
-        <asq-stem><span id="stemContent" inner-H-t-m-l={{qTitleVal}}></span></asq-stem>
-
+        <asq-stem class="multiChoiceStem"><span id="stemContent" inner-H-t-m-l={{qTitleVal}}></span></asq-stem>
         <template is="dom-repeat" items="[[_optionsValue]]">
-          <asq-option name='[[item.label]]'>[[item.label]]</asq-option>
+          <asq-option name='[[item.label]]' class="multyChoiceOption">[[item.label]]</asq-option>
         </template>
-
-
 
         <asq-solution hidden>[[solution]]</asq-solution>
       </asq-multi-choice-q>
 
       <div class="controlPanel">
         <paper-button raised on-tap="_cancel">cancel</paper-button>
-        <paper-button raised id="solutionBt" on-tap='_setSolution1' noink>Set solution</paper-button>
-        <paper-button raised on-tap='_saveQuestion1'>save</paper-button>
+        <paper-button raised id="solutionBtn" on-tap='_solutionBtnTapped' noink>Set solution</paper-button>
+        <paper-button raised on-tap='_saveQuestionTapped'>save</paper-button>
       </div>
     </div>
 
@@ -175,13 +176,20 @@
         let options = '';
         let opt;
         for (opt of this._optionsValue) {
-          options += `\t\t<asq-option name='${opt.label}'>${opt.label}</asq-option>\n`;
+          options += `\t\t<asq-option name="${opt.label}"class="multyChoiceOption">${opt.label}</asq-option>\n`;
         }
         const code = `
-        \t<asq-multi-choice-q id='multyQuestion'
+        <style>
+          .multyChoiceOption{
+            display: block;
+            padding: 5px;
+            margin: 5px 0;
+          }
+        </style>
+        \t<asq-multi-choice-q id='multiQuestion'
           \t${this.qeaRepeatValues.multi === 'true' ? 'multi' : ''}
           \t${this.qeaRepeatValues.disabled === 'true' ? 'disabled' : ''}
-          \tvalue='${JSON.stringify(this.$.multyQuestion.value)}'
+          \tvalue='${JSON.stringify(this.$.multiQuestion.value)}'
           \tselected-Class='${this.qeaRepeatValues.selectedClassc || ''}'
           \tselected='${this.qeaRepeatValues.selected || ''}'
           \tselectable='${this.qeaRepeatValues.selectable || ''}'>
@@ -194,11 +202,11 @@
         return code;
       }
 
-      _setSolution1() {
-        this._setSolution(JSON.stringify(this.$.multyQuestion.value));
+      _solutionBtnTapped() {
+        this._setSolution(JSON.stringify(this.$.multiQuestion.value));
       }
 
-      _saveQuestion1() {
+      _saveQuestionTapped() {
         this._saveQuestion(['qTitleVal', '_optionsValue']);
       }
 

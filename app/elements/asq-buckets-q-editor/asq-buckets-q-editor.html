@@ -11,7 +11,7 @@
 <link rel="import" href="../qea-common-editor-components/qea-three-column-layout.html">
 <link rel="import" href="../qea-common-editor-components/qea-three-column-layout.html">
 <link rel="import" href="../qea-common-editor-components/qea-editors-behavior.html">
-<link rel="import" href="../qea-common-editor-components/qea-user-responce.html">
+<link rel="import" href="../qea-common-editor-components/qea-user-response.html">
 <link rel="import" href="../../behaviors/qea-redux-store.html">
 <link rel="import" href="../../behaviors/qea-actions-behavior.html">
 
@@ -48,7 +48,7 @@
       }
 
     </style>
-    <qea-user-responce></qea-user-responce>
+    <qea-user-response></qea-user-response>
 
     <!-- leftPanel -->
     <div id="leftPanel">
@@ -130,8 +130,8 @@
 
       <div class="controlPanel">
         <paper-button raised on-tap="_cancel">cancel</paper-button>
-        <paper-button raised id="solutionBt" on-tap='_setSolution1' noink>set solution</paper-button>
-        <paper-button raised on-tap='_saveQuestion1'>save</paper-button>
+        <paper-button raised id="solutionBtn" on-tap='_solutionBtnTapped' noink>set solution</paper-button>
+        <paper-button raised on-tap='_saveQuestionTapped'>save</paper-button>
       </div>
     </div>
 
@@ -249,24 +249,18 @@
         return code;
       }
 
-      _setSolution1() {
+      _solutionBtnTapped() {
         this._setSolution(this.$.asqBuckets.value);
       }
 
-      _saveQuestion1() {
+      _saveQuestionTapped() {
         this._saveQuestion(['_bucketsListValue', '_labelsListValue']);
       }
 
-
-      /**
-      * TODO modify asq-buckets-q in order call these functions automatically when a label or backet
-      * is dinamically injected inside asq-buckets-q
-      */
       _updateLabelsandBackets() {
         Polymer.dom.flush();
         const viewer = Polymer.dom(this.$.asqBuckets.root).querySelector('asq-buckets-q-viewer');
-        viewer._setYItems(); // eslint-disable-line no-underscore-dangle
-        viewer._initItems(); // eslint-disable-line no-underscore-dangle
+        viewer._updateItems(); // eslint-disable-line no-underscore-dangle
       }
 
       _restoreQuestionState(state = {}) {
