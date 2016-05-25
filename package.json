@@ -5,7 +5,7 @@
   "main": "electron.js",
   "scripts": {
     "test": "gulp transpile && wct app/test",
-    "start" "gulp serve"
+    "start": "gulp serve"
   },
   "repository": {
     "type": "git",
