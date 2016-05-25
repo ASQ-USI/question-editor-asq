@@ -49,20 +49,22 @@
       }
 
       _questionChanged(qid, b, c, d) {
-        if (qid) {
-          if (qid === 'new_question') {
-            // create new question
-            const newQid = this.__idGenerator();
-            this.push('exerciseStore.elements', { elementId: newQid });
-            this.set('routeData.qid', newQid);
-            this._importHtml(null, c, d);
-          } else {
-            // restore
-            this._importHtml(qid, c, d);
+        this.debounce('doSomething', function () {
+          if (qid) {
+            if (qid === 'new_question') {
+              // create new question
+              const newQid = this.__idGenerator();
+              this.push('exerciseStore.elements', { elementId: newQid });
+              this.set('routeData.qid', newQid);
+              // this._importHtml(null, c, d);
+            } else {
+              // restore
+              this._importHtml(qid, c, d);
+            }
+          } else if (qid === '') {
+            this.set('route.path', '404');
           }
-        } else if (qid === '') {
-          this.set('route.path', '404');
-        }
+        });
       }
 
       _importHtml(qid, editor, eid) {
