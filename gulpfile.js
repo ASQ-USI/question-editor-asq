@@ -11,6 +11,7 @@ const vulcanize = require('gulp-vulcanize');
 const babel = require('gulp-babel');
 const htmlreplace = require('gulp-html-replace');
 const replace = require('gulp-replace');
+const sourcemaps = require('gulp-sourcemaps');
 const rename = require('gulp-rename');
 const historyApiFallback = require('connect-history-api-fallback');
 const browserSync = require('browser-sync').create();
@@ -66,10 +67,12 @@ gulp.task('transpile', ['copyFiles'], () => {
       scriptInHead: false, // true is default
       onlySplit: false,
     }))
+    .pipe(sourcemaps.init())
     .pipe(babel({
       presets: ['es2015'],
       only: '*.js',
     }))
+    .pipe(sourcemaps.write('.'))
     .pipe(gulpif(!ISDISTMODE, plumber.stop()))
     .pipe(gulp.dest('./.transpiled'));
 });

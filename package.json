@@ -36,6 +36,7 @@
   },
   "dependencies": {
     "connect-history-api-fallback": "^1.2.0",
+    "gulp-sourcemaps": "^1.6.0",
     "redux": "^3.4.0"
   }
 }
