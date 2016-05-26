@@ -8,16 +8,7 @@
     <link rel="import" href="../../bower_components/polymer-redux/polymer-redux.html">
 
 
-    <!-- <link rel="import" href="../../.transpiled/elements/elements.html"> -->
-    <link rel="import" href="../../.transpiled/behaviors/qea-redux-store.html">
-    <link rel="import" href="../../.transpiled/behaviors/qea-actions-behavior.html">
     <link rel="import" href="../../.transpiled/elements/qea-canvas/qea-canvas.html">
-    <link rel="import" href="../../bower_components/qea-property-editor/qea-advanced-code-editor.html">
-    <link rel="import" href="../../bower_components/qea-property-editor/qea-advanced-text-editor.html">
-    <link rel="import" href="../../.transpiled/elements/qea-selector-highlighter/qea-selector-highlighter.html">
-    <link rel="import" href="../../bower_components/Sortable/Sortable.html">
-
-
 
   </head>
   <body>
@@ -52,18 +43,43 @@
           })
         });
 
-        test('set droppedElem fires changePage event', function (done) {
+        test('set droppedElem fires changePage event with the correct URL', function (done) {
           myEl._onHovered();
+          myEl.exerciseId = '1234';
           myEl.addEventListener('changePage', function(event) {
-            assert.equal(event.detail.selectedPage, 'questionEditor');
-            assert.notEqual(event.detail.pageData, undefined);
-            assert.equal(event.detail.pageData.bowerName, 'asq-text-input-q-editor');
-            assert.equal(event.detail.pageData.label, 'text input');
+            assert.equal(event.detail.pageURL, '/question/new/edit?type=asq-text-input-q-editor&eid=1234');
             done();
           });
-          myEl.droppedElem = {dragDetails: {}, questionDetails: {bowerName: 'asq-text-input-q-editor', label:'text input'} };
+          myEl.droppedElem = {dragDetails: {}, questionDetails: {type: 'asq-text-input-q-editor', label:'text input'} };
         })
 
+        test('correctly render elements of redux store', function (done) {
+          assert.equal(0, Polymer.dom(myEl.$.canvas).querySelectorAll('qea-selector-highlighter').length)
+          myEl.dispatch('addElement', 'text', '<h1>hello</h1>')
+          flush(function () {
+            var elems = Polymer.dom(myEl.$.canvas).querySelectorAll('qea-selector-highlighter');
+            assert.equal(1, elems.length)
+            assert.equal('<h1>hello</h1>', elems[0].getCode());
+            done()
+          })
+        })
+
+        test('eid(URL param) set to "new" creates a new exercise in localStorage', function (done) {
+          window.localStorage.clear();
+          assert.equal(myEl.exerciseId, undefined);
+          myEl.exerciseStore = {};
+          myEl.route = { prefix: '/exercise'}
+          myEl.routeData = { eid: 'new' }
+          assert.equal(myEl.exerciseStore.eid, undefined)
+
+          Polymer.Base.async(function () {
+            assert.notEqual(myEl.exerciseId, undefined);
+            assert(myEl.exerciseId.length > 5);
+            assert.notEqual(myEl.exerciseStore.eid, undefined)
+            done()
+          }, 400)
+
+        })
 
       });
     </script>

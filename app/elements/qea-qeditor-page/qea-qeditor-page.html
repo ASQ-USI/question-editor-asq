@@ -3,8 +3,11 @@
 <link rel="import" href="../../../bower_components/app-route/app-location.html">
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../../bower_components/asq-spinner/asq-spinner.html">
+<link rel="import" href="../../../bower_components/iron-localstorage/iron-localstorage.html">
 <link rel="import" href="../../behaviors/qea-app-behavior.html">
+<link rel="import" href="../../behaviors/qea-actions-behavior.html">
+<link rel="import" href="../../behaviors/qea-redux-store.html">
+
 
 <dom-module id="qea-qeditor-page">
   <template>
@@ -22,7 +25,8 @@
       data="{{routeData}}">
     </app-route>
 
-    <iron-localstorage name="my-app-storage"
+    <iron-localstorage
+      name="my-app-storage"
       value="{{exerciseStore}}">
     </iron-localstorage>
 
@@ -37,29 +41,57 @@
     class qeaQeditorPage {
 
       get behaviors() {
-        return [qeaBehaviors.appBehavior];
+        return [
+          qeaBehaviors.appBehavior,
+          qeaBehaviors.actionsBehavior,
+          qeaBehaviors.reduxStore,
+        ];
       }
 
       beforeRegister() {
         this.is = 'qea-qeditor-page';
         this.observers = [
-          '_questionChanged(routeData.qid, exerciseStore, query.editor, query.eid)',
+          '_questionChanged(routeData.qid, query.type)',
         ];
         this.properties = {};
       }
 
-      _questionChanged(qid, b, c, d) {
-        this.debounce('doSomething', function () {
-          if (qid) {
-            if (qid === 'new_question') {
+      _questionChanged(qid, type) {
+        this.debounce('changeQuestion', () => {
+          this.$$('iron-localstorage').reload();
+          const editorType = `${type}-editor`;
+
+          if (qid && this.exerciseStore) {
+            if (qid === 'new') {
               // create new question
-              const newQid = this.__idGenerator();
-              this.push('exerciseStore.elements', { elementId: newQid });
+              this.dispatch('addElement', type, null, {});
+              const newQid = this.getState().elements.slice(-1)[0].id;
+              this.set('exerciseStore.elements', this.getState().elements);
+
               this.set('routeData.qid', newQid);
-              // this._importHtml(null, c, d);
+              // console.log('qeditor creo question', newQid, this.exerciseStore);
             } else {
               // restore
-              this._importHtml(qid, c, d);
+              // console.log('qeditor restor', qid, this.exerciseStore);
+
+              this.fire('toggleSpinner', true);
+              this._clearPage();
+
+              // <replace:start>
+              Polymer.Base.importHref(
+                this._resolveLocalPath(editorType),
+                () => {
+                  // successful import
+                  this._renderEditor(qid, editorType, this.query.eid);
+                },
+                () => {
+                  // unsuccessful import
+                  this.fire('toggleSpinner', false);
+                  this.fire('fireToast', { text: "We can't find that editor", type: 'error' });
+                  this.fire('changePage', { pageURL: '404' });
+                },
+              true);
+              // <replace:stop>
             }
           } else if (qid === '') {
             this.set('route.path', '404');
@@ -67,35 +99,28 @@
         });
       }
 
-      _importHtml(qid, editor, eid) {
-        Polymer.Base.importHref(
-          this._resolveLocalPath(editor),
-          this._successImport(qid, editor, eid),
-          () => {
-            this.fire('fireToast', { text: 'Wrong or unspecified editor for that question', type: 'error' });
-          }, false);
-      }
-
-      _successImport(qid, editor, eid) {
-        const oldEditors = Polymer.dom(this.$.editorContainer).childNodes;
-        for (const edit of oldEditors) {
-          Polymer.dom(this.$.editorContainer).removeChild(edit);
-        }
+      _renderEditor(qid, editorType, eid) {
+        // console.log('qeditor _renderEditor', qid, editorType, eid);
         let props = {};
         if (qid) {
-          // restore
+          // restore properties
           props = this._searchQuestion(qid);
+          if (!props) {
+            this.fire('toggleSpinner', false);
+            this.fire('fireToast', { text: "We can't find that question", type: 'error' });
+            return;
+          }
         }
-        if (props === null) {
-          this.fire('fireToast', { text: "We can't find that question", type: 'error' });
-          return;
+        if (eid) {
+          props.exerciseId = eid;
         }
-        props.exerciseId = eid;
+        props.id = qid;
         // create
-        const elem = Polymer.Base.create(editor, props);
+        const elem = Polymer.Base.create(editorType, props);
         elem.classList.add('flex');
         this.async(() => {
           Polymer.dom(this.$.editorContainer).appendChild(elem);
+          this.fire('toggleSpinner', false);
         }, 1000);
       }
 
@@ -107,13 +132,19 @@
       _searchQuestion(qid) {
         if (this.exerciseStore) {
           for (const question of this.exerciseStore.elements) {
-            if (question.questionId === qid) {
-              return question;
+            if (question.id === qid) {
+              return question.props;
             }
           }
         }
-
         return null;
+      }
+
+      _clearPage() {
+        const oldEditors = Polymer.dom(this.$.editorContainer).childNodes;
+        for (const edit of oldEditors) {
+          Polymer.dom(this.$.editorContainer).removeChild(edit);
+        }
       }
 
     }

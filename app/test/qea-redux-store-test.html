@@ -7,10 +7,8 @@
     <script src="../../.transpiled/script/redux.min.js"></script>
     <link rel="import" href="../../bower_components/polymer-redux/polymer-redux.html">
 
-
-
     <!-- import the element to test -->
-    <link rel="import" href="simple-elem.html">
+    <link rel="import" href="./simple-elem.html">
   </head>
   <body>
   <test-fixture id="qea-redux-store-fixture">
@@ -36,7 +34,7 @@
       });
 
       test('add element' , function (done) {
-        myEl.dispatch('addElement', 'text', '<p>hello</p>');
+        myEl.dispatch('addElement', 'text', '<p>hello</p>', {});
         state = myEl.getState()
         assert.equal(state.elements.length, 1);
         assert.notEqual(state.elements[0].id ,  undefined)

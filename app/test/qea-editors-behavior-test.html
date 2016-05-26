@@ -27,7 +27,7 @@
             dispatch: function(action, id, code, state) {
               var event;
               var success = false;
-              if (action === 'addElement' && id === 'simple-element-editors-behavior' && code==='' && Object.keys(state).length >= 2) {
+              if (action === 'addElement' && id === 'simple-element-editors-b' && code==='' && Object.keys(state).length >= 2) {
                 success = true
               }
               var event = new CustomEvent("name-of-event", { "detail": success });
@@ -44,9 +44,21 @@
           assert.equal(myEl.viewAdvanced , 'false');
         });
 
-        test('_cancel fires changePage event when user clicks on confirm', function (done) {
+        test('_cancel fires changePage event when user clicks on confirm without an exerciseId', function (done) {
           myEl.addEventListener('changePage', function(event) {
-            assert.equal(event.detail.selectedPage, 'canvas');
+            assert.equal(event.detail.pageURL, '/home');
+            done();
+          });
+          myEl._cancel()
+          flush(function () {
+            myEl.$$('qea-user-response').$$('#confirm').click();
+          })
+        })
+
+        test('_cancel fires changePage event when user clicks on confirm with an exerciseId', function (done) {
+          myEl.exerciseId = 'asd-2123';
+          myEl.addEventListener('changePage', function(event) {
+            assert.equal(event.detail.pageURL, '/exercise/asd-2123');
             done();
           });
           myEl._cancel()
@@ -93,7 +105,6 @@
             done()
           });
           myEl._saveQuestion([], 'test solution')
-
         })
 
       });

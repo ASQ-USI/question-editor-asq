@@ -13,6 +13,7 @@ const htmlreplace = require('gulp-html-replace');
 const replace = require('gulp-replace');
 const sourcemaps = require('gulp-sourcemaps');
 const rename = require('gulp-rename');
+const inject = require('gulp-inject');
 const historyApiFallback = require('connect-history-api-fallback');
 const browserSync = require('browser-sync').create();
 const reload = browserSync.reload;
@@ -67,12 +68,12 @@ gulp.task('transpile', ['copyFiles'], () => {
       scriptInHead: false, // true is default
       onlySplit: false,
     }))
-    .pipe(sourcemaps.init())
+    .pipe(gulpif(!ISDISTMODE, sourcemaps.init()))
     .pipe(babel({
       presets: ['es2015'],
       only: '*.js',
     }))
-    .pipe(sourcemaps.write('.'))
+    .pipe(gulpif(!ISDISTMODE, sourcemaps.write('.')))
     .pipe(gulpif(!ISDISTMODE, plumber.stop()))
     .pipe(gulp.dest('./.transpiled'));
 });
@@ -84,7 +85,7 @@ gulp.task('linter', () => {
   if (ISDISTMODE) {
     src.push('gulpfile.js');
   }
-  gulp.src(src)
+  return gulp.src(src)
   .pipe(eslint())
   .pipe(eslint.format())
   .pipe(gulpif(ISDISTMODE, eslint.failAfterError()));
@@ -92,7 +93,7 @@ gulp.task('linter', () => {
 
 gulp.task('dist', () => {
   ISDISTMODE = true;
-  runSequence('clean', 'linter', 'transpile', 'vulcanize', 'copyFiles');
+  runSequence('clean', 'linter', 'transpile', 'injectDinamicImports', 'vulcanize', 'copyFiles');
 });
 
 // optimize polymer compomponents
@@ -103,7 +104,9 @@ gulp.task('vulcanize', () => {
       stripComments: true,
       inlineCss: true,
       inlineScripts: true,
-      addedImports: ['./bower_components/import-tinymce/import-tinymce.html'],
+      addedImports: [
+        '../../bower_components/import-tinymce/import-tinymce.html',
+      ],
     }))
     .pipe(gulp.dest('./distribution/'));
 });
@@ -140,10 +143,12 @@ gulp.task('copyAssets', () => {
   const destination = ISDISTMODE ? 'distribution' : '.transpiled';
   if (ISDISTMODE) {
     // change image paths
-    gulp.src('./distribution/qea-main-app/qea-main-app.html')
+    gulp.src('./distribution/elements.html')
       .pipe(replace('../../images/', '../images/'))
-      .pipe(replace(/="[^\s]*assets\//, '="./assets/'))
-      .pipe(gulp.dest('./distribution/qea-main-app/'));
+      .pipe(replace(/="[^\s]*\/?assets\//g, '="./assets/'))
+      .pipe(replace(/\/\/ <replace:start>[\s\S]*\/\/ <replace:stop>/g,
+         '_this._renderEditor(qid, editor, eid);'))
+      .pipe(gulp.dest('./distribution/'));
 
     gulp.src('app/elements/**/assets/**/*')
       .pipe(rename((path) => {
@@ -157,4 +162,12 @@ gulp.task('copyAssets', () => {
   // copy images
   return gulp.src('app/images/**/*')
     .pipe(gulp.dest(`${destination}/images/`));
+});
+
+
+gulp.task('injectDinamicImports', () => {
+  return gulp.src('.transpiled/elements/elements.html')
+    .pipe(inject(gulp.src('.transpiled/elements/asq-*-editor/asq-*-editor.html',
+        { read: false }), { relative: true }))
+    .pipe(gulp.dest('./.transpiled/elements'));
 });

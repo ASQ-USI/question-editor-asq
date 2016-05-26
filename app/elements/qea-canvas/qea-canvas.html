@@ -82,7 +82,7 @@
       beforeRegister() {
         this.is = 'qea-canvas';
         this.observers = [
-          '_loadExercise(routeData.eid, exerciseStore)',
+          '_loadExercise(routeData.eid)',
         ];
         this.properties = {
           exerciseId: {
@@ -112,7 +112,7 @@
           /**
           * Object representing the values described in qea-questions-list for the dropped question.
           *
-          * @type {{ label: String, bowerName: String}}
+          * @type {{ questionDetails: { label, type }, dragDetails: {...} }}
           */
           droppedElem: {
             type: Object,
@@ -157,7 +157,7 @@
         if (this.isHover) {
           const a = el.questionDetails;
           this.fire('changePage',
-            { pageURL: `/question/new_question/edit?editor=${a.bowerName}&eid=${this.exerciseId}` }
+            { pageURL: `/question/new/edit?type=${a.type}&eid=${this.exerciseId}` }
           );
         }
       }
@@ -178,6 +178,9 @@
         );
       }
 
+      /**
+      * open dialog showing the html of the elements present in the canvas
+      */
       showCode() {
         const elements = Polymer.dom(this.root).querySelectorAll('qea-selector-highlighter');
         let code = '<asq-exercise>\n';
@@ -190,32 +193,59 @@
         this.$.codeEditor.openCodeDialog(code);
       }
 
-      _loadExercise(eid, localStore) {
-        if (eid) {
-          if (eid === 'new') {
-            // create new
-            const newEid = this.__idGenerator();
-            this.exerciseId = newEid;
-            this.set('exerciseStore.eid', newEid);
-            this.set('exerciseStore.elements', []);
-            this.set('routeData.eid', `${newEid}`);
-          } else if (localStore.eid && localStore.eid === eid) {
-            // restore
-            this.exerciseId = eid;
-            this.dispatch('resetState', this.exerciseStore.elements);
-          } else {
-            this.fire('fireToast', { text: "We can't find an exercice with that id", type: 'error' });
-            this.fire('changePage', { pageURL: '404' });
+      _loadExercise(eid) {
+        this.debounce('doSomething', () => {
+          this.$$('iron-localstorage').reload();
+          if (eid && this.route.prefix === '/exercise' && this.exerciseStore) {
+            if (eid === 'new') {
+              // create new
+              const newEid = this.__idGenerator();
+              this.exerciseId = newEid;
+              this.set('exerciseStore.eid', newEid);
+              this.set('exerciseStore.elements', []);
+              this.set('routeData.eid', `${newEid}`);
+            } else if (this.exerciseStore.eid && this.exerciseStore.eid === eid) {
+              // restore
+              this.exerciseId = eid;
+              this._ensureImportHelper();
+            } else {
+              this.fire('fireToast', { text: "We can't find an exercice with that id", type: 'error' });
+              this.fire('changePage', { pageURL: '404' });
+            }
           }
-        }
+        });
       }
 
       _initializeDefaultExercise() {
-        this.exerciseStore = { eid: null };
+        this.exerciseStore = { };
       }
 
       saveStorage(arrayOfNode = []) {
         this.set('exerciseStore.elements', arrayOfNode);
+      }
+
+      _ensureImportHelper() {
+        const elements = [];
+        for (const elem of this.exerciseStore.elements) {
+          if (elem.type !== 'text') {
+            elements.push(this.__resolvePath(elem.type));
+          }
+        }
+
+        Promise.all(elements.map(this._ensureImport))
+        .then(() => {
+          this.dispatch('resetState', this.exerciseStore.elements);
+        }).catch((e) => {
+          console.error('error during import: ', e, elements);
+        });
+      }
+
+      _ensureImport(href) {
+        return new Promise((resolve, reject) => {
+          Polymer.Base.importHref((href), (e) => {
+            resolve(e.target);
+          }, reject, true);
+        });
       }
 
     }

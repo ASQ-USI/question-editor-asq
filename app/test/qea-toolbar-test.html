@@ -24,7 +24,7 @@
         test('currentPage property changes the content of the toolbar', function(done) {
           myEl.currentPage = 'landingPage';
           assert.equal(Polymer.dom(myEl.root).querySelectorAll('paper-icon-button').length, 0);
-          myEl.currentPage = 'canvas';
+          myEl.currentPage = 'exercise';
 
           flush(function () {
             assert(Polymer.dom(myEl.root).querySelectorAll('paper-icon-button').length > 0);

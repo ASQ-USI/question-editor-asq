@@ -40,8 +40,8 @@
               break;
             }
           }
-          assert.notEqual(saveBt, null, 'no save button founded');
-          assert.notEqual(myEl._saveQuestion, undefined, 'no _saveQuestion function founded');
+          assert.notEqual(saveBt, null, 'no save button found');
+          assert.notEqual(myEl._saveQuestion, undefined, 'no _saveQuestion function found');
         });
 
         test('user should be able to set a solution', function() {
@@ -53,8 +53,8 @@
               break;
             }
           }
-          assert.notEqual(solutionBtn, null, 'no set solution button founded');
-          assert.notEqual(myEl._setSolution, undefined, 'no _setSolutions function founded');
+          assert.notEqual(solutionBtn, null, 'no set solution button found');
+          assert.notEqual(myEl._setSolution, undefined, 'no _setSolutions function found');
         });
 
         test('_getFormattedCode returns a string containing the html that defines the question', function () {

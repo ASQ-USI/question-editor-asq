@@ -13,7 +13,7 @@ qeaBehaviors.generalEditorsBehavior = {
     * The id of the question. DON'T MODIFY
     * It will be automatically set
     */
-    questionId: String,
+    id: String,
     /**
     * The id of the exercise that contains this question. DON'T MODIFY
     * It will be automatically set
@@ -117,8 +117,8 @@ qeaBehaviors.generalEditorsBehavior = {
           if (resp) {
             const code = this._getFormattedCode();
             const state = this._getQuestionState(propertiesToSave);
-            if (this.questionId) {
-              this.dispatch('editElement', this.questionId, code, state);
+            if (this.id) {
+              this.dispatch('editElement', this.id, code, state);
             } else {
               this.dispatch('addElement', this.tagName.toLowerCase(), code, state);
             }
@@ -130,10 +130,11 @@ qeaBehaviors.generalEditorsBehavior = {
     } else {
       const code = this._getFormattedCode();
       const state = this._getQuestionState(propertiesToSave);
-      if (this.questionId) {
-        this.dispatch('editElement', this.questionId, code, state);
+      if (this.id) {
+        this.dispatch('editElement', this.id, code, state);
       } else {
-        this.dispatch('addElement', this.tagName.toLowerCase(), code, state);
+        this.dispatch('addElement',
+          this.tagName.toLowerCase().substring(0, this.tagName.length - 7), code, state);
       }
       this._previousPage();
       return true;
