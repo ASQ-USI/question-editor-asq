@@ -147,7 +147,7 @@ gulp.task('copyAssets', () => {
       .pipe(replace('../../images/', '../images/'))
       .pipe(replace(/="[^\s]*\/?assets\//g, '="./assets/'))
       .pipe(replace(/\/\/ <replace:start>[\s\S]*\/\/ <replace:stop>/g,
-         '_this._renderEditor(qid, editor, eid);'))
+         'this._renderEditor(qid, editorType, this.query.eid);'))
       .pipe(gulp.dest('./distribution/'));
 
     gulp.src('app/elements/**/assets/**/*')
