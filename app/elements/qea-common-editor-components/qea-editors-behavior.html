@@ -76,9 +76,11 @@ qeaBehaviors.generalEditorsBehavior = {
     Polymer.dom.flush();
     let repeater;
     for (repeater of allRepeaters) {
-      const qProps = Polymer.dom(repeater.root).querySelectorAll('qea-property-editor');
-      for (const spProp of qProps) {
-        spProp.value = state[repeater.id][spProp.name];
+      if (state[repeater.id]) {
+        const qProps = Polymer.dom(repeater.root).querySelectorAll('qea-property-editor');
+        for (const spProp of qProps) {
+          spProp.value = state[repeater.id][spProp.name];
+        }
       }
     }
   },

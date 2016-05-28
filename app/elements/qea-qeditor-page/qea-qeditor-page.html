@@ -101,7 +101,7 @@
 
       _renderEditor(qid, editorType, eid) {
         // console.log('qeditor _renderEditor', qid, editorType, eid);
-        let props = {};
+        let props = null;
         if (qid) {
           // restore properties
           props = this._searchQuestion(qid);
@@ -111,12 +111,9 @@
             return;
           }
         }
-        if (eid) {
-          props.exerciseId = eid;
-        }
-        props.id = qid;
+
         // create
-        const elem = Polymer.Base.create(editorType, props);
+        const elem = Polymer.Base.create(editorType, { id: qid, exerciseId: eid, restoreState: props });
         elem.classList.add('flex');
         this.async(() => {
           Polymer.dom(this.$.editorContainer).appendChild(elem);
