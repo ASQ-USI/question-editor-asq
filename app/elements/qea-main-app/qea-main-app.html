@@ -108,7 +108,9 @@
 
       beforeRegister() {
         this.is = 'qea-main-app';
-
+        this.observers = [
+          // '_importPage(routeData.page)',
+        ];
         this.listeners = {
           fireToast: '_openToast',
           changePage: '_changePage',
@@ -171,6 +173,21 @@
         this.toggleClass('spinnerLayer-active', active, this.$.spinnerLayer);
         this.toggleAttribute('active', active, this.$.spinner);
       }
+
+      // _importPage(page) {
+      //   this.debounce('pageChanged', () => {
+      //     const pageMapper = {
+      //       home: 'qea-landing-page',
+      //       exercise: 'qea-canvas',
+      //       404: 'qea-404-page',
+      //     };
+      //     if (page === '' || pageMapper[page]) {
+      //       this.importHref(
+      //        this.__resolveLocalPath(pageMapper[page] || pageMapper.home),
+      //        null, null, true);
+      //     }
+      //   });
+      // }
 
     }
     Polymer(qeaMainApp);
