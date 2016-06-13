@@ -54,7 +54,9 @@ qeaBehaviors.generalEditorsBehavior = {
   */
   _showAdvanced: function () {
     this.viewAdvanced = this.viewAdvanced === 'true' ? 'false' : 'true';
-    this.$.advanced.textContent = this.viewAdvanced === 'true' ? 'hide advanced' : 'show all';
+    if (this.$.advanced) {
+      this.$.advanced.textContent = this.viewAdvanced === 'true' ? 'hide advanced' : 'show all';
+    }
   },
 
   /**
@@ -102,25 +104,41 @@ qeaBehaviors.generalEditorsBehavior = {
   * @param {String} solution The soluton for the question Default value of questionSolution,
   * @param {Array<String>=} propertyToInclude array containing all the custom properties to be savd
   */
-  _saveQuestion: function (propertiesToSave, solution = this.questionSolution) {
+  _saveQuestion: function (propertiesToSave, solution = this.questionSolution) { // eslint-disable-line consistent-return
+    const toast = Polymer.dom(this.root).querySelector('qea-user-response');
     if (!solution && solution !== false || solution === '') {
-      this.fire('fireToast', { text: "you haven't provided a solution for this question", type: 'error' });
-      return false;
-    }
-    const code = this._getFormattedCode();
-    const state = this._getQuestionState(propertiesToSave);
-    if (this.questionId) {
-      this.dispatch('editElement', this.questionId, code, state);
+      toast.notifyConfirm('Warning', `<p>you haven't provided a solution for this question.</p>
+        <p>Do you want to continue anyway?</p>`)
+        .then((resp) => {
+          if (resp) {
+            const code = this._getFormattedCode();
+            const state = this._getQuestionState(propertiesToSave);
+            if (this.questionId) {
+              this.dispatch('editElement', this.questionId, code, state);
+            } else {
+              this.dispatch('addElement', this.tagName.toLowerCase(), code, state);
+            }
+            this.fire('changePage', { selectedPage: 'canvas' });
+            return true;
+          }
+          return false;
+        });
     } else {
-      this.dispatch('addElement', this.tagName.toLowerCase(), code, state);
+      const code = this._getFormattedCode();
+      const state = this._getQuestionState(propertiesToSave);
+      if (this.questionId) {
+        this.dispatch('editElement', this.questionId, code, state);
+      } else {
+        this.dispatch('addElement', this.tagName.toLowerCase(), code, state);
+      }
+      this.fire('changePage', { selectedPage: 'canvas' });
+      return true;
     }
-    this.fire('changePage', { selectedPage: 'canvas' });
-    return true;
   },
 
   /**
-  * function responsible to return a string representig the HTML code of the question generated;
-  * since each editor is specific for a question, you'll neet to override this fnction in every editor
+  * function responsible to return a string representing the HTML code of the question generated;
+  * since each editor is specific for a question, you'll need to override this function in every editor
   * @return {Strng}
   */
   _getFormattedCode: function () {
@@ -134,21 +152,32 @@ qeaBehaviors.generalEditorsBehavior = {
   * @return {Boolean} true if solution set without problem false otherwise
   */
   _setSolution: function (slValue) {
+    const toast = Polymer.dom(this.root).querySelector('qea-user-response');
     if (!slValue && slValue !== false || slValue === '') {
-      this.fire('fireToast', { text: "you haven't provided a solution for this question", type: 'error' });
-      return false;
+      toast.notifyError('Error', "you haven't provided a solution for this question");
+      return;
     }
     this.questionSolution = '';
-    const a = confirm(
-      `The solution is:
-          ${slValue}
-      is it correct?`);
-    if (a) {
-      this.fire('fireToast', { text: 'Solution correcly created' });
-      this.questionSolution = slValue;
-      return true;
-    }
-    return false;
+    toast.notifyConfirm('Is the solution correct?', `Solution:  ${slValue}`)
+      .then((resp) => {
+        if (resp) {
+          this.questionSolution = slValue;
+        }
+      });
   },
+
+  /**
+  * function use to abort the editing of a question and move back to the canvas page
+  */
+  _cancel: function () {
+    const toast = Polymer.dom(this.root).querySelector('qea-user-response');
+    toast.notifyConfirm('Do you really want to exit?', 'all the chenges will be lost')
+      .then((resp) => {
+        if (resp) {
+          this.fire('changePage', { selectedPage: 'canvas' });
+        }
+      });
+  },
+
 };
 </script>

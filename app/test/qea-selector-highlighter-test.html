@@ -34,7 +34,7 @@
           done()
         });
 
-        test('correctly undersatnd if it is selected', function(done) {
+        test('correctly detect if it is selected', function(done) {
           assert.equal(false, myEl.isSelected )
           myEl.selectedId = '1'
           assert.equal(true, myEl.isSelected )

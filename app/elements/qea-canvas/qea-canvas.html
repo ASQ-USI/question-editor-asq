@@ -23,15 +23,19 @@
       }
 
     </style>
+    <qea-advanced-code-editor id="codeEditor"
+      label="Copy this code"
+      mode="xml"
+      ></qea-advanced-code-editor>
     <qea-advanced-text-editor id="textEditor"></qea-advanced-text-editor>
     <div id="canvas" class="flex" on-tap="_selectItem" on-mouseover="_onHovered" on-mouseout="_onUnhovered">
-      <sortable-js handle=".handle" scroll  animation="200" force-Fallback="true" >
-        <template is="dom-repeat" items={{objs}}  id="repeater">
+      <sortable-js handle=".handle" scroll  animation="200" force-fallback="true" >
+        <template is="dom-repeat" items={{nodeObjects}}  id="repeater">
           <qea-selector-highlighter
-            selected-Id="[[selectedElemId]]"
-            element-Id="[[item.id]]"
+            selected-id="[[selectedElemId]]"
+            element-id="[[item.id]]"
             type="[[item.type]]"
-            element-Props="[[item.props]]"
+            element-props="[[item.props]]"
             content="[[item.html]]">
           </qea-selector-highlighter>
         </template>
@@ -56,24 +60,38 @@
       beforeRegister() {
         this.is = 'qea-canvas';
         this.properties = {
+          /**
+          * Whether the user is dragging an item into the canvas.
+          */
           isDragging: {
             type: Boolean,
           },
+          /**
+          * id of the selected element
+          */
           selectedElemId: {
             type: String,
           },
-          objs: {
+          /**
+          * Questions or text to be rendered in canvas. This Prop is set by the redux store
+          * @type {[{id:String, type:String, html:String, props: Object}, ...]}
+          */
+          nodeObjects: {
             type: Array,
             statePath: 'elements',
           },
-          _hovered: {
-            type: Boolean,
-            value: false,
-          },
+          /**
+          * Object representing the values described in qea-questions-list for the dropped question.
+          *
+          * @type {{ label: String, bowerName: String}}
+          */
           droppedElem: {
             type: Object,
             observer: '_notifyDrop',
           },
+          /**
+          * Whether the user is hovering the canvas.
+          */
           isHover: {
             type: Boolean,
             value: false,
@@ -110,7 +128,7 @@
       }
 
       insertTextArea() {
-        this.$.textEditor.openDialog().then(
+        this.$.textEditor.openTextDialog().then(
           (text) => {
             if (text) { this.dispatch('addElement', 'text', text); }
           }
@@ -118,12 +136,31 @@
       }
 
       modifyTextArea(id, code) {
-        this.$.textEditor.setContent(code);
-        this.$.textEditor.openDialog().then(
+        this.$.textEditor.openTextDialog(code).then(
           (text) => {
             if (text) { this.dispatch('editElement', id, text); }
           }
         );
+      }
+
+      showCode() {
+        const elements = Polymer.dom(this.root).querySelectorAll('qea-selector-highlighter');
+        let code = '';
+        for (const elem of elements) {
+          if (elem.type === 'text') {
+            code += elem.getCode();
+          } else {
+            code +=
+            `
+            <asq-exercise>
+              ${elem.getCode()}
+            </asq-exercise>
+            `;
+          }
+        }
+        code = code.replace(/^\s*[\r\n]/gm, '');
+        code = code.replace(/^ +/gm, '');
+        this.$.codeEditor.openCodeDialog(code);
       }
 
     }

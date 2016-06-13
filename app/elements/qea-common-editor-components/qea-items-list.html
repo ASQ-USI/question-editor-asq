@@ -1,0 +1,168 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/iron-icons/communication-icons.html">
+
+<!--
+The purpose of `qea-items-list` is to offer a simple way to create a list of string with the possiblity to add, edit, remove or sort them
+
+Examples:
+  <qea-items-list
+    new-Item-Label="Insert a new element"
+    sortable
+    value="{{valtest}}">
+  </qea-items-list>
+ -->
+
+<dom-module id="qea-items-list">
+  <template>
+  <style>
+    :host {
+      display: block;
+    }
+    .optionItem{
+      padding-left: 20px;
+      display: flex;
+      align-items: center;
+    }
+    .icons{
+      color: grey;
+      opacity: 0.6;
+    }
+    .move:hover{
+      color: black;
+    }
+    .remove:hover{
+      color: red;
+    }
+    .addItem{
+      opacity: 0.6;
+    }
+  </style>
+
+    <sortable-js id="sortableJs" handle=".handle" scroll  animation="200" force-fallback="true" on-end="_itemMoved">
+      <template is="dom-repeat" items={{_optionsList}}>
+        <div class="optionItem">
+          <paper-input value={{item.label}} no-label-float on-change="_itemUpdated"></paper-input>
+          <template is="dom-if" if="[[sortable]]">
+            <paper-icon-button class="move icons handle" icon="communication:import-export"></paper-icon-button>
+          </template>
+          <paper-icon-button class="remove icons" icon="clear" on-tap="_itemRemoved"></paper-icon-button>
+        </div>
+      </template>
+    </sortable-js>
+    <div class="optionItem addItem">
+      <paper-input id="addInput" label="[[newItemLabel]]" on-change="_addItem"></paper-input>
+      <paper-icon-button id="addIcon" icon="add" on-tap="_addItem"></paper-icon-button>
+    </div>
+
+  </template>
+  <script>
+  (function () {
+    'use strict';
+
+    class qeaItemsList {
+
+      get behaviors() {
+        return [];
+      }
+
+      beforeRegister() {
+        this.is = 'qea-items-list';
+        this.properties = {
+          _counterId: {
+            type: Number,
+            value: 0,
+          },
+          _optionsList: {
+            type: Array,
+            value: () => [],
+          },
+          /**
+          * Placeholder for the add item input
+          */
+          newItemLabel: {
+            type: String,
+            value: 'Add an item',
+          },
+          /**
+          * Ability to organize the items created
+          */
+          sortable: {
+            type: Boolean,
+            value: false,
+          },
+          /**
+          * Array containing the items created
+          * @type {Array<Objects>} Object => {id, label}
+          */
+          value: {
+            type: Array,
+            value: () => [],
+            notify: true,
+          },
+          /**
+          * restore the state of the component by passing an array of object
+          * @type {Array<Objects>} Object => {id, label}
+          */
+          restore: {
+            type: Array,
+            observer: '_restoreState',
+          },
+
+        };
+      }
+
+
+      _addItem(e, manualValue) {
+        let option;
+        if (manualValue && manualValue.label !== undefined) {
+          option = manualValue.label;
+        } else {
+          option = this.$.addInput.value;
+        }
+        if (!option) {
+          return;
+        }
+        this.push('_optionsList', { id: this._counterId, label: option });
+        this.push('value', { id: this._counterId++, label: option });
+        this.$.addInput.value = '';
+      }
+
+      _itemMoved(e) {
+        if (e.oldIndex !== undefined && e.newIndex !== undefined) {
+          const dragItem = this._optionsList[e.newIndex];
+          this.splice('value', e.oldIndex, 1);
+          this.splice('value', e.newIndex, 0, dragItem);
+        }
+      }
+
+      _itemRemoved(e) {
+        this.splice('_optionsList', e.model.index, 1);
+        let i;
+        for (i = 0; i < this.value.length; i++) {
+          if (this.value[i].id === e.model.item.id) { break; }
+        }
+        this.splice('value', i, 1);
+      }
+
+      _restoreState() {
+        for (const opt of this.restore) {
+          this._addItem(null, opt);
+        }
+      }
+
+      _itemUpdated(e) {
+        this.splice('_optionsList', e.model.index, 1, { id: e.model.item.id, label: e.model.item.label });
+        let i;
+        for (i = 0; i < this.value.length; i++) {
+          if (this.value[i].id === e.model.item.id) { break; }
+        }
+        this.splice('value', i, 1, { id: e.model.item.id, label: e.model.item.label });
+      }
+
+
+    }
+
+    Polymer(qeaItemsList);
+  })();
+  </script>
+</dom-module>

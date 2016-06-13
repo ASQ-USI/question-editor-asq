@@ -18,7 +18,7 @@ const reload = browserSync.reload;
 // Utility functions
 let ISDISTMODE = false;
 
-gulp.task('default', () => {
+gulp.task('default', ['dist'], () => {
 
 });
 
