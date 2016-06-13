@@ -32,14 +32,14 @@
         name='title'
         label="question Title"
         type='string'
-        widget-Type='text-code'
+        widget-type='text-code'
         default='Title'
         value={{qTitleVal}}>
       </qea-property-editor>
 
       <div class="sectionTitle"> option list </div>
       <qea-items-list
-        new-Item-Label="Insert an option"
+        new-item-label="Insert an option"
         sortable
         restore="[[_optionsSetter]]"
         value="{{_optionsValue}}">
@@ -50,9 +50,9 @@
       </div>
       <!-- list of question properties -->
       <qea-property-editor-repeater id="qeaRepeatValues"
-        property-Array={{questionProps]]
+        property-array={{questionProps]]
         values={{qeaRepeatValues}}
-        is-Advanced-User=[[viewAdvanced]]>
+        is-advanced-user=[[viewAdvanced]]>
       </qea-property-editor-repeater>
 
       <div id="advanced" on-tap="_showAdvanced">
@@ -71,11 +71,12 @@
         multi=[[qeaRepeatValues.multi]]
         disabled=[[qeaRepeatValues.disabled]]
         value={{qeaRepeatValues.value}}
-        selected-Class=[[qeaRepeatValues.selectedClass]]
+        selected-class=[[qeaRepeatValues.selectedClass]]
         selected=[[qeaRepeatValues.selected]]
         selectable=[[qeaRepeatValues.selectable]]>
 
-        <asq-stem class="multiChoiceStem"><span id="stemContent" inner-H-t-m-l={{qTitleVal}}></span></asq-stem>
+        <asq-stem><span id="stemContent" inner-h-t-m-l={{qTitleVal}}></span></asq-stem>
+
         <template is="dom-repeat" items="[[_optionsValue]]">
           <asq-option name='[[item.label]]' class="multyChoiceOption">[[item.label]]</asq-option>
         </template>
