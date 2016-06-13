@@ -77,7 +77,7 @@
         label list
       </div>
       <qea-items-list
-        new-Item-Label="Insert new labels"
+        new-item-label="Insert new labels"
         restore="[[_labelsListRestore]]"
         value="{{_labelsListValue}}">
       </qea-items-list>
@@ -88,9 +88,9 @@
       </div>
       <!-- list of question properties -->
       <qea-property-editor-repeater id="qeaRepeatValues"
-        property-Array=[[questionProps]]
+        property-array=[[questionProps]]
         values={{qeaRepeatValues}}
-        is-Advanced-User=[[viewAdvanced]]>
+        is-advanced-user=[[viewAdvanced]]>
       </qea-property-editor-repeater>
 
       <div id="advanced" on-tap="_showAdvanced">

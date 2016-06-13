@@ -38,10 +38,10 @@ Examples:
     }
   </style>
 
-    <sortable-js id="sortableJs" handle=".handle" scroll  animation="200" force-Fallback="true" on-end="_itemMoved">
+    <sortable-js id="sortableJs" handle=".handle" scroll  animation="200" force-fallback="true" on-end="_itemMoved">
       <template is="dom-repeat" items={{_optionsList}}>
         <div class="optionItem">
-          <paper-input value={{item.label}} no-Label-Float on-change="_itemUpdated"></paper-input>
+          <paper-input value={{item.label}} no-label-float on-change="_itemUpdated"></paper-input>
           <template is="dom-if" if="[[sortable]]">
             <paper-icon-button class="move icons handle" icon="communication:import-export"></paper-icon-button>
           </template>
