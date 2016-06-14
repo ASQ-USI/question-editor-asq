@@ -15,7 +15,7 @@
   <template>
     <style include="qea-three-column-layout"></style>
     <style>
-      .multyChoiceOption{
+      .multiChoiceOption{
         display: block;
         padding: 5px;
         margin: 5px 0;
@@ -78,7 +78,7 @@
         <asq-stem><span id="stemContent" inner-h-t-m-l={{qTitleVal}}></span></asq-stem>
 
         <template is="dom-repeat" items="[[_optionsValue]]">
-          <asq-option name='[[item.label]]' class="multyChoiceOption">[[item.label]]</asq-option>
+          <asq-option name='[[item.label]]' class="multiChoiceOption">[[item.label]]</asq-option>
         </template>
 
         <asq-solution hidden>[[solution]]</asq-solution>
@@ -177,11 +177,11 @@
         let options = '';
         let opt;
         for (opt of this._optionsValue) {
-          options += `\t\t<asq-option name="${opt.label}"class="multyChoiceOption">${opt.label}</asq-option>\n`;
+          options += `\t\t<asq-option name="${opt.label}"class="multiChoiceOption">${opt.label}</asq-option>\n`;
         }
         const code = `
         <style>
-          .multyChoiceOption{
+          .multiChoiceOption{
             display: block;
             padding: 5px;
             margin: 5px 0;
