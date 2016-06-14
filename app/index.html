@@ -2,7 +2,9 @@
 <html lang="en">
   <head>
     <!-- required by browserSync -->
+    <!-- build:baseurl -->
     <base href="/">
+    <!-- endbuild -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="styles/main.css">
@@ -14,13 +16,13 @@
     <!-- will be creted during the build process -->
     <script src="./script/redux.min.js"></script>
 
-    <!-- build:app -->
     <link rel="import" href="./elements/elements.html">
-    <!-- endbuild -->
 
     <title>question-editor-asq</title>
   </head>
   <body >
+    <!-- build:mountpath -->
     <qea-main-app id="mainApp"></qea-main-app>
+    <!-- endbuild -->
   </body>
 </html>

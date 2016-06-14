@@ -1,5 +1,7 @@
 'use strict';
 
+require('dotenv').config();
+
 const gulp = require('gulp');
 const plumber = require('gulp-plumber');
 const runSequence = require('run-sequence');
@@ -27,7 +29,7 @@ gulp.task('default', ['dist'], () => {
 
 // clean the bild direcories
 gulp.task('clean', () => {
-  return del(['.transpiled', 'distribution']);
+  return del(['.transpiled', 'dist']);
 });
 
 // create a web server with live reload
@@ -108,16 +110,17 @@ gulp.task('vulcanize', () => {
         '../../bower_components/import-tinymce/import-tinymce.html',
       ],
     }))
-    .pipe(gulp.dest('./distribution/'));
+    .pipe(gulp.dest('./dist/elements/'));
 });
 
 gulp.task('copyFiles', ['copyAssets'], () => {
-  const destination = ISDISTMODE ? 'distribution' : '.transpiled';
+  const destination = ISDISTMODE ? 'dist' : '.transpiled';
   if (ISDISTMODE) {
     // change paths
     gulp.src('.transpiled/index.html')
       .pipe(htmlreplace({
-        app: '<link rel="import" href="./elements.html">',
+        baseurl: `<base href="${process.env.MOUNT_PATH}/">`,
+        mountpath: `<qea-main-app id="mainApp" mount-path="${process.env.MOUNT_PATH}"></qea-main-app>`,
         webcomponents: './bower_components/webcomponentsjs/webcomponents-lite.js',
       }))
       .pipe(gulp.dest(`${destination}`));
@@ -125,7 +128,7 @@ gulp.task('copyFiles', ['copyAssets'], () => {
     // copy necessary bower components
     gulp.src(
       ['bower_components/{webcomponentsjs,import-tinymce,tinymce}/**/*']
-    ).pipe(gulp.dest('./distribution/bower_components/'));
+    ).pipe(gulp.dest('./dist/bower_components/'));
   }
   // copy styles
   gulp.src('app/styles/**/*')
@@ -140,15 +143,15 @@ gulp.task('copyFiles', ['copyAssets'], () => {
 
 
 gulp.task('copyAssets', () => {
-  const destination = ISDISTMODE ? 'distribution' : '.transpiled';
+  const destination = ISDISTMODE ? 'dist' : '.transpiled';
   if (ISDISTMODE) {
     // change image paths
-    gulp.src('./distribution/elements.html')
+    gulp.src('./dist/elements/elements.html')
       .pipe(replace('../../images/', '../images/'))
-      .pipe(replace(/="[^\s]*\/?assets\//g, '="./assets/'))
+      .pipe(replace(/="[^\s]*\/?assets\//g, '="../assets/'))
       .pipe(replace(/\/\/ <replace:start>[\s\S]*\/\/ <replace:stop>/g,
          'this._renderEditor(qid, editorType, this.query.eid);'))
-      .pipe(gulp.dest('./distribution/'));
+      .pipe(gulp.dest('./dist/elements/'));
 
     gulp.src('app/elements/**/assets/**/*')
       .pipe(rename((path) => {

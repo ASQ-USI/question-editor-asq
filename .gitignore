@@ -4,3 +4,4 @@ distribution
 bower_components
 .transpiled
 .publish/
+.env
