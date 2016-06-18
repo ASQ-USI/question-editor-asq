@@ -25,6 +25,10 @@
         right: 40px;
         bottom: 40px;
       }
+      #fabButton{
+        --paper-fab-background:#7CB342;
+        color: white;
+      }
       .card{
         margin: 20px;
       }
@@ -54,7 +58,7 @@
           </div>
         </paper-card>
       </template>
-      <paper-fab  icon="add" on-tap="_newExercise"></paper-fab>
+      <paper-fab id="fabButton" icon="add" on-tap="_newExercise"></paper-fab>
     </div>
 
   </template>
