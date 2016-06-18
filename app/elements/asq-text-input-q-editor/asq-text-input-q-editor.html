@@ -28,7 +28,7 @@
         name='title'
         label="Stem"
         type='string'
-        widget-Type='text-code'
+        widget-type='text-code'
         default='Stem'
         value={{qTitleVal}}>
       </qea-property-editor>
@@ -38,9 +38,9 @@
       </div>
       <!-- list of question properties -->
       <qea-property-editor-repeater id="qeaRepeatValues"
-        property-Array=[[questionProps]]
+        property-array=[[questionProps]]
         values={{qeaRepeatValues}}
-        is-Advanced-User=[[viewAdvanced]]>
+        is-advanced-user=[[viewAdvanced]]>
       </qea-property-editor-repeater>
 
       <div id="advanced" on-tap="_showAdvanced">
@@ -59,7 +59,7 @@
         label=[[qeaRepeatValues.label]]
         disabled=[[qeaRepeatValues.disabled]]
         value={{qeaRepeatValues.value}}
-        floating-Label=[[qeaRepeatValues.floatingLabel]]>
+        floating-label=[[qeaRepeatValues.floatingLabel]]>
 
         <asq-stem><span id="stemContent" inner-H-t-m-l={{qTitleVal}}></span></asq-stem>
 

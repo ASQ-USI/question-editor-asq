@@ -90,7 +90,7 @@
     <app-location route="{{route}}" ></app-location>
     <app-route
        route="{{route}}"
-       pattern="/:page"
+       pattern="[[mountPath]]/:page"
        data="{{routeData}}"
        tail="{{subroute}}">
     </app-route>
@@ -127,13 +127,17 @@
           _dropped: {
             type: Object,
           },
+          mountPath: {
+            type: String,
+            value: '',
+          },
         };
       }
 
 
       attached() {
-        if (!this.route.path || this.route.path === '/') {
-          this.set('route.path', '/home');
+        if (!this.route.path || this.route.path === `${this.mountPath}/`) {
+          this.set('route.path', `${this.mountPath}/home`);
         }
       }
 
