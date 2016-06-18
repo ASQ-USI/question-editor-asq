@@ -110,7 +110,7 @@
     <!-- markup dialog -->
     <paper-dialog id="markupDialog" on-core-overlay-open-completed="coreOverlayOpenCompleted" backdrop="" layered="false">
       <div id="aceContainer">
-        <ace-element id="markupEditor" theme="textmate" mode="html"></ace-element>
+        <ace-element id="markupEditor" theme="textmate" mode="xml"></ace-element>
       </div>
       <div class="buttons">
         <paper-button dialog-confirm autofocus="">CLOSE</paper-button>
@@ -504,7 +504,7 @@
 
       _getFormattedCode: function () {
 
-        var html =  '\t<asq-highlight-q ';
+        var html =  '\t<asq-highlight-q style="min-height:300px"';
         html += '\ttheme="' + this.theme + '" ';
         html += '\tmode="' + this.syntaxMode + '">\n';
         html += '  \t\t<asq-solution>' + JSON.stringify(this.getRanges(), null, 2) + '</asq-solution>\n';
@@ -513,9 +513,10 @@
           html += '   \t\t<asq-hl-color-task color="' + t.color + '" colorName="' + t.colorName + '">' + t.html + '</asq-hl-color-task>\n';
         });
         html += '   \t\t<code>';
-        html += this.asqHighlight.$.codeEditor.editor.session.getValue();
+        html += this.asqHighlight.$.codeEditor.editor.session.getValue() || '';
         html += '\t\t</code>\n';
         html += '  \t</asq-highlight-q>\n';
+        console.log(html);
         return html;
       },
 
@@ -528,7 +529,7 @@
         this.questionSolution = solution;
 
         // this._setSolution(solution);
-        this._saveQuestion(['stemTextareaValue', 'stem', 'syntaxModeItem','theme', 'tasks','themeItem', 'asqHighlight'])
+        this._saveQuestion(['stem'])
       },
 
       _isEditLabelActive: function (mode) {
