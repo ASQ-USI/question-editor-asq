@@ -88,11 +88,11 @@
           this.$.notify.notifyConfirm('Warning', 'if you continue presentation will be overridden')
             .then((responce) => {
               if (responce) {
-                this.set('route.path', '/exercise/new');
+                this.fire('changePage', { pageURL: '/exercise/new' });
               }
             });
         } else {
-          this.set('route.path', '/exercise/new');
+          this.fire('changePage', { pageURL: '/exercise/new' });
         }
       }
 
@@ -104,7 +104,7 @@
       }
 
       _restore() {
-        this.set('route.path', `/exercise/${this.exerciseStore.eid}`);
+        this.fire('changePage', { pageURL: `/exercise/${this.exerciseStore.eid}` });
       }
 
       _remove() {

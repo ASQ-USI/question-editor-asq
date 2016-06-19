@@ -133,10 +133,15 @@
           },
         };
       }
+      ready() {
+        console.log('ready ', navigator.userAgent.indexOf('Electron') !== -1);
+      }
 
 
       attached() {
-        if (!this.route.path || this.route.path === `${this.mountPath}/`) {
+        if (navigator.userAgent.indexOf('Electron') !== -1) {
+          this.set('route.path', `${this.mountPath}/home`);
+        } else if (!this.route.path || this.route.path === `${this.mountPath}/`) {
           this.set('route.path', `${this.mountPath}/home`);
         }
       }
@@ -168,7 +173,7 @@
         this.async(() => {
           if (pageURL) {
             this.set('route.__queryParams', {});
-            this.set('route.path', pageURL);
+            this.set('route.path', `${this.mountPath}${pageURL}`);
           }
         }, 1);
       }
@@ -177,21 +182,6 @@
         this.toggleClass('spinnerLayer-active', active, this.$.spinnerLayer);
         this.toggleAttribute('active', active, this.$.spinner);
       }
-
-      // _importPage(page) {
-      //   this.debounce('pageChanged', () => {
-      //     const pageMapper = {
-      //       home: 'qea-landing-page',
-      //       exercise: 'qea-canvas',
-      //       404: 'qea-404-page',
-      //     };
-      //     if (page === '' || pageMapper[page]) {
-      //       this.importHref(
-      //        this.__resolveLocalPath(pageMapper[page] || pageMapper.home),
-      //        null, null, true);
-      //     }
-      //   });
-      // }
 
     }
     Polymer(qeaMainApp);

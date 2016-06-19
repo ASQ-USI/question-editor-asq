@@ -10,13 +10,13 @@ qeaBehaviors.appBehavior = {
 
   __resolvePath(tagName, isEditor = false) {
     const editor = isEditor ? '-editor' : '';
-    const p = typeof __dirname === 'undefined' ? '../..' : __dirname;
+    const p = navigator.userAgent.indexOf('Electron') === -1 ? '../..' : '/Users/marcoravazzini/question-editor-asq';
     return `${p}/bower_components/${tagName.toLowerCase() + editor}/${tagName.toLowerCase() + editor}.html`;
   },
 
   __resolveLocalPath(tagName = '', isEditor = false) {
     const editor = isEditor ? '-editor' : '';
-    const p = typeof __dirname === 'undefined' ? '../..' : __dirname;
+    const p = navigator.userAgent.indexOf('Electron') === -1 ? '../..' : '/Users/marcoravazzini/question-editor-asq/.transpiled';
     return `${p}/elements/${tagName.toLowerCase() + editor}/${tagName.toLowerCase() + editor}.html`;
   },
 

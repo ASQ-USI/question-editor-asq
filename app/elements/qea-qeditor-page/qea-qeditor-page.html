@@ -122,7 +122,7 @@
       }
 
       _resolveLocalPath(tagName = '') {
-        const p = typeof __dirname === 'undefined' ? '../..' : __dirname;
+        const p = navigator.userAgent.indexOf('Electron') === -1 ? '../..' : '/Users/marcoravazzini/question-editor-asq/.transpiled';
         return `${p}/elements/${tagName.toLowerCase()}/${tagName.toLowerCase()}.html`;
       }
 
