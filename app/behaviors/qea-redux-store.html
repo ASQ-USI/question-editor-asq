@@ -74,7 +74,7 @@ function appReducer(state = initialState, action) {
         elements: elementsReducer(state.elements, action),
       });
     case 'RESET_STATE':
-      state = { id: 1234, elements: action.state || [] }; // eslint-disable-line no-param-reassign
+      state = { id: null, elements: action.state || [] }; // eslint-disable-line no-param-reassign
       return state;
     default:
       return state;
