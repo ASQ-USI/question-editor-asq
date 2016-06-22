@@ -101,7 +101,8 @@
         label: 'Type',
         type: 'string',
         default: 'stars',
-        description: `This attribute indicates the type of the asq-rating-items. So far only 'stars' is supported`,
+        description: `This attribute indicates the type of the asq-rating-items.
+         So far only 'stars' is supported`,
         isAdvancedProperty: 'false',
       },
       {
@@ -136,9 +137,9 @@
           },
           qTitleVal: String,
           _ratingItemsValue: {
-                      type: Array,
-                      value: () => [],
-                    },
+            type: Array,
+            value: () => [],
+          },
           _retingItemsSetter: Array,
         };
       }
@@ -153,7 +154,10 @@
         let ratingItems = '';
         let ri;
         for (ri of this._ratingItemsValue) {
-          ratingItems += `\t\t<asq-rating-item name="${ri.label}" disabled="${this.qeaRepeatValues.disabled}" type="${this.qeaRepeatValues.type}" class="asqRatingItem">${ri.label}</asq-rating-item>\n`;
+          ratingItems += `\t\t<asq-rating-item name="${ri.label}"`;
+          ratingItems += ` disabled="${this.qeaRepeatValues.disabled}"`;
+          ratingItems += `  type="${this.qeaRepeatValues.type}"`;
+          ratingItems += `  class="asqRatingItem">${ri.label}</asq-rating-item>\n`;
         }
         const code = `\t<asq-rating-q
             \t${this.qeaRepeatValues.disabled ? `disabled= ${this.qeaRepeatValues.disabled}` : ''}
