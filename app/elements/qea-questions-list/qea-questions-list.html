@@ -1,5 +1,7 @@
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
-
+<link rel="import" href="../../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../qea-question-type/qea-question-type.html">
 
 <dom-module id="qea-questions-list">
   <template>
@@ -61,13 +63,16 @@
                 //   {label: "asq-multi-choice-q"}
                 // ]},
                 { label: 'text input',
-                  bowerName: 'asq-text-input-q-editor',
+                  type: 'asq-text-input-q',
                 },
                 { label: 'multi choice',
-                  bowerName: 'asq-multi-choice-q-editor',
+                  type: 'asq-multi-choice-q',
                 },
                 { label: 'highlighter',
-                  bowerName: 'asq-highlight-q-editor',
+                  type: 'asq-highlight-q',
+                },
+                { label: 'buckets',
+                  type: 'asq-buckets-q',
                 },
             ],
           },

@@ -7,8 +7,10 @@
 <link rel="import" href="../../../bower_components/qea-property-editor/qea-advanced-editors.html">
 <link rel="import" href="../../behaviors/qea-redux-store.html">
 <link rel="import" href="../../behaviors/qea-actions-behavior.html">
-<link rel="import" href="../qea-general-editor-components/qea-three-column-layout.html">
-<link rel="import" href="../qea-general-editor-components/qea-editors-behavior.html">
+<link rel="import" href="../qea-common-editor-components/qea-three-column-layout.html">
+<link rel="import" href="../qea-common-editor-components/qea-editors-behavior.html">
+<link rel="import" href="../qea-common-editor-components/qea-user-response.html">
+
 
 <dom-module id="asq-text-input-q-editor">
   <template>
@@ -16,26 +18,19 @@
     <style>
 
     </style>
+    <qea-user-response></qea-user-response>
 
     <!-- leftPanel -->
     <div id="leftPanel">
 
       <!-- title property-->
-      <qea-property-editor
+      <qea-property-editor id="stemEditor"
         name='title'
         label="Stem"
         type='string'
-        default='Title'
+        widget-type='text-code'
+        default='Stem'
         value={{qTitleVal}}>
-      </qea-property-editor>
-
-      <!-- description property-->
-      <qea-property-editor
-        name='Question Description'
-        type='string'
-        widget-Type='text-code'
-        default={{qDescVal}}
-        value={{qDescVal}}>
       </qea-property-editor>
 
       <div class="sectionTitle">
@@ -43,9 +38,9 @@
       </div>
       <!-- list of question properties -->
       <qea-property-editor-repeater id="qeaRepeatValues"
-        property-Array=[[questionProps]]
+        property-array=[[questionProps]]
         values={{qeaRepeatValues}}
-        is-Advanced-User=[[viewAdvanced]]>
+        is-advanced-user=[[viewAdvanced]]>
       </qea-property-editor-repeater>
 
       <div id="advanced" on-tap="_showAdvanced">
@@ -58,24 +53,23 @@
     <div id="mainArea">
       <div class="explanation">
         To modify the elements in this area, change the values in the left column
-        <button type="button" name="button" on-tap='_getFormattedCode'>get code</button>
       </div>
 
       <asq-text-input-q
         label=[[qeaRepeatValues.label]]
         disabled=[[qeaRepeatValues.disabled]]
         value={{qeaRepeatValues.value}}
-        floating-Label=[[qeaRepeatValues.floatingLabel]]>
+        floating-label=[[qeaRepeatValues.floatingLabel]]>
 
         <asq-stem><span id="stemContent" inner-H-t-m-l={{qTitleVal}}></span></asq-stem>
-        <div id='questionDescription' inner-H-t-m-l={{qDescVal}}></div>
 
         <asq-solution hidden>[[questionSolution]]</asq-solution>
       </asq-text-input-q>
 
       <div class="controlPanel">
-        <paper-button raised id="solutionBt" on-tap='_setSolution1' noink>[[_solutionBt]]</paper-button>
-        <paper-button raised on-tap='_saveQuestion1'>save</paper-button>
+        <paper-button raised on-tap="_cancel">cancel</paper-button>
+        <paper-button raised id="solutionBtn" on-tap='_solutionBtnTapped' noink>[[_solutionBtn]]</paper-button>
+        <paper-button raised on-tap='_saveQuestionTapped'>save</paper-button>
       </div>
     </div>
 
@@ -103,7 +97,7 @@
         label: 'Disable input',
         type: 'Boolean',
         description: 'Set to true to style the element as disabled.',
-        default: 'true',
+        default: 'false',
         isAdvancedProperty: 'false',
       },
       {
@@ -140,12 +134,11 @@
             type: Array,
             value: questionProperties,
           },
-          _solutionBt: {
+          _solutionBtn: {
             type: String,
             value: 'set solution',
           },
           qTitleVal: String,
-          qDescVal: String,
         };
       }
 
@@ -156,25 +149,23 @@
       }
 
       _getFormattedCode() {
-        const code = `<asq-text-input-q
-            label="${this.qeaRepeatValues.label}"
-            ${this.qeaRepeatValues.disabled ? `disabled= ${this.qeaRepeatValues.disabled}` : ''}
-            value="${this.qeaRepeatValues.value}"
-            ${this.qeaRepeatValues.floatingLabel ? `floating-Label= ${this.qeaRepeatValues.floatingLabel}` : ''}>
-
-            <asq-stem>${this.qTitleVal || ''}</asq-stem>
-            ${this.qDescVal || ''}
-            <asq-solution hidden>${this.questionSolution || ''}</asq-solution>
-          </asq-text-input-q>`;
+        const code = `\t<asq-text-input-q
+            \tlabel="${this.qeaRepeatValues.label || ''}"
+            \t${this.qeaRepeatValues.disabled ? `disabled= ${this.qeaRepeatValues.disabled}` : ''}
+            \tvalue="${this.qeaRepeatValues.value}"
+            \t${this.qeaRepeatValues.floatingLabel ? 'floating-Label' : ''}>
+            \t\t<asq-stem>${this.qTitleVal || ''}</asq-stem>
+            \t\t<asq-solution hidden>${this.questionSolution || ''}</asq-solution>
+          \t</asq-text-input-q>`;
         return code;
       }
 
-      _setSolution1() {
+      _solutionBtnTapped() {
         this._setSolution(this.qeaRepeatValues.value);
       }
 
-      _saveQuestion1() {
-        this._saveQuestion(['qTitleVal', 'qDescVal']);
+      _saveQuestionTapped() {
+        this._saveQuestion(['qTitleVal']);
       }
 
     }

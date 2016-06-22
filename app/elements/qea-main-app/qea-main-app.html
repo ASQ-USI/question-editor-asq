@@ -1,6 +1,7 @@
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../behaviors/qea-app-behavior.html">
 
 <dom-module id="qea-main-app">
   <template>
@@ -10,30 +11,10 @@
         @apply(--layout-fit);
         @apply(--layout-vertical);
       }
-
-/*      #canvas-container{
-        position: absolute;
-        top: 64px;
-        left: 0;
-        bottom: 0;
-        right: 0;
-      }*/
-      iron-pages {
-       /* width: 100%;
-        height: 100%;*/
-      }
-      iron-pages > div{
-        /*width: 100%;
-        height: 100%;*/
-      }
       #nav-container{
         background: #fafafa;
         border-left: 1px solid #999;
-        /*position: fixed;*/
         width: 300px;
-/*        top: 0;
-        right: 0;
-        bottom: 0;*/
       }
       .tollbarIcon{
         margin: 0 10px;
@@ -42,47 +23,78 @@
       #spinner{
         --asq-spinner-letter-height: 46px;
         --asq-spinner-letter-width: 46px;
+        --iron-icon-fill-color: white;
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
       }
-
+      .spinnerLayer{
+        display: none;
+      }
+      .spinnerLayer-active{
+        cursor: progress;
+        display: block;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        background: rgba(51,51,51,0.5);
+        top: 0;
+        /*pointer-events: all;*/
+        z-index: 10000;
+      }
     </style>
 
+    <div class="spinnerLayer" id="spinnerLayer">
+      <asq-spinner id='spinner'></asq-spinner>
+    </div>
 
-    <qea-toolbar current-Page=[[_currentPage]]></qea-toolbar>
+    <qea-toolbar current-Page="[[routeData.page]]"></qea-toolbar>
 
 
     <section id="canvas-container" class="flex layout horizontal">
-      <asq-spinner id='spinner'></asq-spinner>
 
       <!-- be sure to add the "page-name" attribute to all the new pages inserted -->
-      <iron-pages id='pageController' selected={{_currentPage}} attr-For-Selected="page-name" class="flex layout horizontal">
+      <iron-pages id='pageController' selected="[[routeData.page]]" attr-for-selected="page-name" class="flex layout horizontal" fallback-selection="404">
 
-        <div class="page page0 layout horizontal flex" page-name='landingPage'>
+        <section class="page page0 layout horizontal flex" page-name='home'>
           <qea-landing-page class="flex"></qea-landing-page>
-        </div>
+        </section>
 
-        <div class="page flex layout horizontal page1" page-name='canvas'>
+        <section class="page flex layout horizontal page1" page-name='exercise'>
           <qea-canvas id="qeaCanvas"
             class="flex layout horizontal"
             dropped-elem="[[_dropped]]"
+            route="{{subroute}}"
             is-dragging="[[_isDragging]]">
           </qea-canvas>
           <nav id="nav-container">
             <qea-questions-list id="questions-list"></qea-questions-list>
           </nav>
-        </div>
+        </section>
 
-        <div class="page flex layout horizontal page3" id='questionEditorPage' page-name="questionEditor">
+        <section class="page flex layout horizontal page3" id='questionEditorPage' page-name="question">
+          <qea-qeditor-page class="flex layout horizontal" route="{{subroute}}"></qea-qeditor-page>
+        </section>
 
-        </div>
-
+        <section class="page flex layout horizontal page4" page-name="404">
+          <qea-404-page></qea-404-page>
+        </section>
       </iron-pages>
     </section>
 
-    <paper-toast id="toast" text="[[_toastMessage]]" duration="5000" ></paper-toast>
+    <qea-user-response id="notify"></qea-user-response>
+
+    <!-- router -->
+    <app-location route="{{route}}" ></app-location>
+    <app-route
+       route="{{route}}"
+       pattern="[[mountPath]]/:page"
+       data="{{routeData}}"
+       tail="{{subroute}}">
+    </app-route>
+    <!-- /router -->
 
   </template>
   <script>
@@ -96,58 +108,54 @@
 
       beforeRegister() {
         this.is = 'qea-main-app';
-
+        this.observers = [
+          // '_importPage(routeData.page)',
+        ];
         this.listeners = {
           fireToast: '_openToast',
           changePage: '_changePage',
           dragStart: '_dragStart',
           dragStop: '_dragStop',
+          toggleSpinner: '_toggleSpinner',
         };
 
         this.properties = {
-          _toastMessage: {
-            type: String,
-            value: '',
-          },
           _isDragging: {
             type: Boolean,
             value: false,
           },
           _dropped: {
             type: Object,
-            notify: true,
           },
-          props: {
-            type: Object,
-            notify: true,
-          },
-          _currentPage: {
+          mountPath: {
             type: String,
-            value: 'landingPage',
-            notify: true,
+            value: '',
           },
         };
       }
 
-      _openToast(host, messageData) {
-        this._toastMessage = messageData.text;
-        if (messageData.type && messageData.type === 'error') {
-          this.$.toast.customStyle['--paper-toast-background-color'] = '#F44336';
-          this.$.toast.updateStyles();
-        } else {
-          this.$.toast.customStyle['--paper-toast-background-color'] = 'black';
-          this.$.toast.updateStyles();
+
+      attached() {
+        if (!this.route.path || this.route.path === `${this.mountPath}/`) {
+          this.set('route.path', `${this.mountPath}/home`);
         }
-        this.$.toast.open();
+      }
+
+      _openToast(host, { type = 'default', text = '', properties }) {
+        if (type === 'error') {
+          this.$.notify.notifyError('', text, properties);
+        } else {
+          this.$.notify.notify('', text, properties);
+        }
       }
 
       _dragStart() {
-        // receive the event from question-item when drag start
+        // receive the event from question-type when drag start
         this._isDragging = true;
       }
 
       _dragStop(host, droppedElem) {
-        // receive the event from question-item when drag stop
+        // receive the event from question-type when drag stop
         this._isDragging = false;
         if (droppedElem) {
           // render the dropped element
@@ -155,57 +163,35 @@
         }
       }
 
-      _changePage(host, { selectedPage, pageData = null, questionInfo = { id: null, props: {}, type: '' } }) {
-        for (const page of this.$.pageController.items) {
-          if (page.getAttribute('page-name') === selectedPage) {
-            if (selectedPage === 'questionEditor') {
-              this._moveToquestionPage(questionInfo, pageData);
-              return;
-            }
-            this._currentPage = selectedPage;
-            return;
+      // the async function is used to prevent errors caused by concurrent changes of the route
+      _changePage(host, { pageURL }) {
+        this.async(() => {
+          if (pageURL) {
+            this.set('route.__queryParams', {});
+            this.set('route.path', pageURL);
           }
-        }
-        this._openToast(null, { text: `no page available with name: ${selectedPage}`, type: 'error' });
+        }, 1);
       }
 
-      _moveToquestionPage({ id, props, type }, pageData = null) {
-        // this.resolvePath(type)
-        const oldEditors = Polymer.dom(this.$.questionEditorPage).childNodes;
-        for (const edit of oldEditors) {
-          Polymer.dom(this.$.questionEditorPage).removeChild(edit);
-        }
-        if (!pageData) {
-          const name = type || pageData.bowerName;
-          const elem = this._createElement(name, true, { questionId: id, restoreState: props });
-          Polymer.dom(this.$.questionEditorPage).appendChild(elem);
-          this._currentPage = 'questionEditor';
-          return;
-        }
-        this.toggleAttribute('active', true, this.$.spinner);
-
-        Polymer.Base.importHref(this.resolveLocalPath(pageData.bowerName),
-          () => {
-            const name = type || pageData.bowerName;
-            const elem = this._createElement(name, true, {});
-            this.async(() => {
-              Polymer.dom(this.$.questionEditorPage).appendChild(elem);
-              elem.classList.add('flex');
-              this.toggleAttribute('active', false, this.$.spinner);
-              this._currentPage = 'questionEditor';
-            }, 1000);
-          },
-          () => {
-            console.error(`failed to import page ${pageData.bowerName}`);
-          }
-        );
+      _toggleSpinner(host, active = false) {
+        this.toggleClass('spinnerLayer-active', active, this.$.spinnerLayer);
+        this.toggleAttribute('active', active, this.$.spinner);
       }
 
-      resolveLocalPath(tagName) {
-        const p = typeof __dirname === 'undefined' ? '../..' : __dirname;
-        return `${p}/elements/${tagName.toLowerCase()}/${tagName.toLowerCase()}.html`;
-      }
-
+      // _importPage(page) {
+      //   this.debounce('pageChanged', () => {
+      //     const pageMapper = {
+      //       home: 'qea-landing-page',
+      //       exercise: 'qea-canvas',
+      //       404: 'qea-404-page',
+      //     };
+      //     if (page === '' || pageMapper[page]) {
+      //       this.importHref(
+      //        this.__resolveLocalPath(pageMapper[page] || pageMapper.home),
+      //        null, null, true);
+      //     }
+      //   });
+      // }
 
     }
     Polymer(qeaMainApp);

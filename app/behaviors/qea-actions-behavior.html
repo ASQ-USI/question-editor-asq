@@ -2,7 +2,7 @@
   window.qeaBehaviors = window.qeaBehaviors || {};
   qeaBehaviors.actionsBehavior = {
     actions: {
-      addElement: (type, html) => {
+      addElement: (type, html, properties) => {
         const idGenerator = () => {
           const s4 = () => {
             return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
@@ -14,6 +14,7 @@
           elementId: idGenerator(),
           elementType: type,
           elementHtml: html,
+          elementProps: properties,
         };
       },
       removeElement: (id) => {
@@ -39,8 +40,8 @@
           newIndex: newIndex, // eslint-disable-line object-shorthand
         };
       },
-      resetState: () => {
-        return { type: 'RESET_STATE' };
+      resetState: (state = null) => {
+        return { type: 'RESET_STATE', state };
       },
     },
   };

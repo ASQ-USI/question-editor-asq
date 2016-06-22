@@ -1,5 +1,7 @@
 'use strict';
 
+require('dotenv').config();
+
 const gulp = require('gulp');
 const plumber = require('gulp-plumber');
 const runSequence = require('run-sequence');
@@ -11,26 +13,35 @@ const vulcanize = require('gulp-vulcanize');
 const babel = require('gulp-babel');
 const htmlreplace = require('gulp-html-replace');
 const replace = require('gulp-replace');
+const sourcemaps = require('gulp-sourcemaps');
 const rename = require('gulp-rename');
+const inject = require('gulp-inject');
+const historyApiFallback = require('connect-history-api-fallback');
 const browserSync = require('browser-sync').create();
 const reload = browserSync.reload;
 
 // Utility functions
 let ISDISTMODE = false;
 
-gulp.task('default', () => {
+gulp.task('default', ['dist'], () => {
 
 });
 
 // clean the bild direcories
 gulp.task('clean', () => {
-  return del(['.transpiled', 'distribution']);
+  return del(['.transpiled', 'dist']);
 });
 
 // create a web server with live reload
 gulp.task('serve', ['transpile'], () => {
   browserSync.init({
-    server: ['.transpiled', './'],
+    server: {
+      baseDir: '.transpiled',
+      routes: {
+        '/bower_components': 'bower_components',
+      },
+      middleware: [historyApiFallback()],
+    },
     notify: false,
   });
   gulp.watch('app/**/*.{html, js}', ['transpile', reload]);
@@ -39,7 +50,13 @@ gulp.task('serve', ['transpile'], () => {
 // create a web server with live reload and linting
 gulp.task('serve:linter', ['transpile', 'linter'], () => {
   browserSync.init({
-    server: ['.transpiled', './'],
+    server: {
+      baseDir: '.transpiled',
+      routes: {
+        '/bower_components': 'bower_components',
+      },
+      middleware: [historyApiFallback()],
+    },
     notify: false,
   });
   gulp.watch('app/**/*.{html, js}', ['transpile', 'linter', reload]);
@@ -53,10 +70,12 @@ gulp.task('transpile', ['copyFiles'], () => {
       scriptInHead: false, // true is default
       onlySplit: false,
     }))
+    .pipe(gulpif(!ISDISTMODE, sourcemaps.init()))
     .pipe(babel({
       presets: ['es2015'],
       only: '*.js',
     }))
+    .pipe(gulpif(!ISDISTMODE, sourcemaps.write('.')))
     .pipe(gulpif(!ISDISTMODE, plumber.stop()))
     .pipe(gulp.dest('./.transpiled'));
 });
@@ -68,7 +87,7 @@ gulp.task('linter', () => {
   if (ISDISTMODE) {
     src.push('gulpfile.js');
   }
-  gulp.src(src)
+  return gulp.src(src)
   .pipe(eslint())
   .pipe(eslint.format())
   .pipe(gulpif(ISDISTMODE, eslint.failAfterError()));
@@ -76,7 +95,7 @@ gulp.task('linter', () => {
 
 gulp.task('dist', () => {
   ISDISTMODE = true;
-  runSequence('clean', 'linter', 'transpile', 'vulcanize', 'copyFiles');
+  runSequence('clean', 'linter', 'transpile', 'injectDinamicImports', 'vulcanize', 'copyFiles');
 });
 
 // optimize polymer compomponents
@@ -87,18 +106,21 @@ gulp.task('vulcanize', () => {
       stripComments: true,
       inlineCss: true,
       inlineScripts: true,
-      addedImports: ['./bower_components/import-tinymce/import-tinymce.html'],
+      addedImports: [
+        '../../bower_components/import-tinymce/import-tinymce.html',
+      ],
     }))
-    .pipe(gulp.dest('./distribution/'));
+    .pipe(gulp.dest('./dist/elements/'));
 });
 
 gulp.task('copyFiles', ['copyAssets'], () => {
-  const destination = ISDISTMODE ? 'distribution' : '.transpiled';
+  const destination = ISDISTMODE ? 'dist' : '.transpiled';
   if (ISDISTMODE) {
     // change paths
     gulp.src('.transpiled/index.html')
       .pipe(htmlreplace({
-        app: '<link rel="import" href="./elements.html">',
+        baseurl: `<base href="${process.env.MOUNT_PATH}/">`,
+        mountpath: `<qea-main-app id="mainApp" mount-path="${process.env.MOUNT_PATH}"></qea-main-app>`,
         webcomponents: './bower_components/webcomponentsjs/webcomponents-lite.js',
       }))
       .pipe(gulp.dest(`${destination}`));
@@ -106,7 +128,7 @@ gulp.task('copyFiles', ['copyAssets'], () => {
     // copy necessary bower components
     gulp.src(
       ['bower_components/{webcomponentsjs,import-tinymce,tinymce}/**/*']
-    ).pipe(gulp.dest('./distribution/bower_components/'));
+    ).pipe(gulp.dest('./dist/bower_components/'));
   }
   // copy styles
   gulp.src('app/styles/**/*')
@@ -121,13 +143,15 @@ gulp.task('copyFiles', ['copyAssets'], () => {
 
 
 gulp.task('copyAssets', () => {
-  const destination = ISDISTMODE ? 'distribution' : '.transpiled';
+  const destination = ISDISTMODE ? 'dist' : '.transpiled';
   if (ISDISTMODE) {
     // change image paths
-    gulp.src('./distribution/qea-main-app/qea-main-app.html')
+    gulp.src('./dist/elements/elements.html')
       .pipe(replace('../../images/', '../images/'))
-      .pipe(replace(/="[^\s]*assets\//, '="./assets/'))
-      .pipe(gulp.dest('./distribution/qea-main-app/'));
+      .pipe(replace(/="[^\s]*\/?assets\//g, '="../assets/'))
+      .pipe(replace(/\/\/ <replace:start>[\s\S]*\/\/ <replace:stop>/g,
+         'this._renderEditor(qid, editorType, this.query.eid);'))
+      .pipe(gulp.dest('./dist/elements/'));
 
     gulp.src('app/elements/**/assets/**/*')
       .pipe(rename((path) => {
@@ -141,4 +165,12 @@ gulp.task('copyAssets', () => {
   // copy images
   return gulp.src('app/images/**/*')
     .pipe(gulp.dest(`${destination}/images/`));
+});
+
+
+gulp.task('injectDinamicImports', () => {
+  return gulp.src('.transpiled/elements/elements.html')
+    .pipe(inject(gulp.src('.transpiled/elements/asq-*-editor/asq-*-editor.html',
+        { read: false }), { relative: true }))
+    .pipe(gulp.dest('./.transpiled/elements'));
 });

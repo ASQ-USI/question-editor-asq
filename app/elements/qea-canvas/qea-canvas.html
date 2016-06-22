@@ -1,19 +1,25 @@
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../../bower_components/iron-localstorage/iron-localstorage.html">
+<link rel="import" href="../../../bower_components/qea-property-editor/qea-advanced-text-editor.html">
+<link rel="import" href="../../../bower_components/qea-property-editor/qea-advanced-code-editor.html">
+<link rel="import" href="../../../bower_components/Sortable/Sortable.html">
+<link rel="import" href="../../behaviors/qea-redux-store.html">
+<link rel="import" href="../../behaviors/qea-actions-behavior.html">
+<link rel="import" href="../../behaviors/qea-app-behavior.html">
+<link rel="import" href="../qea-selector-highlighter/qea-selector-highlighter.html">
 
 <dom-module id="qea-canvas">
   <template>
     <style include="iron-flex">
       :host {
-       /* display: block;
-        height: 100%;
-        width: calc(100% - 300px);*/
         box-sizing: border-box;
       }
       #canvas{
-        /*width: 100%;
-        height: 100%;*/
+        overflow-y: auto;
         position: relative;
         padding: 5px;
         box-sizing: border-box;
@@ -23,15 +29,34 @@
       }
 
     </style>
+
+    <!-- router -->
+    <app-route
+       route="{{route}}"
+       pattern="/:eid"
+       data="{{routeData}}"
+       tail="{{subroute}}">
+    </app-route>
+    <!-- /router -->
+
+    <iron-localstorage name="my-app-storage"
+      value="{{exerciseStore}}"
+      on-iron-localstorage-load-empty="_initializeDefaultExercise">
+    </iron-localstorage>
+
+    <qea-advanced-code-editor id="codeEditor"
+      label="Copy this code"
+      mode="xml"
+      ></qea-advanced-code-editor>
     <qea-advanced-text-editor id="textEditor"></qea-advanced-text-editor>
     <div id="canvas" class="flex" on-tap="_selectItem" on-mouseover="_onHovered" on-mouseout="_onUnhovered">
-      <sortable-js handle=".handle" scroll  animation="200" force-Fallback="true" >
-        <template is="dom-repeat" items={{objs}}  id="repeater">
+      <sortable-js handle=".handle" scroll  animation="200" force-fallback="true" >
+        <template is="dom-repeat" items={{nodeObjects}}  id="repeater">
           <qea-selector-highlighter
-            selected-Id="[[selectedElemId]]"
-            element-Id="[[item.id]]"
+            selected-id="[[selectedElemId]]"
+            element-id="[[item.id]]"
             type="[[item.type]]"
-            element-Props="[[item.props]]"
+            element-props="[[item.props]]"
             content="[[item.html]]">
           </qea-selector-highlighter>
         </template>
@@ -48,6 +73,7 @@
 
       get behaviors() {
         return [
+          qeaBehaviors.appBehavior,
           qeaBehaviors.actionsBehavior,
           qeaBehaviors.reduxStore,
         ];
@@ -55,28 +81,52 @@
 
       beforeRegister() {
         this.is = 'qea-canvas';
+        this.observers = [
+          '_loadExercise(routeData.eid)',
+        ];
         this.properties = {
+          exerciseId: {
+            type: String,
+          },
+          /**
+          * Whether the user is dragging an item into the canvas.
+          */
           isDragging: {
             type: Boolean,
           },
+          /**
+          * id of the selected element
+          */
           selectedElemId: {
             type: String,
           },
-          objs: {
+          /**
+          * Questions or text to be rendered in canvas. This Prop is set by the redux store
+          * @type {[{id:String, type:String, html:String, props: Object}, ...]}
+          */
+          nodeObjects: {
             type: Array,
             statePath: 'elements',
+            observer: 'saveStorage',
           },
-          _hovered: {
-            type: Boolean,
-            value: false,
-          },
+          /**
+          * Object representing the values described in qea-questions-list for the dropped question.
+          *
+          * @type {{ questionDetails: { label, type }, dragDetails: {...} }}
+          */
           droppedElem: {
             type: Object,
             observer: '_notifyDrop',
           },
+          /**
+          * Whether the user is hovering the canvas.
+          */
           isHover: {
             type: Boolean,
             value: false,
+          },
+          exerciseStore: {
+            type: Object,
           },
         };
       }
@@ -105,12 +155,15 @@
       _notifyDrop(el) {
         this.toggleClass('qea-selected', false, this.$.canvas);
         if (this.isHover) {
-          this.fire('changePage', { selectedPage: 'questionEditor', pageData: el.questionDetails });
+          const a = el.questionDetails;
+          this.fire('changePage',
+            { pageURL: `/question/new/edit?type=${a.type}&eid=${this.exerciseId}` }
+          );
         }
       }
 
       insertTextArea() {
-        this.$.textEditor.openDialog().then(
+        this.$.textEditor.openTextDialog().then(
           (text) => {
             if (text) { this.dispatch('addElement', 'text', text); }
           }
@@ -118,12 +171,81 @@
       }
 
       modifyTextArea(id, code) {
-        this.$.textEditor.setContent(code);
-        this.$.textEditor.openDialog().then(
+        this.$.textEditor.openTextDialog(code).then(
           (text) => {
             if (text) { this.dispatch('editElement', id, text); }
           }
         );
+      }
+
+      /**
+      * open dialog showing the html of the elements present in the canvas
+      */
+      showCode() {
+        const elements = Polymer.dom(this.root).querySelectorAll('qea-selector-highlighter');
+        let code = '<asq-exercise>\n';
+        for (const elem of elements) {
+          code += elem.getCode();
+        }
+        code += '\n</asq-exercise>';
+        code = code.replace(/^\s*[\r\n]/gm, '');
+        code = code.replace(/^ +/gm, '');
+        this.$.codeEditor.openCodeDialog(code);
+      }
+
+      _loadExercise(eid) {
+        this.debounce('doSomething', () => {
+          this.$$('iron-localstorage').reload();
+          if (eid && this.route.prefix === '/exercise' && this.exerciseStore) {
+            if (eid === 'new') {
+              // create new
+              const newEid = this.__idGenerator();
+              this.exerciseId = newEid;
+              this.set('exerciseStore.eid', newEid);
+              this.set('exerciseStore.elements', []);
+              this.set('routeData.eid', `${newEid}`);
+            } else if (this.exerciseStore.eid && this.exerciseStore.eid === eid) {
+              // restore
+              this.exerciseId = eid;
+              this._ensureImportHelper();
+            } else {
+              this.fire('fireToast', { text: "We can't find an exercice with that id", type: 'error' });
+              this.fire('changePage', { pageURL: '404' });
+            }
+          }
+        });
+      }
+
+      _initializeDefaultExercise() {
+        this.exerciseStore = { };
+      }
+
+      saveStorage(arrayOfNode = []) {
+        this.set('exerciseStore.elements', arrayOfNode);
+      }
+
+      _ensureImportHelper() {
+        const elements = [];
+        for (const elem of this.exerciseStore.elements) {
+          if (elem.type !== 'text') {
+            elements.push(this.__resolvePath(elem.type));
+          }
+        }
+
+        Promise.all(elements.map(this._ensureImport))
+        .then(() => {
+          this.dispatch('resetState', this.exerciseStore.elements);
+        }).catch((e) => {
+          console.error('error during import: ', e, elements);
+        });
+      }
+
+      _ensureImport(href) {
+        return new Promise((resolve, reject) => {
+          Polymer.Base.importHref((href), (e) => {
+            resolve(e.target);
+          }, reject, true);
+        });
       }
 
     }

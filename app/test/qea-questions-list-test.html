@@ -31,7 +31,7 @@
         });
       });
 
-      test('correctly render single question element', function(done) {
+      test('correctly render a single question element', function(done) {
         myEl.questions = [{name : "im a single element"}]
 
         flush(function() {
@@ -42,7 +42,7 @@
         });
       });
 
-      test('correctly render multiple questions elements', function(done) {
+      test('correctly render multiple question elements', function(done) {
         myEl.questions = [{name : "im element1"}, {name : "im element2"}]
 
         flush(function() {

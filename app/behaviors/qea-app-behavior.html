@@ -8,11 +8,25 @@ qeaBehaviors.appBehavior = {
     },
   },
 
-  resolvePath(tagName) {
+  __resolvePath(tagName, isEditor = false) {
+    const editor = isEditor ? '-editor' : '';
     const p = typeof __dirname === 'undefined' ? '../..' : __dirname;
-    return `${p}/bower_components/${tagName.toLowerCase()}/${tagName.toLowerCase()}.html`;
+    return `${p}/bower_components/${tagName.toLowerCase() + editor}/${tagName.toLowerCase() + editor}.html`;
   },
 
+  __resolveLocalPath(tagName = '', isEditor = false) {
+    const editor = isEditor ? '-editor' : '';
+    const p = typeof __dirname === 'undefined' ? '../..' : __dirname;
+    return `${p}/elements/${tagName.toLowerCase() + editor}/${tagName.toLowerCase() + editor}.html`;
+  },
+
+
+  __idGenerator() {
+    const s4 = () => {
+      return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+    };
+    return `${s4() + s4()}-${s4()}-${s4()}-${s4()}-${s4() + s4() + s4()}`;
+  },
 
   _importElement(elementName, notyfyImport = true) {
   // check if the element is already been imported
