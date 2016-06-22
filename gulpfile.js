@@ -48,7 +48,7 @@ gulp.task('serve', ['transpile'], () => {
 });
 
 // create a web server with live reload and linting
-gulp.task('serve:linter', ['transpile', 'linter'], () => {
+gulp.task('serve:lint', ['transpile', 'lint'], () => {
   browserSync.init({
     server: {
       baseDir: '.transpiled',
@@ -59,7 +59,7 @@ gulp.task('serve:linter', ['transpile', 'linter'], () => {
     },
     notify: false,
   });
-  gulp.watch('app/**/*.{html, js}', ['transpile', 'linter', reload]);
+  gulp.watch('app/**/*.{html, js}', ['transpile', 'lint', reload]);
 });
 
 // tranpile javascript
@@ -81,8 +81,8 @@ gulp.task('transpile', ['copyFiles'], () => {
 });
 
 
-// linter that use Google's rooles
-gulp.task('linter', () => {
+// lint using AirBnB's rules
+gulp.task('lint', () => {
   const src = ['app/**/*.{html,js}', '!app/test/**/*'];
   if (ISDISTMODE) {
     src.push('gulpfile.js');
@@ -95,7 +95,7 @@ gulp.task('linter', () => {
 
 gulp.task('dist', () => {
   ISDISTMODE = true;
-  runSequence('clean', 'linter', 'transpile', 'injectDinamicImports', 'vulcanize', 'copyFiles');
+  runSequence('clean', 'lint', 'transpile', 'injectDinamicImports', 'vulcanize', 'copyFiles');
 });
 
 // optimize polymer compomponents
