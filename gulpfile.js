@@ -174,3 +174,19 @@ gulp.task('injectDinamicImports', () => {
         { read: false }), { relative: true }))
     .pipe(gulp.dest('./.transpiled/elements'));
 });
+
+
+gulp.task('electron', ['transpile'], () => {
+  gulp.src('.transpiled/index.html')
+    .pipe(htmlreplace({
+      mountpath: `<qea-main-app id="mainApp"
+                    mount-path="${process.env.MOUNT_PATH}" is-electron></qea-main-app>`,
+      electronRequire: `<script> window.nodeRequire = require;
+        delete window.require;delete window.exports;
+        delete window.module;</script>`,
+      baseurl: '',
+    }))
+    .pipe(gulp.dest('.transpiled'));
+
+  return;
+});

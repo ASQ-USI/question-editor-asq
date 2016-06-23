@@ -131,12 +131,19 @@
             type: String,
             value: '',
           },
+          isElectron: {
+            type: Boolean,
+            value: false,
+          },
         };
       }
-      ready() {
-        console.log('ready ', navigator.userAgent.indexOf('Electron') !== -1);
-      }
 
+      ready() {
+        window.QEA = {
+          isElectron: this.isElectron,
+          basePath: window.location.href,
+        };
+      }
 
       attached() {
         if (navigator.userAgent.indexOf('Electron') !== -1) {

@@ -24,7 +24,7 @@ app.on('ready', () => {
     { width: 1200,
       height: 800,
       webPreferences: {
-        nodeIntegration: false,
+        nodeIntegration: true,
       },
     });
 
@@ -32,7 +32,7 @@ app.on('ready', () => {
   mainWindow.loadURL(`file://${__dirname}/.transpiled/index.html`);
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 
   // Emitted when the window is closed.
   mainWindow.on('closed', () => {
