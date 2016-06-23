@@ -1,7 +1,8 @@
 
 node_modules
-distribution
+dist
 bower_components
 .transpiled
 .publish/
+distribution
 .env

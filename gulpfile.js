@@ -48,7 +48,7 @@ gulp.task('serve', ['transpile'], () => {
 });
 
 // create a web server with live reload and linting
-gulp.task('serve:linter', ['transpile', 'linter'], () => {
+gulp.task('serve:lint', ['transpile', 'lint'], () => {
   browserSync.init({
     server: {
       baseDir: '.transpiled',
@@ -59,7 +59,7 @@ gulp.task('serve:linter', ['transpile', 'linter'], () => {
     },
     notify: false,
   });
-  gulp.watch('app/**/*.{html, js}', ['transpile', 'linter', reload]);
+  gulp.watch('app/**/*.{html, js}', ['transpile', 'lint', reload]);
 });
 
 // tranpile javascript
@@ -81,8 +81,8 @@ gulp.task('transpile', ['copyFiles'], () => {
 });
 
 
-// linter that use Google's rooles
-gulp.task('linter', () => {
+// lint using AirBnB's rules
+gulp.task('lint', () => {
   const src = ['app/**/*.{html,js}', '!app/test/**/*'];
   if (ISDISTMODE) {
     src.push('gulpfile.js');
@@ -95,7 +95,7 @@ gulp.task('linter', () => {
 
 gulp.task('dist', () => {
   ISDISTMODE = true;
-  runSequence('clean', 'linter', 'transpile', 'injectDinamicImports', 'vulcanize', 'copyFiles');
+  runSequence('clean', 'lint', 'transpile', 'injectDinamicImports', 'vulcanize', 'copyFiles');
 });
 
 // optimize polymer compomponents
@@ -107,7 +107,7 @@ gulp.task('vulcanize', () => {
       inlineCss: true,
       inlineScripts: true,
       addedImports: [
-        '../../bower_components/import-tinymce/import-tinymce.html',
+        '../bower_components/import-tinymce/import-tinymce.html',
       ],
     }))
     .pipe(gulp.dest('./dist/elements/'));
@@ -127,7 +127,7 @@ gulp.task('copyFiles', ['copyAssets'], () => {
 
     // copy necessary bower components
     gulp.src(
-      ['bower_components/{webcomponentsjs,import-tinymce,tinymce}/**/*']
+      ['bower_components/{webcomponentsjs,import-tinymce,tinymce,ace-element}/**/*']
     ).pipe(gulp.dest('./dist/bower_components/'));
   }
   // copy styles
@@ -173,4 +173,20 @@ gulp.task('injectDinamicImports', () => {
     .pipe(inject(gulp.src('.transpiled/elements/asq-*-editor/asq-*-editor.html',
         { read: false }), { relative: true }))
     .pipe(gulp.dest('./.transpiled/elements'));
+});
+
+
+gulp.task('electron', ['transpile'], () => {
+  gulp.src('.transpiled/index.html')
+    .pipe(htmlreplace({
+      mountpath: `<qea-main-app id="mainApp"
+                    mount-path="${process.env.MOUNT_PATH}" is-electron></qea-main-app>`,
+      electronRequire: `<script> window.nodeRequire = require;
+        delete window.require;delete window.exports;
+        delete window.module;</script>`,
+      baseurl: '',
+    }))
+    .pipe(gulp.dest('.transpiled'));
+
+  return;
 });

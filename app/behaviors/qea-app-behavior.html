@@ -10,16 +10,15 @@ qeaBehaviors.appBehavior = {
 
   __resolvePath(tagName, isEditor = false) {
     const editor = isEditor ? '-editor' : '';
-    const p = typeof __dirname === 'undefined' ? '../..' : __dirname;
+    const p = window.QEA.isElectron ? `${window.QEA.basePath}/../..` : '../..';
     return `${p}/bower_components/${tagName.toLowerCase() + editor}/${tagName.toLowerCase() + editor}.html`;
   },
 
   __resolveLocalPath(tagName = '', isEditor = false) {
     const editor = isEditor ? '-editor' : '';
-    const p = typeof __dirname === 'undefined' ? '../..' : __dirname;
+    const p = window.QEA.isElectron ? `${window.QEA.basePath}/..` : '../..';
     return `${p}/elements/${tagName.toLowerCase() + editor}/${tagName.toLowerCase() + editor}.html`;
   },
-
 
   __idGenerator() {
     const s4 = () => {
@@ -38,7 +37,6 @@ qeaBehaviors.appBehavior = {
     }
     return 1;
   },
-
 
   // function rensponsable to generate DOM elements
   _createElement(elementName, isPolymerElem = true, elemProperties = {}) {

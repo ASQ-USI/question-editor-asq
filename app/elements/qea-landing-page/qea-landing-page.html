@@ -25,6 +25,10 @@
         right: 40px;
         bottom: 40px;
       }
+      #fabButton{
+        --paper-fab-background:#7CB342;
+        color: white;
+      }
       .card{
         margin: 20px;
       }
@@ -42,7 +46,6 @@
       <template is="dom-if" if="[[_checkStore(exerciseStore)]]">
         <paper-card  class="card" >
           <div class="card-content">
-            <img src="./assets/svg/asq-logo.svg" alt="" /><br>
             <p>
               we have foud a presentation<br> do
               you whant to restore it?
@@ -54,7 +57,7 @@
           </div>
         </paper-card>
       </template>
-      <paper-fab  icon="add" on-tap="_newExercise"></paper-fab>
+      <paper-fab id="fabButton" icon="add" on-tap="_newExercise"></paper-fab>
     </div>
 
   </template>
@@ -84,11 +87,11 @@
           this.$.notify.notifyConfirm('Warning', 'if you continue presentation will be overridden')
             .then((responce) => {
               if (responce) {
-                this.set('route.path', '/exercise/new');
+                this.fire('changePage', { pageURL: '/exercise/new' });
               }
             });
         } else {
-          this.set('route.path', '/exercise/new');
+          this.fire('changePage', { pageURL: '/exercise/new' });
         }
       }
 
@@ -100,7 +103,7 @@
       }
 
       _restore() {
-        this.set('route.path', `/exercise/${this.exerciseStore.eid}`);
+        this.fire('changePage', { pageURL: `/exercise/${this.exerciseStore.eid}` });
       }
 
       _remove() {

@@ -79,7 +79,7 @@
 
               // <replace:start>
               Polymer.Base.importHref(
-                this._resolveLocalPath(editorType),
+                this.__resolveLocalPath(editorType),
                 () => {
                   // successful import
                   this._renderEditor(qid, editorType, this.query.eid);
@@ -119,11 +119,6 @@
           Polymer.dom(this.$.editorContainer).appendChild(elem);
           this.fire('toggleSpinner', false);
         }, 1000);
-      }
-
-      _resolveLocalPath(tagName = '') {
-        const p = typeof __dirname === 'undefined' ? '../..' : __dirname;
-        return `${p}/elements/${tagName.toLowerCase()}/${tagName.toLowerCase()}.html`;
       }
 
       _searchQuestion(qid) {
