@@ -107,7 +107,7 @@ gulp.task('vulcanize', () => {
       inlineCss: true,
       inlineScripts: true,
       addedImports: [
-        '../../bower_components/import-tinymce/import-tinymce.html',
+        '../bower_components/import-tinymce/import-tinymce.html',
       ],
     }))
     .pipe(gulp.dest('./dist/elements/'));
@@ -127,7 +127,7 @@ gulp.task('copyFiles', ['copyAssets'], () => {
 
     // copy necessary bower components
     gulp.src(
-      ['bower_components/{webcomponentsjs,import-tinymce,tinymce}/**/*']
+      ['bower_components/{webcomponentsjs,import-tinymce,tinymce,ace-element}/**/*']
     ).pipe(gulp.dest('./dist/bower_components/'));
   }
   // copy styles
