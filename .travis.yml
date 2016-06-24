@@ -17,6 +17,6 @@ addons:
     - google-chrome-stable
   sauce_connect: true
 script:
-- xvfb-run wct
+- xvfb-run npm run test
 - if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then npm run test-ci; fi
 dist: trusty
