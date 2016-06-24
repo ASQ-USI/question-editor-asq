@@ -5,7 +5,7 @@
   "main": "electron.js",
   "scripts": {
     "test": "gulp transpile && wct app/test",
-    "test-ci": "gulp transpile && wct app/test -s 'default'"
+    "test-ci": "gulp transpile && wct app/test --skip-plugin local --plugin sauce;"
   },
   "repository": {
     "type": "git",
