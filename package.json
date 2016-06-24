@@ -34,6 +34,7 @@
     "run-sequence": "^1.1.5"
   },
   "dependencies": {
+    "babel-plugin-transform-object-assign": "^6.8.0",
     "redux": "^3.4.0"
   }
 }

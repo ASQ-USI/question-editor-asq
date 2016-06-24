@@ -54,6 +54,7 @@ gulp.task('transpile', ['copyFiles'], () => {
       onlySplit: false,
     }))
     .pipe(babel({
+      plugins: ['transform-object-assign'],
       presets: ['es2015'],
       only: '*.js',
     }))
