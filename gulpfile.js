@@ -1,6 +1,7 @@
 'use strict';
 
-require('dotenv').config();
+require('dotenv').config({ silent: true });
+const mountPath = process.env.MOUNT_PATH || '';
 
 const gulp = require('gulp');
 const plumber = require('gulp-plumber');
@@ -120,8 +121,8 @@ gulp.task('copyFiles', ['copyAssets'], () => {
     // change paths
     gulp.src('.transpiled/index.html')
       .pipe(htmlreplace({
-        baseurl: `<base href="${process.env.MOUNT_PATH}/">`,
-        mountpath: `<qea-main-app id="mainApp" mount-path="${process.env.MOUNT_PATH}"></qea-main-app>`,
+        baseurl: `<base href="${mountPath}/">`,
+        mountpath: `<qea-main-app id="mainApp" mount-path="${mountPath}"></qea-main-app>`,
         webcomponents: './bower_components/webcomponentsjs/webcomponents-lite.js',
       }))
       .pipe(gulp.dest(`${destination}`));
@@ -181,7 +182,7 @@ gulp.task('electron', ['transpile'], () => {
   gulp.src('.transpiled/index.html')
     .pipe(htmlreplace({
       mountpath: `<qea-main-app id="mainApp"
-                    mount-path="${process.env.MOUNT_PATH}" is-electron></qea-main-app>`,
+                    mount-path="${mountPath}" is-electron></qea-main-app>`,
       electronRequire: `<script> window.nodeRequire = require;
         delete window.require;delete window.exports;
         delete window.module;</script>`,
