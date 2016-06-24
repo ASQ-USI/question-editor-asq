@@ -1,4 +1,8 @@
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/paper-tooltip/paper-tooltip.html">
 
 <dom-module id="qea-toolbar">
   <template>
@@ -47,13 +51,18 @@
         <paper-icon-button icon="add-box" id="addText"
           class="tollbarIcons" on-tap='_insertText'>
         </paper-icon-button>
-        <paper-tooltip for='addText' animation-Delay='200'>insert text area</paper-tooltip>
+        <paper-icon-button icon="code" id="showCode"
+          class="tollbarIcons" on-tap='_showCode'>
+        </paper-icon-button>
+        <paper-tooltip for='addText' animation-delay='200'>insert text area</paper-tooltip>
+        <paper-tooltip for='showCode' animation-delay='200'>show generated code</paper-tooltip>
 
-        <paper-icon-button icon="undo" id="undo" class="tollbarIcons" disabled></paper-icon-button>
+
+        <!-- <paper-icon-button icon="undo" id="undo" class="tollbarIcons" disabled></paper-icon-button>
         <paper-tooltip for='undo' animation-Delay='200'>undo</paper-tooltip>
 
         <paper-icon-button icon="redo" id="redo" class="tollbarIcons" disabled></paper-icon-button>
-        <paper-tooltip for='redo' animation-Delay='200'>redo</paper-tooltip>
+        <paper-tooltip for='redo' animation-Delay='200'>redo</paper-tooltip> -->
 
         <!-- <paper-button disabled>save</paper-button> -->
       </template>
@@ -89,10 +98,9 @@
 
       _showChecker(currentPage) {
         switch (currentPage) {
-          case 'canvas':
+          case 'exercise':
             this._isVisible = true;
             break;
-          case 'landingPage':
           default:
             this._isVisible = false;
             return;
@@ -104,7 +112,10 @@
         canvas.insertTextArea();
       }
 
-
+      _showCode() {
+        const canvas = Polymer.dom(this.parentNode.root).querySelector('qea-canvas');
+        canvas.showCode();
+      }
     }
 
     Polymer(qeaToolbar);

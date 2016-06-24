@@ -1,9 +1,8 @@
 
 node_modules
-distribution
+dist
 bower_components
 .transpiled
 .publish/
 .env
-dist
 npm-debug.log

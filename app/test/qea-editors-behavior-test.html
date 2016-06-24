@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script src="../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../bower_components/web-component-tester/browser.js"></script>
+    <script src="../../.transpiled/script/redux.min.js"></script>
+    <link rel="import" href="../../bower_components/polymer-redux/polymer-redux.html">
+
+
+    <!-- import the element to test -->
+    <link rel="import" href="./simple-element-editors-behavior.html">
+  </head>
+  <body>
+    <!-- use the document as a place to set up your fixtures -->
+    <test-fixture id="simple-element-editors-behavior-fixture">
+      <template>
+        <simple-element-editors-behavior></simple-element-editors-behavior>
+      </template>
+    </test-fixture>
+    <script>
+      suite('<simple-element-editors-behavior>', function() {
+        var myEl;
+        setup(function() {
+          myEl = fixture('simple-element-editors-behavior-fixture');
+          stub('simple-element-editors-behavior', {
+            dispatch: function(action, id, code, state) {
+              var event;
+              var success = false;
+              if (action === 'addElement' && id === 'simple-element-editors-b' && code==='' && Object.keys(state).length >= 2) {
+                success = true
+              }
+              var event = new CustomEvent("name-of-event", { "detail": success });
+              document.dispatchEvent(event);
+            }
+          });
+        });
+
+        test('_showAdvanced toggles state of viewAdvanced prop', function() {
+          assert.equal(myEl.viewAdvanced , 'false');
+          myEl._showAdvanced();
+          assert.equal(myEl.viewAdvanced , 'true');
+          myEl._showAdvanced();
+          assert.equal(myEl.viewAdvanced , 'false');
+        });
+
+        test('_cancel fires changePage event when user clicks on confirm without an exerciseId', function (done) {
+          myEl.addEventListener('changePage', function(event) {
+            assert.equal(event.detail.pageURL, '/home');
+            done();
+          });
+          myEl._cancel()
+          flush(function () {
+            myEl.$$('qea-user-response').$$('#confirm').click();
+          })
+        })
+
+        test('_cancel fires changePage event when user clicks on confirm with an exerciseId', function (done) {
+          myEl.exerciseId = 'asd-2123';
+          myEl.addEventListener('changePage', function(event) {
+            assert.equal(event.detail.pageURL, '/exercise/asd-2123');
+            done();
+          });
+          myEl._cancel()
+          flush(function () {
+            myEl.$$('qea-user-response').$$('#confirm').click();
+          })
+        })
+
+        test('_setSolution modifies questionSolution prop', function (done) {
+          assert.equal(myEl.questionSolution , undefined);
+          myEl._setSolution('test')
+          flush(function () {
+            myEl.$$('qea-user-response').$$('#confirm').click();
+            Polymer.Base.async(function () {
+              assert.equal(myEl.questionSolution , 'test');
+              done()
+            }, 200)
+          })
+        })
+
+        test('_getQuestionState returns an object with all the properties passed', function () {
+          myEl.test1 = 42;
+          myEl.test2 = '24';
+          var obj = myEl._getQuestionState(['test1', 'test2']);
+          assert.equal(obj.test1, 42);
+          assert.equal(obj.test2, '24');
+          assert.equal(obj.viewAdvanced, 'false');
+          assert.notEqual(obj.qeaRepeatValues, undefined);
+        })
+
+        test('_restoreQuestionState restores the values of the properties passed', function () {
+          assert.equal(myEl.test1, undefined);
+          assert.equal(myEl.viewAdvanced, 'false');
+          assert.notEqual(myEl.qeaRepeatValues, undefined);
+          myEl._restoreQuestionState({viewAdvanced: 'true', test1: 42});
+          assert.equal(myEl.test1, 42);
+          assert.equal(myEl.viewAdvanced, 'true');
+          assert.notEqual(myEl.qeaRepeatValues, undefined);
+        })
+
+        test('_saveQuestion dispatch a redux event passing the correct action, id, code, state', function (done) {
+          document.addEventListener("name-of-event", function(e) {
+            assert.equal(e.detail, true)
+            done()
+          });
+          myEl._saveQuestion([], 'test solution')
+        })
+
+      });
+    </script>
+  </body>
+</html>

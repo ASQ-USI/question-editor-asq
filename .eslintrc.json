@@ -9,7 +9,7 @@
     "func-names": "off",
     "strict": "off",
     "arrow-body-style": "off",
-    "no-underscore-dangle": ["error", { "allowAfterThis": true }],
+    "no-underscore-dangle": ["error", { "allowAfterThis": true, "allow": ["__queryParams"]}],
     "no-param-reassign": ["error", { "props": false }]
   },
   "env": {

@@ -1,7 +1,8 @@
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../../bower_components/qea-property-editor/qea-property-editor-repeater.html">
+<link rel="import" href="../qea-common-editor-components/qea-items-list.html">
 <link rel="import" href="../../../bower_components/qea-property-editor/qea-property-editor.html">
-<link rel="import" href="../../../bower_components/asq-text-input-q/asq-text-input-q.html">
+<link rel="import" href="../../../bower_components/asq-rating-q/asq-rating-q.html">
 <link rel="import" href="../../../bower_components/asq-stem/asq-stem.html">
 <link rel="import" href="../../../bower_components/asq-solution/asq-solution.html">
 <link rel="import" href="../../../bower_components/qea-property-editor/qea-advanced-editors.html">
@@ -12,7 +13,7 @@
 <link rel="import" href="../qea-common-editor-components/qea-user-response.html">
 
 
-<dom-module id="asq-text-input-q-editor">
+<dom-module id="asq-rating-q-editor">
   <template>
     <style include="qea-three-column-layout"></style>
     <style>
@@ -43,6 +44,14 @@
         is-advanced-user=[[viewAdvanced]]>
       </qea-property-editor-repeater>
 
+      <div class="sectionTitle"> Rating items list </div>
+      <qea-items-list
+        new-item-label="Insert a rating item"
+        sortable
+        restore="[[_ratingItemsSetter]]"
+        value="{{_ratingItemsValue}}">
+      </qea-items-list>
+
       <div id="advanced" on-tap="_showAdvanced">
         show all
       </div>
@@ -55,16 +64,19 @@
         To modify the elements in this area, change the values in the left column
       </div>
 
-      <asq-text-input-q
-        label=[[qeaRepeatValues.label]]
+      <asq-rating-q
+        type=[[qeaRepeatValues.type]]
         disabled=[[qeaRepeatValues.disabled]]
-        value={{qeaRepeatValues.value}}
-        floating-label=[[qeaRepeatValues.floatingLabel]]>
+        value={{qeaRepeatValues.value}}>
 
         <asq-stem><span id="stemContent" inner-H-t-m-l={{qTitleVal}}></span></asq-stem>
+          
+        <template is="dom-repeat" items="[[_ratingItemsValue]]">
+          <asq-rating-item name='[[item.label]]' disabled='[[qeaRepeatValues.disabled]]' type="[[qeaRepeatValues.type]]" class="asqRatingItem">[[item.label]]</asq-rating-item>
+        </template>
 
         <asq-solution hidden>[[questionSolution]]</asq-solution>
-      </asq-text-input-q>
+      </asq-rating-q>
 
       <div class="controlPanel">
         <paper-button raised on-tap="_cancel">cancel</paper-button>
@@ -85,39 +97,24 @@
 
     const questionProperties = [
       {
-        name: 'label',
-        label: 'Input label',
+        name: 'type',
+        label: 'Type',
         type: 'string',
-        description: `The label for this input. It normally appears as grey text
-                inside the text input and disappears once the user enters text.`,
+        default: 'stars',
+        description: `This attribute indicates the type of the asq-rating-items.
+         So far only 'stars' is supported`,
         isAdvancedProperty: 'false',
       },
       {
         name: 'disabled',
         label: 'Disable input',
         type: 'Boolean',
-        description: 'Set to true to style the element as disabled.',
+        description: 'Set to true to disable the element.',
         default: 'false',
         isAdvancedProperty: 'false',
-      },
-      {
-        name: 'value',
-        label: 'Input value',
-        type: 'string',
-        description: 'The current value of the input.',
-        isAdvancedProperty: 'false',
-      },
-      {
-        name: 'floatingLabel',
-        label: 'move label hover text',
-        type: 'Boolean',
-        description: `If true, the label will 'float' above the text input once the
-                      user enters text instead of disappearing.`,
-        default: 'false',
-        isAdvancedProperty: 'true',
       },
     ];
-    class asqTextInputQEditor {
+    class asqRatingQEditor {
 
       get behaviors() {
         return [
@@ -128,7 +125,7 @@
       }
 
       beforeRegister() {
-        this.is = 'asq-text-input-q-editor';
+        this.is = 'asq-rating-q-editor';
         this.properties = {
           questionProps: {
             type: Array,
@@ -139,6 +136,11 @@
             value: 'set solution',
           },
           qTitleVal: String,
+          _ratingItemsValue: {
+            type: Array,
+            value: () => [],
+          },
+          _retingItemsSetter: Array,
         };
       }
 
@@ -149,14 +151,21 @@
       }
 
       _getFormattedCode() {
-        const code = `\t<asq-text-input-q
-            \tlabel="${this.qeaRepeatValues.label || ''}"
+        let ratingItems = '';
+        let ri;
+        for (ri of this._ratingItemsValue) {
+          ratingItems += `\t\t<asq-rating-item name="${ri.label}"`;
+          ratingItems += ` disabled="${this.qeaRepeatValues.disabled}"`;
+          ratingItems += `  type="${this.qeaRepeatValues.type}"`;
+          ratingItems += `  class="asqRatingItem">${ri.label}</asq-rating-item>\n`;
+        }
+        const code = `\t<asq-rating-q
             \t${this.qeaRepeatValues.disabled ? `disabled= ${this.qeaRepeatValues.disabled}` : ''}
-            \tvalue="${this.qeaRepeatValues.value}"
-            \t${this.qeaRepeatValues.floatingLabel ? 'floating-Label' : ''}>
+            \ttype="${this.qeaRepeatValues.type}">
             \t\t<asq-stem>${this.qTitleVal || ''}</asq-stem>
+            ${ratingItems}
             \t\t<asq-solution hidden>${this.questionSolution || ''}</asq-solution>
-          \t</asq-text-input-q>`;
+          \t</asq-rating-q>`;
         return code;
       }
 
@@ -165,12 +174,36 @@
       }
 
       _saveQuestionTapped() {
-        this._saveQuestion(['qTitleVal']);
+        this._saveQuestion(['qTitleVal', '_ratingItemsValue']);
       }
 
+      /*
+      * @override
+      */
+      _restoreQuestionState(state = {}) {
+        const allRepeaters = Polymer.dom(this.root).querySelectorAll('qea-property-editor-repeater');
+        let prop;
+        for (prop of Object.keys(state)) {
+          if (prop === '_ratingItemsValue') {
+            this._ratingItemsSetter = state[prop];
+          } else {
+            this[prop] = state[prop];
+          }
+        }
+        // need to wait the rendering
+        Polymer.dom.flush();
+        for (const repeater of allRepeaters) {
+          if (state[repeater.id]) {
+            const qProps = Polymer.dom(repeater.root).querySelectorAll('qea-property-editor');
+            for (const spProp of qProps) {
+              spProp.value = state[repeater.id][spProp.name];
+            }
+          }
+        }
+      }
     }
 
-    Polymer(asqTextInputQEditor);
+    Polymer(asqRatingQEditor);
   })();
   </script>
 </dom-module>

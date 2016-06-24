@@ -1,11 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
   <head>
+    <!-- build:electronRequire -->
+    <!-- endbuild -->
+
+    <!-- required by browserSync -->
+    <!-- build:baseurl -->
+    <base href="/" target="_blank" />
+    <!-- endbuild -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="styles/main.css">
-    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
-
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,500,700' rel='stylesheet' type='text/css'>
     <!-- build:webcomponents -->
     <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
     <!-- endbuild -->
@@ -13,13 +20,13 @@
     <!-- will be creted during the build process -->
     <script src="./script/redux.min.js"></script>
 
-    <!-- build:app -->
     <link rel="import" href="./elements/elements.html">
-    <!-- endbuild -->
 
     <title>question-editor-asq</title>
   </head>
   <body >
-    <qea-main-app id="mainApp"></qea-main-app>
+    <!-- build:mountpath -->
+    <qea-main-app id="mainApp"  ></qea-main-app>
+    <!-- endbuild -->
   </body>
 </html>
