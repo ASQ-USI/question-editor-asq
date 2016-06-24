@@ -2,7 +2,7 @@
     "verbose": false,
     "plugins": {
         "local": {
-            "browsers": ["chrome", "firefox", "safari"]
+            "browsers": ["chrome", "firefox"]
         },
         "sauce": {
             "disabled": true,
