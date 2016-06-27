@@ -73,7 +73,7 @@ gulp.task('transpile', ['copyFiles'], () => {
     }))
     .pipe(gulpif(!ISDISTMODE, sourcemaps.init()))
     .pipe(babel({
-      plugins: ['transform-object-assign'],
+      plugins: ['transform-object-assign', 'transform-es2015-typeof-symbol', 'es6-promise'],
       presets: ['es2015'],
       only: '*.js',
     }))
