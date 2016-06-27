@@ -2,6 +2,15 @@
 <html lang="en">
 
   <head>
+    <script>
+    (function () {
+      if (! window.Symbol || typeof window.Symbol !== 'function') {
+        const e = document.createElement('script');
+        e.src = 'https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.9.1/polyfill.min.js';
+        document.body.appendChild(e);
+      }
+    })();
+    </script>
     <!-- build:electronRequire -->
     <!-- endbuild -->
 
@@ -16,6 +25,7 @@
     <!-- build:webcomponents -->
     <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
     <!-- endbuild -->
+
 
     <!-- will be creted during the build process -->
     <script src="./script/redux.min.js"></script>

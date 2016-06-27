@@ -65,7 +65,10 @@ gulp.task('serve:lint', ['transpile', 'lint'], () => {
 
 // tranpile javascript
 gulp.task('transpile', ['copyFiles'], () => {
-  return gulp.src(['app/**/*.html', '!app/bower_components/**/*'])
+  gulp.src('app/index.html')
+    .pipe(gulp.dest('./.transpiled'));
+
+  return gulp.src(['app/**/*.html', '!app/bower_components/**/*', '!app/index.html'])
     .pipe(gulpif(!ISDISTMODE, plumber()))
     .pipe(crisper({
       scriptInHead: false, // true is default
@@ -73,7 +76,7 @@ gulp.task('transpile', ['copyFiles'], () => {
     }))
     .pipe(gulpif(!ISDISTMODE, sourcemaps.init()))
     .pipe(babel({
-      plugins: ['transform-object-assign', 'transform-es2015-typeof-symbol', 'es6-promise'],
+      plugins: ['transform-object-assign', 'es6-promise'],
       presets: ['es2015'],
       only: '*.js',
     }))

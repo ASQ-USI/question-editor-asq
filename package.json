@@ -39,7 +39,6 @@
     "web-component-tester": "^4.2.2"
   },
   "dependencies": {
-    "babel-plugin-transform-es2015-typeof-symbol": "^6.8.0",
     "babel-plugin-transform-object-assign": "^6.8.0",
     "connect-history-api-fallback": "^1.2.0",
     "gulp-sourcemaps": "^1.6.0",
