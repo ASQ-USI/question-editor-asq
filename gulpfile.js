@@ -167,6 +167,8 @@ gulp.task('copyAssets', () => {
     gulp.src('app/elements/**/assets/**/*')
       .pipe(gulp.dest(`${destination}/elements/`));
   }
+  gulp.src('app/script/**/*')
+    .pipe(gulp.dest(`${destination}/script/`));
   // copy images
   return gulp.src('app/images/**/*')
     .pipe(gulp.dest(`${destination}/images/`));
