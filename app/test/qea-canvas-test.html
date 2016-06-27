@@ -15,72 +15,93 @@
     <!-- use the document as a place to set up your fixtures -->
     <test-fixture id="qea-canvas-fixture">
       <template>
-        <qea-canvas></qea-canvas>
+        <div >
+          <qea-canvas style="display: block;"></qea-canvas>
+        </div>
       </template>
     </test-fixture>
     <script>
       suite('<qea-canvas>', function() {
+
         var myEl;
         setup(function() {
-          myEl = fixture('qea-canvas-fixture');
+          myEl = fixture('qea-canvas-fixture').querySelector('qea-canvas');
         });
 
         test('insertTextArea opens the text editor', function(done) {
-          assert.equal(myEl.$$('qea-advanced-text-editor').$$('paper-dialog').opened, false);
-          myEl.insertTextArea();
-          flush(function () {
-            assert.equal(myEl.$$('qea-advanced-text-editor').$$('paper-dialog').opened, true);
-            done();
-          })
+          Polymer.Base.async(function (){
+
+            assert.equal(myEl.$$('qea-advanced-text-editor').$$('paper-dialog').opened, false);
+            myEl.insertTextArea();
+            flush(function () {
+              assert.equal(myEl.$$('qea-advanced-text-editor').$$('paper-dialog').opened, true);
+              done();
+            })
+          }, 1000 )
+
         });
 
         test('showCode opens the code editor', function(done) {
-          assert.equal(myEl.$$('qea-advanced-code-editor').$$('paper-dialog').opened, false);
-          myEl.showCode();
-          flush(function () {
-            assert.equal(myEl.$$('qea-advanced-code-editor').$$('paper-dialog').opened, true);
-            done();
-          })
+          Polymer.Base.async(function (){
+
+            assert.equal(myEl.$$('qea-advanced-code-editor').$$('paper-dialog').opened, false);
+            myEl.showCode();
+            flush(function () {
+              assert.equal(myEl.$$('qea-advanced-code-editor').$$('paper-dialog').opened, true);
+              done();
+            })
+          }, 1000 )
         });
 
         test('set droppedElem fires changePage event with the correct URL', function (done) {
-          myEl._onHovered();
-          myEl.exerciseId = '1234';
-          myEl.addEventListener('changePage', function(event) {
-            assert.equal(event.detail.pageURL, '/question/new/edit?type=asq-text-input-q-editor&eid=1234');
-            done();
-          });
-          myEl.droppedElem = {dragDetails: {}, questionDetails: {type: 'asq-text-input-q-editor', label:'text input'} };
+          Polymer.Base.async(function (){
+            myEl._onHovered();
+            myEl.exerciseId = '1234';
+            myEl.addEventListener('changePage', function(event) {
+              assert.equal(event.detail.pageURL, '/question/new/edit?type=asq-text-input-q-editor&eid=1234');
+              done();
+            });
+            myEl.droppedElem = {dragDetails: {}, questionDetails: {type: 'asq-text-input-q-editor', label:'text input'} };
+          }, 1000 )
         })
 
         test('correctly render elements of redux store', function (done) {
-          assert.equal(0, Polymer.dom(myEl.$.canvas).querySelectorAll('qea-selector-highlighter').length)
-          myEl.dispatch('addElement', 'text', '<h1>hello</h1>')
-          flush(function () {
-            var elems = Polymer.dom(myEl.$.canvas).querySelectorAll('qea-selector-highlighter');
-            assert.equal(1, elems.length)
-            assert.equal('<h1>hello</h1>', elems[0].getCode());
-            done()
-          })
+          Polymer.Base.async(function (){
+
+            myEl.dispatch('resetState' )
+            assert.equal(0, Polymer.dom(myEl.$.canvas).querySelectorAll('qea-selector-highlighter').length)
+            myEl.dispatch('addElement', 'text', '<h1>hello</h1>')
+            flush(function () {
+              var elems = Polymer.dom(myEl.$.canvas).querySelectorAll('qea-selector-highlighter');
+              assert.equal(1, elems.length)
+              assert.equal('<h1>hello</h1>', elems[0].getCode());
+              done()
+            })
+          }, 1000 )
         })
 
         test('eid(URL param) set to "new" creates a new exercise in localStorage', function (done) {
-          window.localStorage.clear();
-          assert.equal(myEl.exerciseId, undefined);
-          myEl.exerciseStore = {};
-          myEl.route = { prefix: '/exercise'}
-          myEl.routeData = { eid: 'new' }
-          assert.equal(myEl.exerciseStore.eid, undefined)
+          Polymer.Base.async(function (){
 
-          Polymer.Base.async(function () {
-            assert.notEqual(myEl.exerciseId, undefined);
-            assert(myEl.exerciseId.length > 5);
-            assert.notEqual(myEl.exerciseStore.eid, undefined)
-            done()
-          }, 400)
+            flush(() => {
+              window.localStorage.clear();
+              assert.equal(myEl.exerciseId, undefined);
+              myEl.exerciseStore = {};
+              myEl.route = { prefix: '/exercise'}
+              myEl.routeData = { eid: 'new' }
+              assert.equal(myEl.exerciseStore.eid, undefined)
+
+              Polymer.Base.async(function () {
+                assert.notEqual(myEl.exerciseId, undefined);
+                assert(myEl.exerciseId.length > 5);
+                assert.notEqual(myEl.exerciseStore.eid, undefined)
+                done()
+              }, 400)
+
+            })
+          }, 1000 )
 
         })
-
       });
     </script>
   </body>
