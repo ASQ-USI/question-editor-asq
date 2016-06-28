@@ -25,7 +25,7 @@
         });
 
         test('changePage event change page URL', function(done) {
-          Polymer.Base.async(
+          Polymer.Base.async( function () {
               assert.notEqual(window.location.pathname, '/home')
               myEl.fire('changePage', {pageURL: '/home'})
               Polymer.Base.async(
@@ -38,7 +38,7 @@
         });
 
         test('changePage event shows the right page', function(done) {
-          Polymer.Base.async(
+          Polymer.Base.async(function () {
             myEl.fire('changePage', {pageURL: '/home'})
             Polymer.Base.async(
               function () {
@@ -50,7 +50,7 @@
         });
 
         test('Unknown URL brings to 404 page', function(done) {
-          Polymer.Base.async(
+          Polymer.Base.async(function () {
             myEl.fire('changePage', {pageURL: '/wrongURL'})
             Polymer.Base.async(
               function () {
