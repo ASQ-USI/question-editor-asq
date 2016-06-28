@@ -6,7 +6,7 @@
     (function () {
       if (! window.Symbol || typeof window.Symbol !== 'function') {
         const e = document.createElement('script');
-        e.src = './script/polyfill.min.js';
+        e.src = './scripts/custom.min.js';
         document.head.appendChild(e);
       }
     })();
@@ -28,7 +28,7 @@
 
 
     <!-- will be creted during the build process -->
-    <script src="./script/redux.min.js"></script>
+    <script src="./scripts/redux.min.js"></script>
 
     <link rel="import" href="./elements/elements.html">
 

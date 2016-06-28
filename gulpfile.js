@@ -140,7 +140,7 @@ gulp.task('copyFiles', ['copyAssets'], () => {
     .pipe(gulp.dest(`${destination}/styles/`));
   // copy script
   gulp.src('node_modules/redux/dist/redux.min.js')
-    .pipe(gulp.dest(`${destination}/script/`));
+    .pipe(gulp.dest(`${destination}/scripts/`));
   // copy images
   return gulp.src('app/images/**/*')
     .pipe(gulp.dest(`${destination}/images/`));
@@ -167,8 +167,8 @@ gulp.task('copyAssets', () => {
     gulp.src('app/elements/**/assets/**/*')
       .pipe(gulp.dest(`${destination}/elements/`));
   }
-  gulp.src('app/script/**/*')
-    .pipe(gulp.dest(`${destination}/script/`));
+  gulp.src('app/scripts/**/*')
+    .pipe(gulp.dest(`${destination}/scripts/`));
   // copy images
   return gulp.src('app/images/**/*')
     .pipe(gulp.dest(`${destination}/images/`));
