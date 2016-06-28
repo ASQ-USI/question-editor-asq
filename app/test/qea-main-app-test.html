@@ -25,34 +25,40 @@
         });
 
         test('changePage event change page URL', function(done) {
-          assert.notEqual(window.location.pathname, '/home')
-          myEl.fire('changePage', {pageURL: '/home'})
           Polymer.Base.async(
-            function () {
-              assert.equal(window.location.pathname,'/home')
-              done()
-            }, 500
-          )
+              assert.notEqual(window.location.pathname, '/home')
+              myEl.fire('changePage', {pageURL: '/home'})
+              Polymer.Base.async(
+                function () {
+                  assert.equal(window.location.pathname,'/home')
+                  done()
+                }, 500
+              )
+          }, 500)
         });
 
         test('changePage event shows the right page', function(done) {
-          myEl.fire('changePage', {pageURL: '/home'})
           Polymer.Base.async(
-            function () {
-              assert.equal(myEl.$$('iron-pages').selected,'home')
-              done()
-            }, 500
-          )
+            myEl.fire('changePage', {pageURL: '/home'})
+            Polymer.Base.async(
+              function () {
+                assert.equal(myEl.$$('iron-pages').selected,'home')
+                done()
+              }, 500
+            )
+          }, 500)
         });
 
         test('Unknown URL brings to 404 page', function(done) {
-          myEl.fire('changePage', {pageURL: '/wrongURL'})
           Polymer.Base.async(
-            function () {
-              assert.equal(myEl.$$('iron-pages').selected,'404')
-              done()
-            }, 500
-          )
+            myEl.fire('changePage', {pageURL: '/wrongURL'})
+            Polymer.Base.async(
+              function () {
+                assert.equal(myEl.$$('iron-pages').selected,'404')
+                done()
+              }, 500
+            )
+          }, 500)
         });
 
         test('dragStop event correctly handles the dropped element informations', function() {

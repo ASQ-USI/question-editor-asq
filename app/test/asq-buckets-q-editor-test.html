@@ -26,7 +26,7 @@
         test('user should be able to change the stem', function(done) {
           myEl.$.stemEditor.value = 'this is a test value'
           flush(function functionName() {
-            assert.equal(myEl.$$('asq-stem').innerText, 'this is a test value');
+            assert.equal(myEl.$$('asq-stem').textContent.trim(), 'this is a test value');
             done();
           })
         });
