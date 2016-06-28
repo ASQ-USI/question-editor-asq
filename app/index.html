@@ -7,7 +7,7 @@
       if (! window.Symbol || typeof window.Symbol !== 'function') {
         const e = document.createElement('script');
         e.src = './script/polyfill.min.js';
-        document.body.appendChild(e);
+        document.head.appendChild(e);
       }
     })();
     </script>
