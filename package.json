@@ -41,6 +41,7 @@
   "dependencies": {
     "babel-plugin-transform-object-assign": "^6.8.0",
     "connect-history-api-fallback": "^1.2.0",
+    "core-js": "^2.4.0",
     "gulp-sourcemaps": "^1.6.0",
     "redux": "^3.4.0"
   }
