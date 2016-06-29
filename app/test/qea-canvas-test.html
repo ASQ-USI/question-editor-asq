@@ -83,7 +83,7 @@
         test('eid(URL param) set to "new" creates a new exercise in localStorage', function (done) {
           Polymer.Base.async(function (){
 
-            flush(() => {
+            flush(function () {
               window.localStorage.clear();
               assert.equal(myEl.exerciseId, undefined);
               myEl.exerciseStore = {};
