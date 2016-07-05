@@ -20,9 +20,21 @@
     <script>
       suite('<qea-main-app>', function() {
         var myEl;
-        setup(function() {
-          myEl = fixture('qea-main-app-fixture');
+        
+        setup(function(done) {
+          // If we move to the next test without tinyMCE having finished initilization
+          // we get errors. Make sure we initilize then.
+          tinyMCE.on("AddEditor", function(evt){
+            evt.editor.on("init", function(){
+              done();
+            })
+          })
+          myEl = fixture('qea-canvas-fixture').querySelector('qea-canvas');
         });
+
+        teardown(function(){
+          tinyMCE.off("AddEditor")
+        })
 
         test('changePage event change page URL', function(done) {
           Polymer.Base.async( function () {
