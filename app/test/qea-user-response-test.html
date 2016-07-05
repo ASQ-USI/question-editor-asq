@@ -35,28 +35,32 @@
         test('notify function opens the toast with the right parameters', function(done) {
           assert.equal(myEl.opened, false)
           myEl.notify('label', 'body', {duration: 40});
-          flush(function () {
-            assert.equal(myEl.opened, true);
-            assert.equal(myEl.$$('paper-toast').querySelector('h3.label').textContent, 'label');
-            assert.equal(myEl.$$('paper-toast').querySelector('div.body').textContent, 'body');
-            assert.equal(myEl.$$('paper-toast').querySelector('div.buttons'), null);
-            assert.equal(myEl.$$('paper-toast').duration, 40);
-            assert(myEl.$$('paper-toast').className.indexOf('default') > -1, 'wrong style class')
-            done();
+          Polymer.Base.async(function (){
+            flush(function () {
+              assert.equal(myEl.opened, true);
+              assert.equal(myEl.$$('paper-toast').querySelector('h3.label').textContent, 'label');
+              assert.equal(myEl.$$('paper-toast').querySelector('div.body').textContent, 'body');
+              assert.equal(myEl.$$('paper-toast').querySelector('div.buttons'), null);
+              assert.equal(myEl.$$('paper-toast').duration, 40);
+              assert(myEl.$$('paper-toast').className.indexOf('default') > -1, 'wrong style class')
+              done();
+            })
           })
         });
 
         test('notifyError function opens the toast with the right parameters', function(done) {
           assert.equal(myEl.opened, false)
           myEl.notifyError('label', 'body', {duration: 40});
-          flush(function () {
-            assert.equal(myEl.opened, true);
-            assert.equal(myEl.$$('paper-toast').querySelector('h3.label').textContent, 'label');
-            assert.equal(myEl.$$('paper-toast').querySelector('div.body').textContent, 'body');
-            assert.equal(myEl.$$('paper-toast').querySelector('div.buttons'), null);
-            assert.equal(myEl.$$('paper-toast').duration, 40);
-            assert(myEl.$$('paper-toast').className.indexOf('error') > -1, 'wrong style class')
-            done();
+          Polymer.Base.async(function (){
+            flush(function () {
+              assert.equal(myEl.opened, true);
+              assert.equal(myEl.$$('paper-toast').querySelector('h3.label').textContent, 'label');
+              assert.equal(myEl.$$('paper-toast').querySelector('div.body').textContent, 'body');
+              assert.equal(myEl.$$('paper-toast').querySelector('div.buttons'), null);
+              assert.equal(myEl.$$('paper-toast').duration, 40);
+              assert(myEl.$$('paper-toast').className.indexOf('error') > -1, 'wrong style class')
+              done();
+            })
           })
         });
 
@@ -69,14 +73,16 @@
               done();
             }
           )
-          flush(function () {
-            assert.equal(myEl.opened, true);
-            assert.equal(myEl.$$('paper-toast').querySelector('h3.label').textContent, 'label');
-            assert.equal(myEl.$$('paper-toast').querySelector('div.body').textContent, 'body');
-            assert.notEqual(myEl.$$('paper-toast').querySelector('div.buttons'), null);
-            assert.equal(myEl.$$('paper-toast').duration, 4000);
-            assert(myEl.$$('paper-toast').className.indexOf('confirm') > -1, 'wrong style class')
-            myEl.$$('paper-toast').querySelector('#cancel').click()
+          Polymer.Base.async(function (){
+            flush(function () {
+              assert.equal(myEl.opened, true);
+              assert.equal(myEl.$$('paper-toast').querySelector('h3.label').textContent, 'label');
+              assert.equal(myEl.$$('paper-toast').querySelector('div.body').textContent, 'body');
+              assert.notEqual(myEl.$$('paper-toast').querySelector('div.buttons'), null);
+              assert.equal(myEl.$$('paper-toast').duration, 4000);
+              assert(myEl.$$('paper-toast').className.indexOf('confirm') > -1, 'wrong style class')
+              myEl.$$('paper-toast').querySelector('#cancel').click()
+            })
           })
         });
 
@@ -89,14 +95,16 @@
               done();
             }
           )
-          flush(function () {
-            assert.equal(myEl.opened, true);
-            assert.equal(myEl.$$('paper-toast').querySelector('h3.label').textContent, 'label');
-            assert.equal(myEl.$$('paper-toast').querySelector('div.body').textContent, 'body');
-            assert.notEqual(myEl.$$('paper-toast').querySelector('div.buttons'), null);
-            assert(myEl.$$('paper-toast').className.indexOf('confirm') > -1, 'wrong style class')
-            myEl.$$('paper-toast').querySelector('#confirm').click()
-          })
+          Polymer.Base.async(function (){
+            flush(function () {
+              assert.equal(myEl.opened, true);
+              assert.equal(myEl.$$('paper-toast').querySelector('h3.label').textContent, 'label');
+              assert.equal(myEl.$$('paper-toast').querySelector('div.body').textContent, 'body');
+              assert.notEqual(myEl.$$('paper-toast').querySelector('div.buttons'), null);
+              assert(myEl.$$('paper-toast').className.indexOf('confirm') > -1, 'wrong style class')
+              myEl.$$('paper-toast').querySelector('#confirm').click()
+            })
+          });
         });
       });
     </script>
