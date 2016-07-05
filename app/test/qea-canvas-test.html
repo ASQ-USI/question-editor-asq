@@ -26,6 +26,8 @@
 
         var myEl;
         setup(function(done) {
+          // If we move to the next test without tinyMCE having finished initilization
+          // we get errors. Make sure we initilize then.
           tinyMCE.on("AddEditor", function(evt){
             evt.editor.on("init", function(){
               done();
@@ -37,12 +39,6 @@
         teardown(function(){
           tinyMCE.off("AddEditor")
         })
-
-        // suiteSetup(function(done){
-        //   tinyMCE.on("AddEditor", function(evt){
-        //     evt.editor.on("init", done)
-        //   })
-        // })
 
         test('insertTextArea opens the text editor', function(done) {
           Polymer.Base.async(function (){
