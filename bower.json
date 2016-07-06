@@ -29,7 +29,7 @@
     "paper-toast": "PolymerElements/paper-toast#^1.0.0",
     "paper-fab": "PolymerElements/paper-fab#^1.0.0",
     "hydrolysis": "^1.23.3",
-    "web-component-tester": "Polymer/web-component-tester#^4.2.2",
+    "web-component-tester": "Polymer/web-component-tester#^4.3.1",
     "Sortable": "sortable.js#^1.4.2",
     "polymer-tinymce": "*",
     "paper-menu-button": "PolymerElements/paper-menu-button#^1.0.0",

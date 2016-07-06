@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <script src="../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../../bower_components/web-component-tester/browser.js"></script>
-    <script src="../../.transpiled/script/redux.min.js"></script>
+    <script src="../../.transpiled/scripts/redux.min.js"></script>
 
     <!-- import the element to test -->
     <link rel="import" href="../../.transpiled/elements/elements.html">
@@ -20,39 +20,57 @@
     <script>
       suite('<qea-main-app>', function() {
         var myEl;
-        setup(function() {
-          myEl = fixture('qea-main-app-fixture');
+        
+        setup(function(done) {
+          // If we move to the next test without tinyMCE having finished initilization
+          // we get errors. Make sure we initilize then.
+          tinyMCE.on("AddEditor", function(evt){
+            evt.editor.on("init", function(){
+              done();
+            })
+          })
+          myEl = fixture('qea-canvas-fixture').querySelector('qea-canvas');
         });
 
+        teardown(function(){
+          tinyMCE.off("AddEditor")
+        })
+
         test('changePage event change page URL', function(done) {
-          assert.notEqual(window.location.pathname, '/home')
-          myEl.fire('changePage', {pageURL: '/home'})
-          Polymer.Base.async(
-            function () {
-              assert.equal(window.location.pathname,'/home')
-              done()
-            }, 500
-          )
+          Polymer.Base.async( function () {
+              assert.notEqual(window.location.pathname, '/home')
+              myEl.fire('changePage', {pageURL: '/home'})
+              Polymer.Base.async(
+                function () {
+                  assert.equal(window.location.pathname,'/home')
+                  done()
+                }, 500
+              )
+          }, 500)
         });
 
         test('changePage event shows the right page', function(done) {
-          myEl.fire('changePage', {pageURL: '/home'})
-          Polymer.Base.async(
-            function () {
-              assert.equal(myEl.$$('iron-pages').selected,'home')
-              done()
-            }, 500
-          )
+          Polymer.Base.async(function () {
+            myEl.fire('changePage', {pageURL: '/home'})
+            Polymer.Base.async(
+              function () {
+                assert.equal(myEl.$$('iron-pages').selected,'home')
+                done()
+              }, 500
+            )
+          }, 500)
         });
 
         test('Unknown URL brings to 404 page', function(done) {
-          myEl.fire('changePage', {pageURL: '/wrongURL'})
-          Polymer.Base.async(
-            function () {
-              assert.equal(myEl.$$('iron-pages').selected,'404')
-              done()
-            }, 500
-          )
+          Polymer.Base.async(function () {
+            myEl.fire('changePage', {pageURL: '/wrongURL'})
+            Polymer.Base.async(
+              function () {
+                assert.equal(myEl.$$('iron-pages').selected,'404')
+                done()
+              }, 500
+            )
+          }, 500)
         });
 
         test('dragStop event correctly handles the dropped element informations', function() {

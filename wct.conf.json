@@ -1,0 +1,112 @@
+{
+    "verbose": false,
+    "plugins": {
+        "local": {
+            "browsers": ["chrome", "firefox"]
+        },
+        "sauce": {
+            "disabled": true,
+            "browsers": [{
+                "browserName": "microsoftedge",
+                "platform": "Windows 10",
+                "version": ""
+            }, {
+                 "browserName": "chrome",
+                 "platform": "Windows 10",
+                 "version": "50.0"
+            }, {
+                 "browserName": "chrome",
+                 "platform": "Windows 10",
+                 "version": "51.0"
+            }, {
+                 "browserName": "chrome",
+                 "platform": "Windows 10",
+                 "version": "beta"
+            }, {
+                "browserName": "firefox",
+                 "platform": "Windows 10",
+                 "version": "45.0"
+            }, {
+                 "browserName": "firefox",
+                 "platform": "Windows 10",
+                 "version": "46.0"
+            }, {
+                "browserName": "internet explorer",
+                "platform": "Windows 8.1",
+                "version": "11"
+            }, {
+                "browserName": "chrome",
+                 "platform": "Windows 8.1",
+                 "version": "51.0"
+            }, {
+                "browserName": "chrome",
+                 "platform": "Windows 8.1",
+                 "version": "50.0"
+            }, {
+                "browserName": "firefox",
+                 "platform": "Windows 8.1",
+                 "version": "45.0"
+            }, {
+                 "browserName": "firefox",
+                 "platform": "Windows 8.1",
+                 "version": "46.0"
+            }, {
+                "browserName": "chrome",
+                 "platform": "Windows 7",
+                 "version": "51.0"
+            }, {
+                "browserName": "chrome",
+                 "platform": "Windows 7",
+                 "version": "50.0"
+            }, {
+                "browserName": "firefox",
+                 "platform": "Windows 7",
+                 "version": "45.0"
+            }, {
+                 "browserName": "firefox",
+                 "platform": "Windows 7",
+                 "version": "46.0"
+            }, {
+                 "browserName": "chrome",
+                 "platform": "OS X 10.11",
+                 "version": "50.0"
+            }, {
+                 "browserName": "chrome",
+                 "platform": "OS X 10.11",
+                 "version": "51.0"
+            }, {
+                 "browserName": "chrome",
+                 "platform": "OS X 10.11",
+                 "version": "beta"
+            }, {
+                 "browserName": "chrome",
+                 "platform": "OS X 10.11",
+                 "version": "dev"
+            }, {
+                 "browserName": "firefox",
+                 "platform": "OS X 10.11",
+                 "version": "45.0"
+            }, {
+                 "browserName": "firefox",
+                 "platform": "OS X 10.11",
+                 "version": "46.0"
+            }, {
+                 "browserName": "firefox",
+                 "platform": "OS X 10.11",
+                 "version": "beta"
+            }, {
+                 "browserName": "safari",
+                 "platform": "OS X 10.11",
+                 "version": "9"
+             },{
+                "browserName": "safari",
+                "platform": "OS X 10.10",
+                "version": "8"
+            }, {
+                "browserName": "safari",
+                "platform": "OS X 10.9",
+                "version": "7"
+            }]
+        }
+    }
+}

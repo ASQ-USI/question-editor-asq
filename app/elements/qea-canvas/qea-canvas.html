@@ -6,7 +6,7 @@
 <link rel="import" href="../../../bower_components/iron-localstorage/iron-localstorage.html">
 <link rel="import" href="../../../bower_components/qea-property-editor/qea-advanced-text-editor.html">
 <link rel="import" href="../../../bower_components/qea-property-editor/qea-advanced-code-editor.html">
-<link rel="import" href="../../../bower_components/Sortable/Sortable.html">
+<link rel="import" href="../../scripts/Sortable.html">
 <link rel="import" href="../../behaviors/qea-redux-store.html">
 <link rel="import" href="../../behaviors/qea-actions-behavior.html">
 <link rel="import" href="../../behaviors/qea-app-behavior.html">
@@ -132,6 +132,7 @@
       }
 
       _selectItem(event) {
+        console.log('sadasd',event);
         let value;
         for (value of event.path) {
           if (value.tagName && value.tagName.toLowerCase() === 'qea-selector-highlighter') {

@@ -2,9 +2,10 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <script src="../scripts/corejs.shim.min.js"></script>
     <script src="../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../../bower_components/web-component-tester/browser.js"></script>
-    <script src="../../.transpiled/script/redux.min.js"></script>
+    <script src="../../.transpiled/scripts/redux.min.js"></script>
     <link rel="import" href="../../bower_components/polymer-redux/polymer-redux.html">
 
     <!-- import the element to test -->
@@ -27,7 +28,7 @@
         test('user should be able to change the stem', function(done) {
           myEl.$.stemEditor.value = 'this is a test value'
           flush(function functionName() {
-            assert.equal(myEl.$$('asq-stem').innerText, 'this is a test value');
+            assert.equal(myEl.$$('asq-stem').textContent.trim(), 'this is a test value');
             done();
           })
         });

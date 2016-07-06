@@ -1,6 +1,7 @@
 'use strict';
 
-require('dotenv').config();
+require('dotenv').config({ silent: true });
+const mountPath = process.env.MOUNT_PATH || '';
 
 const gulp = require('gulp');
 const plumber = require('gulp-plumber');
@@ -64,7 +65,10 @@ gulp.task('serve:lint', ['transpile', 'lint'], () => {
 
 // tranpile javascript
 gulp.task('transpile', ['copyFiles'], () => {
-  return gulp.src(['app/**/*.html', '!app/bower_components/**/*'])
+  gulp.src('app/index.html')
+    .pipe(gulp.dest('./.transpiled'));
+
+  return gulp.src(['app/**/*.html', '!app/bower_components/**/*', '!app/index.html'])
     .pipe(gulpif(!ISDISTMODE, plumber()))
     .pipe(crisper({
       scriptInHead: false, // true is default
@@ -72,6 +76,7 @@ gulp.task('transpile', ['copyFiles'], () => {
     }))
     .pipe(gulpif(!ISDISTMODE, sourcemaps.init()))
     .pipe(babel({
+      plugins: ['transform-object-assign', 'es6-promise'],
       presets: ['es2015'],
       only: '*.js',
     }))
@@ -119,8 +124,8 @@ gulp.task('copyFiles', ['copyAssets'], () => {
     // change paths
     gulp.src('.transpiled/index.html')
       .pipe(htmlreplace({
-        baseurl: `<base href="${process.env.MOUNT_PATH}/">`,
-        mountpath: `<qea-main-app id="mainApp" mount-path="${process.env.MOUNT_PATH}"></qea-main-app>`,
+        baseurl: `<base href="${mountPath}/">`,
+        mountpath: `<qea-main-app id="mainApp" mount-path="${mountPath}"></qea-main-app>`,
         webcomponents: './bower_components/webcomponentsjs/webcomponents-lite.js',
       }))
       .pipe(gulp.dest(`${destination}`));
@@ -135,7 +140,7 @@ gulp.task('copyFiles', ['copyAssets'], () => {
     .pipe(gulp.dest(`${destination}/styles/`));
   // copy script
   gulp.src('node_modules/redux/dist/redux.min.js')
-    .pipe(gulp.dest(`${destination}/script/`));
+    .pipe(gulp.dest(`${destination}/scripts/`));
   // copy images
   return gulp.src('app/images/**/*')
     .pipe(gulp.dest(`${destination}/images/`));
@@ -162,6 +167,8 @@ gulp.task('copyAssets', () => {
     gulp.src('app/elements/**/assets/**/*')
       .pipe(gulp.dest(`${destination}/elements/`));
   }
+  gulp.src('app/scripts/**/*')
+    .pipe(gulp.dest(`${destination}/scripts/`));
   // copy images
   return gulp.src('app/images/**/*')
     .pipe(gulp.dest(`${destination}/images/`));
@@ -180,7 +187,7 @@ gulp.task('electron', ['transpile'], () => {
   gulp.src('.transpiled/index.html')
     .pipe(htmlreplace({
       mountpath: `<qea-main-app id="mainApp"
-                    mount-path="${process.env.MOUNT_PATH}" is-electron></qea-main-app>`,
+                    mount-path="${mountPath}" is-electron></qea-main-app>`,
       electronRequire: `<script> window.nodeRequire = require;
         delete window.require;delete window.exports;
         delete window.module;</script>`,
