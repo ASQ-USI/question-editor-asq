@@ -26,13 +26,21 @@
 
         var myEl;
         setup(function(done) {
+          var hasEditors = false;
           // If we move to the next test without tinyMCE having finished initilization
           // we get errors. Make sure we initilize then.
           tinyMCE.on("AddEditor", function(evt){
+            hasEditors = true;
             evt.editor.on("init", function(){
               done();
             })
           })
+
+          Polymer.Base.async(function (){
+            if(! hasEditors){
+              done();
+            }
+          }, 500)
           myEl = fixture('qea-canvas-fixture').querySelector('qea-canvas');
         });
 
