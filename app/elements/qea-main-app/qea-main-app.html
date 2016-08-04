@@ -176,10 +176,10 @@
       }
 
       // the async function is used to prevent errors caused by concurrent changes of the route
-      _changePage(host, { pageURL }) {
+      _changePage(host, { pageURL, qParams = {} }) {
         this.async(() => {
           if (pageURL) {
-            this.set('route.__queryParams', {});
+            this.set('route.__queryParams', qParams);
             this.set('route.path', `${this.mountPath}${pageURL}`);
           }
         }, 1);
