@@ -41,7 +41,7 @@
 
             myEl.$.stemEditor.value = 'this is a test value'
             flush(function functionName() {
-              assert.equal(myEl.$$('asq-stem').innerText, 'this is a test value');
+              assert.equal(myEl.$$('asq-stem').innerText.trim(), 'this is a test value');
               done();
             })
           }, 1000 )
