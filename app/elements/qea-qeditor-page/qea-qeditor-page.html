@@ -69,11 +69,8 @@
               this.set('exerciseStore.elements', this.getState().elements);
 
               this.set('routeData.qid', newQid);
-              // console.log('qeditor creo question', newQid, this.exerciseStore);
             } else {
               // restore
-              // console.log('qeditor restor', qid, this.exerciseStore);
-
               this.fire('toggleSpinner', true);
               this._clearPage();
 
@@ -100,7 +97,6 @@
       }
 
       _renderEditor(qid, editorType, eid) {
-        // console.log('qeditor _renderEditor', qid, editorType, eid);
         let props = null;
         if (qid) {
           // restore properties

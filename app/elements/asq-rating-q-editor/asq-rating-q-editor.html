@@ -70,7 +70,7 @@
         value={{qeaRepeatValues.value}}>
 
         <asq-stem><span id="stemContent" inner-H-t-m-l={{qTitleVal}}></span></asq-stem>
-          
+
         <template is="dom-repeat" items="[[_ratingItemsValue]]">
           <asq-rating-item name='[[item.label]]' disabled='[[qeaRepeatValues.disabled]]' type="[[qeaRepeatValues.type]]" class="asqRatingItem">[[item.label]]</asq-rating-item>
         </template>
@@ -99,7 +99,8 @@
       {
         name: 'type',
         label: 'Type',
-        type: 'string',
+        type: 'enum',
+        options: 'stars',
         default: 'stars',
         description: `This attribute indicates the type of the asq-rating-items.
          So far only 'stars' is supported`,
@@ -170,7 +171,8 @@
       }
 
       _solutionBtnTapped() {
-        this._setSolution(this.qeaRepeatValues.value);
+        // TODO set solution
+        // this._setSolution(this.qeaRepeatValues.value);
       }
 
       _saveQuestionTapped() {

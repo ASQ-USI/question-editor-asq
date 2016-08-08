@@ -506,6 +506,7 @@
 
         var html =  '\t<asq-highlight-q style="min-height:300px"';
         html += '\ttheme="' + this.theme + '" ';
+        html += '\tfont-size="'+ this.fontSize+ '" ';
         html += '\tmode="' + this.syntaxMode + '">\n';
         html += '  \t\t<asq-solution>' + JSON.stringify(this.getRanges(), null, 2) + '</asq-solution>\n';
         html += '    \t\t<asq-stem>' + this.stem + '</asq-stem>\n';
@@ -516,7 +517,6 @@
         html += this.asqHighlight.$.codeEditor.editor.session.getValue() || '';
         html += '\t\t</code>\n';
         html += '  \t</asq-highlight-q>\n';
-        console.log(html);
         return html;
       },
 

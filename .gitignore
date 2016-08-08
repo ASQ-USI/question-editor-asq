@@ -4,5 +4,6 @@ dist
 bower_components
 .transpiled
 .publish/
+distribution
 .env
 npm-debug.log

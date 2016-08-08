@@ -37,6 +37,7 @@
       no-wrap
       name='SQL code'
       type='string'
+      no-wrap
       widget-type='code'
       value={{SQLVal}}>
     </qea-property-editor>
@@ -58,7 +59,8 @@
     <div class="explanation">
       To modify the elements in this area, change the values in the left column
     </div>
-    <asq-sqlite-q role="viewer"  value="[[SQLVal]]">
+    <asq-sqlite-q   value="[[SQLVal]]"  mode="sql" disabled="[[qeaRepeatValues.disabled]]"
+      db-url="[[qeaRepeatValues.dbUrl]]" theme="[[qeaRepeatValues.theme]]" tab-size="[[qeaRepeatValues.tabSize]]">
       <asq-stem><span inner-h-t-m-l="[[qTitleVal]]"></span></asq-stem>
       <code>[[SQLVal]]</code>
     </asq-sqlite-q>
@@ -85,21 +87,29 @@
       {
         name: 'dbUrl',
         label: 'database Url',
-        type: 'String', // < Boolean | Number | String | Enum  >
+        type: 'String',
         description: 'Load an external db from a URL. If not specified a new empty database is created.',
       },
       {
         name: 'disabled',
         label: 'disabled',
-        type: 'Boolean', // < Boolean | Number | String | Enum  >
+        type: 'Boolean',
         description: 'Load an external db from a URL. If not specified a new empty database is created.',
       },
       {
-        name: 'Theme',
+        name: 'theme',
         label: 'theme',
-        type: 'Enum', // < Boolean | Number | String | Enum  >
-        default: 'Chrome, Monokay',
+        type: 'Enum',
+        options: 'chrome,clouds,crimson_editor,dawn,gitHub,solarized_light,monokai',
+        default: 'chrome',
         description: 'Load an external db from a URL. If not specified a new empty database is created.',
+      },
+      {
+        name: 'tabSize',
+        label: 'tab size',
+        type: 'Number',
+        default: '2',
+        description: 'The tabSize property of the SQL editor',
       },
     ];
 
@@ -125,7 +135,9 @@
 
       _getFormattedCode() {
         return `
-        <asq-sqlite-q >
+        <asq-sqlite-q  mode="sql" theme="${this.qeaRepeatValues.theme}" db-url="${this.qeaRepeatValues.dbUrl}"
+          ${this.qeaRepeatValues.disabled ? `disabled= ${this.qeaRepeatValues.disabled}` : ''}
+          tab-size="${this.qeaRepeatValues.tabSize}">
           <asq-stem>${this.qTitleVal || ''}</asq-stem>
           <code>${this.SQLVal || ''}</code>
         </asq-sqlite-q>`;

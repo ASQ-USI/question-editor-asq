@@ -58,3 +58,18 @@ and run with
 ```
 gulp && electron .
 ```
+
+
+## Deployment
+
+```
+gulp dist
+```
+
+### Mount path
+If you wish to mount the app in a specific path of your server, set the `MOUNT_PATH` ENV variable to the path. You can also use a `.env` file in the root of the project which will get picked up automatically eg:
+
+```bash
+# .env
+MOUNT_PATH=/my-mount-path
+```

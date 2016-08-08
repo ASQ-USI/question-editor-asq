@@ -26,13 +26,21 @@
 
         var myEl;
         setup(function(done) {
+          var hasEditors = false;
           // If we move to the next test without tinyMCE having finished initilization
           // we get errors. Make sure we initilize then.
           tinyMCE.on("AddEditor", function(evt){
+            hasEditors = true;
             evt.editor.on("init", function(){
               done();
             })
           })
+
+          Polymer.Base.async(function (){
+            if(! hasEditors){
+              done();
+            }
+          }, 500)
           myEl = fixture('qea-canvas-fixture').querySelector('qea-canvas');
         });
 
@@ -70,7 +78,11 @@
             myEl._onHovered();
             myEl.exerciseId = '1234';
             myEl.addEventListener('changePage', function(event) {
-              assert.equal(event.detail.pageURL, '/question/new/edit?type=asq-text-input-q-editor&eid=1234');
+              assert.equal(event.detail.pageURL, '/question/new/edit');
+              assert.notEqual(event.detail.qParams.type, undefined);
+              assert.notEqual(event.detail.qParams.eid, undefined);
+              assert.equal(event.detail.qParams.type, 'asq-text-input-q-editor');
+              assert.equal(event.detail.qParams.eid, '1234');
               done();
             });
             myEl.droppedElem = {dragDetails: {}, questionDetails: {type: 'asq-text-input-q-editor', label:'text input'} };

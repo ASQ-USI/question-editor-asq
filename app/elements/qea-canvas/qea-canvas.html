@@ -132,7 +132,6 @@
       }
 
       _selectItem(event) {
-        console.log('sadasd',event);
         let value;
         for (value of event.path) {
           if (value.tagName && value.tagName.toLowerCase() === 'qea-selector-highlighter') {
@@ -158,7 +157,9 @@
         if (this.isHover) {
           const a = el.questionDetails;
           this.fire('changePage',
-            { pageURL: `/question/new/edit?type=${a.type}&eid=${this.exerciseId}` }
+            { pageURL: '/question/new/edit',
+              qParams: { type: a.type, eid: this.exerciseId },
+            }
           );
         }
       }
