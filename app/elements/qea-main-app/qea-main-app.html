@@ -1,4 +1,5 @@
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../elements.html">
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../behaviors/qea-app-behavior.html">
@@ -146,9 +147,10 @@
       }
 
       attached() {
+        console.log(this.route.path);
         if (navigator.userAgent.indexOf('Electron') !== -1) {
           this.set('route.path', `${this.mountPath}/home`);
-        } else if (!this.route.path || this.route.path === `${this.mountPath}/`) {
+        } else if (!this.route.path || this.route.path === `${this.mountPath}` ||  this.route.path === `${this.mountPath}/`) {
           this.set('route.path', `${this.mountPath}/home`);
         }
       }
