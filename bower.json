@@ -5,7 +5,7 @@
     "Marco Ravazzini"
   ],
   "description": "question editor for ASQ wab app",
-  "main": "",
+  "main": "app/dust/asq.dust",
   "moduleType": [],
   "license": "RPL-1.5",
   "repository": {

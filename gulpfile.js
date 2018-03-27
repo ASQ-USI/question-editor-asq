@@ -68,6 +68,9 @@ gulp.task('transpile', ['copyFiles'], () => {
   gulp.src('app/index.html')
     .pipe(gulp.dest('./.transpiled'));
 
+  gulp.src('app/dust/asq.dust')
+    .pipe(gulp.dest('./.transpiled/dust'));
+
   return gulp.src(['app/**/*.html', '!app/bower_components/**/*', '!app/index.html'])
     .pipe(gulpif(!ISDISTMODE, plumber()))
     .pipe(crisper({
