@@ -1,7 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+    <script>
+        window.questionEditorASQ = {
+            conf: {
+                mountPath: '/now'
+            }
+        }
+    </script>
     <script>
         (function () {
           if (! window.Symbol || typeof window.Symbol !== 'function') {
@@ -19,21 +25,37 @@
 <!-- <base href="/" /> -->
 <!-- endbuild -->
 
+<script>
+    /**
+    * [polymer-root-path]
+    *
+    * By default, we set `Polymer.rootPath` to the server root path (`/`).
+    * Leave this line unchanged if you intend to serve your app from the root
+    * path (e.g., with URLs like `my.domain/` and `my.domain/view1`).
+    *
+    * If you intend to serve your app from a non-root path (e.g., with URLs
+    * like `my.domain/my-app/` and `my.domain/my-app/view1`), edit this line
+    * to indicate the path from which you'll be serving, including leading
+    * and trailing slashes (e.g., `/my-app/`).
+    */
+    window.Polymer = {rootPath: '/question-editor/build/es6-unbundled/'};
+</script>
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="/app/styles/main.css">
+<link rel="stylesheet" href="/question-editor/build/es6-unbundled/app/styles/main.css">
 <link href='https://fonts.googleapis.com/css?family=Roboto:400,500,700' rel='stylesheet' type='text/css'>
 <!-- build:webcomponents -->
-<script src="/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+<script src="/question-editor/build/es6-unbundled/bower_components/webcomponentsjs/webcomponents-loader.js"></script>
 <!-- endbuild -->
 
 
 <!-- will be creted during the build process -->
 <!-- <script src="./scripts/redux.min.js"></script> -->
-<script src="/node_modules/redux/dist/redux.min.js"></script>
+<script src="/question-editor/build/es6-unbundled/node_modules/redux/dist/redux.min.js"></script>
 
 <!-- <link rel="import" href="./elements/elements.html"> -->
-<link rel="import" href="/app/elements/qea-main-app/qea-main-app.html">
+<link rel="import" href="/question-editor/build/es6-unbundled/app/elements/qea-main-app/qea-main-app.html">
 
 <title>question-editor-asq!!!!</title>
 </head>

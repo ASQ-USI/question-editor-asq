@@ -130,7 +130,7 @@
           },
           mountPath: {
             type: String,
-            value: '',
+            value: window.questionEditorASQ.conf.mountPath,
           },
           isElectron: {
             type: Boolean,
@@ -148,6 +148,8 @@
 
       attached() {
         console.log(this.route.path);
+        console.log(window.questionEditorASQ)
+
         if (navigator.userAgent.indexOf('Electron') !== -1) {
           this.set('route.path', `${this.mountPath}/home`);
         } else if (!this.route.path || this.route.path === `${this.mountPath}` ||  this.route.path === `${this.mountPath}/`) {
