@@ -24,7 +24,6 @@
     "bower_components/tinymce/*",
     "bower_components/tinymce/**/*",
     "bower_components/tinymce/**/**/*",
-    "bower_components/tinymce/**/**/**/*",
     "manifest.json",
     "node_modules/redux/dist/redux.min.js"
   ],
