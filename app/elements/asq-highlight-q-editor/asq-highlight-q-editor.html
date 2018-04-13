@@ -123,7 +123,7 @@
     <asq-highlight-q id="asqHighlight" theme="{{theme}}" mode="{{syntaxMode}}" font-size="{{fontSize}}">
       <asq-stem id="leStem"></asq-stem>
       <template is="dom-repeat" items="{{tasks}}" as="t" index-as="idx">
-        <asq-hl-color-task color="{{t.color}}" idx$="{{idx}}" colorname="{{t.colorName}}">{{t.html}}<paper-icon-button icon="close" on-click="removeTask" for-idx="{{idx}}"</paper-icon-button></asq-hl-color-task>
+        <asq-hl-color-task color="{{t.color}}" idx$="{{idx}}" colorname="{{t.colorName}}">{{t.html}}<paper-icon-button icon="close" on-click="removeTask" for-idx="{{idx}}"></paper-icon-button></asq-hl-color-task>
       </template>
     </asq-highlight-q>
   </template>
