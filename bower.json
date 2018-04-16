@@ -4,8 +4,8 @@
   "authors": [
     "Marco Ravazzini"
   ],
-  "description": "question editor for ASQ wab app",
-  "main": "app/dust/asq.dust",
+  "description": "question editor for ASQ web app",
+  "main": "index.html",
   "moduleType": [],
   "license": "RPL-1.5",
   "repository": {
@@ -17,7 +17,6 @@
     "**/.*",
     "node_modules",
     "bower_components",
-    "app/bower_components",
     "test",
     "tests"
   ],

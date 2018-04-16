@@ -1,11 +1,11 @@
 {
   "name": "question-editor-asq",
   "version": "0.0.1",
-  "description": "question editor for ASQ wab app",
+  "description": "question editor for ASQ web app",
   "main": "electron.js",
   "scripts": {
-    "test": "gulp transpile && wct app/test",
-    "test-ci": "gulp transpile && wct app/test --skip-plugin local --plugin sauce;",
+    "test": "gulp transpile && wct test",
+    "test-ci": "gulp transpile && wct test --skip-plugin local --plugin sauce;",
     "start": "gulp serve"
   },
   "repository": {

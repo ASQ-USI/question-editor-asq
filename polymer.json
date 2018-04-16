@@ -1,21 +1,21 @@
 {
-  "entrypoint": "app/index.html",
-  "shell": "app/elements/qea-main-app/qea-main-app.html",
+  "entrypoint": "index.html",
+  "shell": "elements/qea-main-app/qea-main-app.html",
   "sources": [
-   "app/elements/**/*",
-   "app/scripts/*",
-   "app/styles/*",
-   "app/behaviors/*",
+   "elements/**/*",
+   "scripts/*",
+   "styles/*",
+   "behaviors/*",
    "bower.json"
   ],
   "fragments": [
-    "app/elements/qea-qeditor-page/qea-qeditor-page.html",
-    "app/elements/qea-questions-list/qea-questions-list.html",
-    "app/elements/qea-canvas/qea-canvas.html",
-    "app/elements/qea-landing-page/qea-landing-page.html",
-    "app/elements/qea-toolbar/qea-toolbar.html",
-    "app/elements/qea-common-editor-components/qea-user-response.html",
-    "app/elements/qea-404-page/qea-404-page.html"
+    "elements/qea-qeditor-page/qea-qeditor-page.html",
+    "elements/qea-questions-list/qea-questions-list.html",
+    "elements/qea-canvas/qea-canvas.html",
+    "elements/qea-landing-page/qea-landing-page.html",
+    "elements/qea-toolbar/qea-toolbar.html",
+    "elements/qea-common-editor-components/qea-user-response.html",
+    "elements/qea-404-page/qea-404-page.html"
   ],
   "extraDependencies": [
     "bower_components/webcomponentsjs/webcomponents-lite.js",
@@ -27,6 +27,9 @@
     "manifest.json",
     "node_modules/redux/dist/redux.min.js"
   ],
+  "lint": {
+    "rules": ["polymer-1"]
+  },
   "builds": [{
     "preset": "es5-bundled",
     "name" : "bundled",
