@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script src="../scripts/corejs.shim.min.js"></script>
+    <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../bower_components/web-component-tester/browser.js"></script>
+    <script src="../../.transpiled/scripts/redux.min.js"></script>
+    <link rel="import" href="../bower_components/polymer-redux/polymer-redux.html">
+
+    <!-- import the element to test -->
+    <link rel="import" href="../../.transpiled/elements/qea-qeditor-page/qea-qeditor-page.html">
+  </head>
+  <body>
+    <!-- use the document as a place to set up your fixtures -->
+    <test-fixture id="qea-qeditor-page-fixture">
+      <template>
+        <qea-qeditor-page></qea-qeditor-page>
+      </template>
+    </test-fixture>
+    <script>
+      suite('<qea-qeditor-page>', function() {
+        var myEl;
+        setup(function() {
+          myEl = fixture('qea-qeditor-page-fixture');
+          stub('qea-qeditor-page', {
+            __resolveLocalPath: function(a) {
+              return '../../.transpiled/elements/'+a+'/'+a+'.html';
+            }
+          });
+        });
+
+        test('URL with "new" as qid cause the creation of a new question element', function(done) {
+          myEl.addEventListener('iron-localstorage-load-empty', function(event) {
+            myEl.exerciseStore = { };
+          });
+          myEl.query = { type: 'asq-text-input-q', eid: ''};
+          myEl.routeData = { qid: 'new' };
+          assert.equal(myEl.$$('asq-text-input-q-editor'), null)
+          Polymer.Base.async(function () {
+            assert.notEqual(myEl.routeData.qid, undefined);
+            assert.notEqual(myEl.exerciseStore.elements, undefined);
+            assert.equal(myEl.exerciseStore.elements.length, 1);
+            done()
+          }, 2400)
+        });
+
+      });
+    </script>
+  </body>
+</html>

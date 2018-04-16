@@ -1,0 +1,7 @@
+{
+  "name": "question-editor-asq",
+  "short_name": "question-editor-asq",
+  "description": "Question editor for the ASQ platform",
+  "start_url": "/",
+  "display": "standalone"
+}

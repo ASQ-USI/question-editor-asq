@@ -1,4 +1,3 @@
-/* if the google style is to aggressive use  "eslint:recommended" as extension */
 {
   "extends":  "airbnb-base",
   "rules": {

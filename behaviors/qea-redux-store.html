@@ -81,11 +81,14 @@ function appReducer(state = initialState, action) {
   }
 }
 const store = Redux.createStore(appReducer);
+// if there's a factory function, polymer linter will not 
+// pick the behavior up: see here: https://github.com/Polymer/polymer-cli/issues/556
+// that's why we use Object.assign()
 /**
  * `qeaBehaviors.reduxStore` implements redux behaviors.
  *
  * @polymerBehavior qeaBehaviors.reduxStore
  */
-qeaBehaviors.reduxStore = PolymerRedux(store);
+qeaBehaviors.reduxStore = Object.assign({}, PolymerRedux(store));
 
 </script>

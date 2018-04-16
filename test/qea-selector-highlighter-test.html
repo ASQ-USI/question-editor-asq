@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../bower_components/web-component-tester/browser.js"></script>
+    <script src="../../.transpiled/scripts/redux.min.js"></script>
+    <link rel="import" href="../bower_components/polymer-redux/polymer-redux.html">
+
+    <!-- import the element to test -->
+    <link rel="import" href="../../.transpiled/elements/qea-selector-highlighter/qea-selector-highlighter.html">
+  </head>
+  <body>
+    <!-- use the document as a place to set up your fixtures -->
+    <test-fixture id="qea-selector-highlighter">
+      <template>
+        <qea-selector-highlighter element-Id='1' ></qea-selector-highlighter>
+      </template>
+    </test-fixture>
+    <script>
+      suite('qea-selector-highlighter test', function() {
+        var myEl, listItems;
+
+        setup(function() {
+          myEl = fixture('qea-selector-highlighter');
+        });
+
+        test('render content', function(done) {
+          myEl.content = '<p>test</p>'
+          assert.equal('<p>test</p>', myEl.$.content.innerHTML);
+          done()
+        });
+
+        test('correctly detect if it is selected', function(done) {
+          assert.equal(false, myEl.isSelected )
+          myEl.selectedId = '1'
+          assert.equal(true, myEl.isSelected )
+          done()
+        });
+
+        test('correctly render controller buttons when selected', function(done) {
+          assert.equal(null, Polymer.dom(myEl.root).querySelector('.controlPanel'))
+          myEl.selectedId = '1'
+          flush(function() {
+            assert.equal(true, myEl.isSelected )
+            assert.notEqual(null, Polymer.dom(myEl.root).querySelector('.controlPanel'))
+            done()
+          })
+
+
+        });
+
+      });
+    </script>
+  </body>
+</html>
