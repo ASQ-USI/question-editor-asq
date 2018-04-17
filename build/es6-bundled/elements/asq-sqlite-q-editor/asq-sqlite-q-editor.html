@@ -1,7 +1,137 @@
-<html><head><link rel="import" href="../../bower_components/polymer/polymer.html"><link rel="import" href="../../bower_components/qea-property-editor/qea-property-editor-repeater.html"><link rel="import" href="../../bower_components/qea-property-editor/qea-property-editor.html"><link rel="import" href="../../bower_components/asq-sqlite-q/asq-sqlite-q.html"><link rel="import" href="../../bower_components/asq-stem/asq-stem.html"><link rel="import" href="../../bower_components/asq-solution/asq-solution.html"><link rel="import" href="../../bower_components/qea-property-editor/qea-advanced-editors.html"><link rel="import" href="../../behaviors/qea-redux-store.html"><link rel="import" href="../../behaviors/qea-actions-behavior.html"><link rel="import" href="../qea-common-editor-components/qea-three-column-layout.html"><link rel="import" href="../qea-common-editor-components/qea-editors-behavior.html"><link rel="import" href="../qea-common-editor-components/qea-user-response.html"><link rel="import" href="../qea-common-editor-components/qea-items-list.html"></head><body><dom-module id="asq-sqlite-q-editor"><template><style include="qea-three-column-layout">asq-sqlite-q{height:300px;}</style><div id="leftPanel"><qea-advanced-editors></qea-advanced-editors><qea-user-response></qea-user-response><qea-property-editor id="stemEditor" name="title" label="Stem" type="string" widget-type="text-code" default="Stem" value="{{qTitleVal}}"></qea-property-editor><qea-property-editor id="stemEditor" no-wrap="" name="SQL code" type="string" widget-type="code" value="{{SQLVal}}"></qea-property-editor><qea-property-editor-repeater id="qeaRepeatValues" property-array="[[questionProps]]" values="{{qeaRepeatValues}}" is-advanced-user="[[viewAdvanced]]"></qea-property-editor-repeater><div id="advanced" on-tap="_showAdvanced">show all</div></div><div id="mainArea"><div class="explanation">To modify the elements in this area, change the values in the left column</div><asq-sqlite-q value="[[SQLVal]]" mode="sql" disabled="[[qeaRepeatValues.disabled]]" db-url="[[qeaRepeatValues.dbUrl]]" theme="[[qeaRepeatValues.theme]]" tab-size="[[qeaRepeatValues.tabSize]]"><asq-stem><span inner-h-t-m-l="[[qTitleVal]]"></span></asq-stem><code>[[SQLVal]]</code></asq-sqlite-q><div class="controlPanel"><paper-button raised="" on-tap="_cancel">cancel</paper-button><paper-button raised="" id="solutionBtn" on-tap="_solutionBtnTapped" noink="">Set solution</paper-button><paper-button raised="" on-tap="_saveQuestionTapped">save</paper-button></div></div><div id="rightPanel"></div></template><script>(function(){'use strict';const a=[{name:'dbUrl',label:'database Url',type:'String',description:'Load an external db from a URL. If not specified a new empty database is created.'},{name:'disabled',label:'disabled',type:'Boolean',description:'Load an external db from a URL. If not specified a new empty database is created.'},{name:'theme',label:'theme',type:'Enum',options:'chrome,clouds,crimson_editor,dawn,gitHub,solarized_light,monokai',default:'chrome',description:'Load an external db from a URL. If not specified a new empty database is created.'},{name:'tabSize',label:'tab size',type:'Number',default:'2',description:'The tabSize property of the SQL editor'}];class b{get behaviors(){return[qeaBehaviors.actionsBehavior,qeaBehaviors.reduxStore,qeaBehaviors.generalEditorsBehavior]}beforeRegister(){this.is='asq-sqlite-q-editor',this.properties={questionProps:{type:Array,value:a}}}_getFormattedCode(){return`
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/qea-property-editor/qea-property-editor-repeater.html">
+<link rel="import" href="../../bower_components/qea-property-editor/qea-property-editor.html">
+<link rel="import" href="../../bower_components/asq-sqlite-q/asq-sqlite-q.html">
+<link rel="import" href="../../bower_components/asq-stem/asq-stem.html">
+<link rel="import" href="../../bower_components/asq-solution/asq-solution.html">
+<link rel="import" href="../../bower_components/qea-property-editor/qea-advanced-editors.html">
+<link rel="import" href="../../behaviors/qea-redux-store.html">
+<link rel="import" href="../../behaviors/qea-actions-behavior.html">
+<link rel="import" href="../qea-common-editor-components/qea-three-column-layout.html">
+<link rel="import" href="../qea-common-editor-components/qea-editors-behavior.html">
+<link rel="import" href="../qea-common-editor-components/qea-user-response.html">
+<link rel="import" href="../qea-common-editor-components/qea-items-list.html">
+
+</head><body><dom-module id="asq-sqlite-q-editor">
+  <template>
+  <style include="qea-three-column-layout">asq-sqlite-q{height:300px;}</style>
+  <div id="leftPanel">
+    <qea-advanced-editors></qea-advanced-editors>
+    <qea-user-response></qea-user-response>
+
+    <!-- title property-->
+    <qea-property-editor id="stemEditor" name="title" label="Stem" type="string" widget-type="text-code" default="Stem" value="{{qTitleVal}}">
+    </qea-property-editor>
+
+    <qea-property-editor id="stemEditor" no-wrap="" name="SQL code" type="string" widget-type="code" value="{{SQLVal}}">
+    </qea-property-editor>
+
+    <qea-property-editor-repeater id="qeaRepeatValues" property-array="[[questionProps]]" values="{{qeaRepeatValues}}" is-advanced-user="[[viewAdvanced]]">
+    </qea-property-editor-repeater>
+
+    <div id="advanced" on-tap="_showAdvanced">
+      show all
+    </div>
+
+  </div>
+
+  <!-- Main Area -->
+  <div id="mainArea">
+    <div class="explanation">
+      To modify the elements in this area, change the values in the left column
+    </div>
+    <asq-sqlite-q value="[[SQLVal]]" mode="sql" disabled="[[qeaRepeatValues.disabled]]" db-url="[[qeaRepeatValues.dbUrl]]" theme="[[qeaRepeatValues.theme]]" tab-size="[[qeaRepeatValues.tabSize]]">
+      <asq-stem><span inner-h-t-m-l="[[qTitleVal]]"></span></asq-stem>
+      <code>[[SQLVal]]</code>
+    </asq-sqlite-q>
+
+
+    <div class="controlPanel">
+      <paper-button raised="" on-tap="_cancel">cancel</paper-button>
+      <paper-button raised="" id="solutionBtn" on-tap="_solutionBtnTapped" noink="">Set solution</paper-button>
+      <paper-button raised="" on-tap="_saveQuestionTapped">save</paper-button>
+    </div>
+  </div>
+
+  <!-- Right Panel -->
+  <div id="rightPanel">
+
+  </div>
+
+
+  </template>
+  <script>
+  (function () {
+    'use strict';
+    const questionProperties = [
+      {
+        name: 'dbUrl',
+        label: 'database Url',
+        type: 'String',
+        description: 'Load an external db from a URL. If not specified a new empty database is created.',
+      },
+      {
+        name: 'disabled',
+        label: 'disabled',
+        type: 'Boolean',
+        description: 'Load an external db from a URL. If not specified a new empty database is created.',
+      },
+      {
+        name: 'theme',
+        label: 'theme',
+        type: 'Enum',
+        options: 'chrome,clouds,crimson_editor,dawn,gitHub,solarized_light,monokai',
+        default: 'chrome',
+        description: 'Load an external db from a URL. If not specified a new empty database is created.',
+      },
+      {
+        name: 'tabSize',
+        label: 'tab size',
+        type: 'Number',
+        default: '2',
+        description: 'The tabSize property of the SQL editor',
+      },
+    ];
+
+    class asqSqliteQeditor {
+
+      get behaviors() {
+        return [
+          qeaBehaviors.actionsBehavior,
+          qeaBehaviors.reduxStore,
+          qeaBehaviors.generalEditorsBehavior,
+        ];
+      }
+
+      beforeRegister() {
+        this.is = 'asq-sqlite-q-editor';
+        this.properties = {
+          questionProps: {
+            type: Array,
+            value: questionProperties,
+          },
+        };
+      }
+
+      _getFormattedCode() {
+        return `
         <asq-sqlite-q  mode="sql" theme="${this.qeaRepeatValues.theme}" db-url="${this.qeaRepeatValues.dbUrl}"
-          ${this.qeaRepeatValues.disabled?`disabled= ${this.qeaRepeatValues.disabled}`:''}
+          ${this.qeaRepeatValues.disabled ? `disabled= ${this.qeaRepeatValues.disabled}` : ''}
           tab-size="${this.qeaRepeatValues.tabSize}">
-          <asq-stem>${this.qTitleVal||''}</asq-stem>
-          <code>${this.SQLVal||''}</code>
-        </asq-sqlite-q>`}_saveQuestionTapped(){this._saveQuestion(['qTitleVal','SQLVal'])}}Polymer(b)})();</script></dom-module></body></html>
+          <asq-stem>${this.qTitleVal || ''}</asq-stem>
+          <code>${this.SQLVal || ''}</code>
+        </asq-sqlite-q>`;
+      }
+
+      _saveQuestionTapped() {
+        this._saveQuestion(['qTitleVal', 'SQLVal']);
+      }
+
+
+    }
+
+    Polymer(asqSqliteQeditor);
+  })();
+  </script>
+</dom-module>
+</body></html>

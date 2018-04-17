@@ -1,1 +1,50 @@
-<!DOCTYPE html><html lang="en"><head><script>(function(){if(!window.Symbol||'function'!==typeof window.Symbol){const a=document.createElement('script');a.src='./scripts/corejs.shim.min.js',document.head.appendChild(a)}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="styles/main.css"><link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet" type="text/css"><script src="./bower_components/webcomponentsjs/webcomponents-lite.js"></script><script src="./node_modules/redux/dist/redux.min.js"></script><link rel="import" href="elements/qea-main-app/qea-main-app.html"><title>question-editor-asq</title></head><body><qea-main-app id="mainApp"></qea-main-app></body></html>
+<!DOCTYPE html><html lang="en"><head>
+<!--     <script>
+        window.questionEditorASQ = {
+            conf: {
+                mountPath: '/build/es6-unbundled' //change this mountpath based on where to deploy the app ('/now' is the default for ASQ)
+            }
+        }
+    </script> -->
+    <script>
+        (function () {
+          if (! window.Symbol || typeof window.Symbol !== 'function') {
+            const e = document.createElement('script');
+            e.src = './scripts/corejs.shim.min.js';
+            document.head.appendChild(e);
+        }
+    })();
+</script>
+<!-- build:electronRequire -->
+<!-- endbuild -->
+
+<!-- required by browserSync -->
+<!-- build:baseurl -->
+<base href="/">
+<!-- endbuild -->
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="styles/main.css">
+<link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet" type="text/css">
+<!-- build:webcomponents -->
+<script src="./bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+<!-- endbuild -->
+
+
+<!-- will be creted during the build process -->
+<!-- <script src="./scripts/redux.min.js"></script> -->
+<script src="./node_modules/redux/dist/redux.min.js"></script>
+
+<!-- <link rel="import" href="./elements/elements.html"> -->
+<link rel="import" href="elements/qea-main-app/qea-main-app.html">
+
+<title>question-editor-asq</title>
+</head>
+<body>
+    <!-- build:mountpath -->
+    <qea-main-app id="mainApp"></qea-main-app>
+    <!-- endbuild -->
+
+
+</body></html>

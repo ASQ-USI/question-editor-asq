@@ -1,0 +1,886 @@
+{
+  "elements/qea-main-app/qea-main-app.html": {
+    "bower_components/polymer/polymer.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/polymer/polymer-mini.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/polymer/polymer-micro.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-flex-layout/iron-flex-layout-classes.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-flex-layout/iron-flex-layout.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/polymer-redux/polymer-redux.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/polymer-redux/polymer-redux.js": {
+      "type": "script",
+      "weight": 1
+    },
+    "bower_components/iron-pages/iron-pages.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-resizable-behavior/iron-resizable-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-selector/iron-selectable.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-selector/iron-selection.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/app-route/app-route.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/app-route/app-location.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-location/iron-location.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-location/iron-query-params.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/app-route/app-route-converter-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/asq-spinner/asq-spinner.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/asq-spinner/asq-icons.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-icon/iron-icon.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-meta/iron-meta.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-iconset-svg/iron-iconset-svg.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-fab/paper-fab.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-behaviors/paper-button-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-behaviors/iron-button-state.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-a11y-keys-behavior/iron-a11y-keys-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-behaviors/iron-control-state.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-behaviors/paper-ripple-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-ripple/paper-ripple.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-material/paper-material-shared-styles.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-styles/shadow.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-styles/color.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-styles/default-theme.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "behaviors/qea-app-behavior.html": {
+      "type": "document",
+      "weight": 1
+    }
+  },
+  "elements/qea-qeditor-page/qea-qeditor-page.html": {
+    "bower_components/polymer/polymer.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/polymer/polymer-mini.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/polymer/polymer-micro.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/app-route/app-route.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/app-route/app-location.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-location/iron-location.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-location/iron-query-params.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/app-route/app-route-converter-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-flex-layout/iron-flex-layout-classes.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-flex-layout/iron-flex-layout.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-localstorage/iron-localstorage.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "behaviors/qea-app-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "behaviors/qea-actions-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "behaviors/qea-redux-store.html": {
+      "type": "document",
+      "weight": 1
+    }
+  },
+  "elements/qea-questions-list/qea-questions-list.html": {
+    "bower_components/polymer/polymer.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/polymer/polymer-mini.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/polymer/polymer-micro.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-toolbar/paper-toolbar.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-styles/default-theme.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-styles/color.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-styles/typography.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/font-roboto/roboto.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-flex-layout/iron-flex-layout.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-menu/paper-menu.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-menu-behavior/iron-menu-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-selector/iron-multi-selectable.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-selector/iron-selectable.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-selector/iron-selection.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-a11y-keys-behavior/iron-a11y-keys-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-menu/paper-menu-shared-styles.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "elements/qea-question-type/qea-question-type.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-menu/paper-submenu.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-behaviors/iron-control-state.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-collapse/iron-collapse.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-resizable-behavior/iron-resizable-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-item/paper-item.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-item/paper-item-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-behaviors/iron-button-state.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-item/paper-item-shared-styles.html": {
+      "type": "document",
+      "weight": 1
+    }
+  },
+  "elements/qea-canvas/qea-canvas.html": {
+    "bower_components/polymer/polymer.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/polymer/polymer-mini.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/polymer/polymer-micro.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-flex-layout/iron-flex-layout-classes.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-flex-layout/iron-flex-layout.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/app-route/app-route.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/app-route/app-location.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-location/iron-location.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-location/iron-query-params.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/app-route/app-route-converter-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-localstorage/iron-localstorage.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/qea-property-editor/qea-advanced-text-editor.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-dialog/paper-dialog.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/neon-animation/neon-animation-runner-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-meta/iron-meta.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/neon-animation/neon-animatable-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-dialog-behavior/paper-dialog-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-overlay-behavior/iron-overlay-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-fit-behavior/iron-fit-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-resizable-behavior/iron-resizable-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-overlay-behavior/iron-overlay-manager.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-a11y-keys-behavior/iron-a11y-keys-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-overlay-behavior/iron-overlay-backdrop.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-overlay-behavior/iron-focusables-helper.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-dialog-behavior/paper-dialog-shared-styles.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-styles/default-theme.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-styles/color.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-styles/typography.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/font-roboto/roboto.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-styles/shadow.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/polymer-tinymce/polymer-tinymce.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/import-tinymce/import-tinymce.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/tinymce/tinymce.min.js": {
+      "type": "script",
+      "weight": 1
+    },
+    "bower_components/qea-property-editor/qea-advanced-code-editor.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/ace-element/ace-element.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/ace-element/src-min-noconflict/ace.js": {
+      "type": "script",
+      "weight": 1
+    },
+    "scripts/Sortable.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "scripts/Sortable.min.js": {
+      "type": "script",
+      "weight": 1
+    },
+    "behaviors/qea-redux-store.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "behaviors/qea-actions-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "behaviors/qea-app-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "elements/qea-selector-highlighter/qea-selector-highlighter.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-material/paper-material.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-material/paper-material-shared-styles.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-icons/iron-icons.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-icon/iron-icon.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-iconset-svg/iron-iconset-svg.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-button/paper-button.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-behaviors/paper-button-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-behaviors/iron-button-state.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-behaviors/iron-control-state.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-behaviors/paper-ripple-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-ripple/paper-ripple.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "elements/qea-common-editor-components/qea-user-response.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-toast/paper-toast.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-a11y-announcer/iron-a11y-announcer.html": {
+      "type": "document",
+      "weight": 1
+    }
+  },
+  "elements/qea-landing-page/qea-landing-page.html": {
+    "bower_components/polymer/polymer.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/polymer/polymer-mini.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/polymer/polymer-micro.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-flex-layout/iron-flex-layout.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-localstorage/iron-localstorage.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-card/paper-card.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-image/iron-image.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-material/paper-material.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-styles/shadow.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-material/paper-material-shared-styles.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-styles/default-theme.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-styles/color.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-button/paper-button.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-behaviors/paper-button-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-behaviors/iron-button-state.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-a11y-keys-behavior/iron-a11y-keys-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-behaviors/iron-control-state.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-behaviors/paper-ripple-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-ripple/paper-ripple.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-icons/iron-icons.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-icon/iron-icon.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-meta/iron-meta.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-iconset-svg/iron-iconset-svg.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-fab/paper-fab.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/app-route/app-location.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-location/iron-location.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-location/iron-query-params.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/app-route/app-route-converter-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "elements/qea-common-editor-components/qea-user-response.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-toast/paper-toast.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-a11y-announcer/iron-a11y-announcer.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-overlay-behavior/iron-overlay-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-fit-behavior/iron-fit-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-resizable-behavior/iron-resizable-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-overlay-behavior/iron-overlay-manager.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-overlay-behavior/iron-overlay-backdrop.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-overlay-behavior/iron-focusables-helper.html": {
+      "type": "document",
+      "weight": 1
+    }
+  },
+  "elements/qea-toolbar/qea-toolbar.html": {
+    "bower_components/polymer/polymer.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/polymer/polymer-mini.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/polymer/polymer-micro.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-toolbar/paper-toolbar.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-styles/default-theme.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-styles/color.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-styles/typography.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/font-roboto/roboto.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-flex-layout/iron-flex-layout.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-icon-button/paper-icon-button.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-icon/iron-icon.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-meta/iron-meta.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-behaviors/paper-inky-focus-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-behaviors/iron-button-state.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-a11y-keys-behavior/iron-a11y-keys-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-behaviors/iron-control-state.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-behaviors/paper-ripple-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-ripple/paper-ripple.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-icons/iron-icons.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-iconset-svg/iron-iconset-svg.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-tooltip/paper-tooltip.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/neon-animation/neon-animation-runner-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/neon-animation/neon-animatable-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/neon-animation/animations/fade-in-animation.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/neon-animation/neon-animation-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/neon-animation/web-animations.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/web-animations-js/web-animations-next-lite.min.js": {
+      "type": "script",
+      "weight": 1
+    },
+    "bower_components/neon-animation/animations/fade-out-animation.html": {
+      "type": "document",
+      "weight": 1
+    }
+  },
+  "elements/qea-common-editor-components/qea-user-response.html": {
+    "bower_components/polymer/polymer.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/polymer/polymer-mini.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/polymer/polymer-micro.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-toast/paper-toast.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-a11y-announcer/iron-a11y-announcer.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-overlay-behavior/iron-overlay-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-fit-behavior/iron-fit-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-resizable-behavior/iron-resizable-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-overlay-behavior/iron-overlay-manager.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-a11y-keys-behavior/iron-a11y-keys-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-overlay-behavior/iron-overlay-backdrop.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-overlay-behavior/iron-focusables-helper.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-button/paper-button.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-flex-layout/iron-flex-layout.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-behaviors/paper-button-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-behaviors/iron-button-state.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/iron-behaviors/iron-control-state.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-behaviors/paper-ripple-behavior.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-ripple/paper-ripple.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-material/paper-material-shared-styles.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/paper-styles/shadow.html": {
+      "type": "document",
+      "weight": 1
+    }
+  },
+  "elements/qea-404-page/qea-404-page.html": {
+    "bower_components/polymer/polymer.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/polymer/polymer-mini.html": {
+      "type": "document",
+      "weight": 1
+    },
+    "bower_components/polymer/polymer-micro.html": {
+      "type": "document",
+      "weight": 1
+    }
+  }
+}

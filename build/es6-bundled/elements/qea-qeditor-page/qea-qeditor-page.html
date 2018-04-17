@@ -1,1 +1,145 @@
-<html><head></head><body><dom-module id="qea-qeditor-page"><template><style include="iron-flex">:host{display:block;}</style><app-route query-params="{{query}}" route="{{route}}" pattern="/:qid/edit" data="{{routeData}}"></app-route><iron-localstorage name="my-app-storage" value="{{exerciseStore}}"></iron-localstorage><div id="editorContainer" class="flex layout horizontal"></div></template><script>(function(){'use strict';Polymer({is:'qea-qeditor-page',behaviors:[qeaBehaviors.appBehavior,qeaBehaviors.actionsBehavior,qeaBehaviors.reduxStore],observers:['_questionChanged(routeData.qid, query.type)'],properties:{exerciseStore:{type:Object,notify:!0},route:{type:Object,notify:!0},routeData:{type:Object,notify:!0},query:{type:Object,notify:!0}},_questionChanged:function(a,b){this.debounce('changeQuestion',()=>{this.$$('iron-localstorage').reload();const c=`${b}-editor`;if(!(a&&this.exerciseStore))''===a&&this.set('route.path','404');else if('new'===a){this.dispatch('addElement',b,null,{});const a=this.getState().elements.slice(-1)[0].id;this.set('exerciseStore.elements',this.getState().elements),this.set('routeData.qid',a)}else this.fire('toggleSpinner',!0),this._clearPage(),Polymer.Base.importHref(this.__resolveLocalPath(c),()=>{this._renderEditor(a,c,this.query.eid)},()=>{this.fire('toggleSpinner',!1),this.fire('fireToast',{text:'We can\'t find that editor',type:'error'}),this.fire('changePage',{pageURL:'404'})},!0)})},_renderEditor:function(a,b,c){let d=null;if(a&&(d=this._searchQuestion(a),!d))return this.fire('toggleSpinner',!1),void this.fire('fireToast',{text:'We can\'t find that question',type:'error'});const e=Polymer.Base.create(b,{id:a,exerciseId:c,restoreState:d});e.classList.add('flex'),this.async(()=>{Polymer.dom(this.$.editorContainer).appendChild(e),this.fire('toggleSpinner',!1)},1e3)},_searchQuestion:function(a){if(this.exerciseStore)for(const b of this.exerciseStore.elements)if(b.id===a)return b.props;return null},_clearPage:function(){const a=Polymer.dom(this.$.editorContainer).childNodes;for(const b of a)Polymer.dom(this.$.editorContainer).removeChild(b)}})})();</script></dom-module></body></html>
+<html><head></head><body><dom-module id="qea-qeditor-page">
+  <template>
+    <style include="iron-flex">:host{display:block;}</style>
+    <!-- router -->
+
+    <app-route query-params="{{query}}" route="{{route}}" pattern="/:qid/edit" data="{{routeData}}">
+    </app-route>
+
+    <iron-localstorage name="my-app-storage" value="{{exerciseStore}}">
+    </iron-localstorage>
+
+    <div id="editorContainer" class="flex layout horizontal">
+
+    </div>
+  </template>
+  <script>
+  (function () {
+    'use strict';
+
+    Polymer({
+
+      is: 'qea-qeditor-page',
+      behaviors: [
+        qeaBehaviors.appBehavior,
+        qeaBehaviors.actionsBehavior,
+        qeaBehaviors.reduxStore,
+      ],
+      observers: [
+        '_questionChanged(routeData.qid, query.type)',
+      ],
+      properties: {
+        /**
+        * exercises to store in local storage
+        */
+        exerciseStore:{
+          type: Object,
+          notify: true,
+        },
+        /**
+        * Route
+        */
+        route:{
+          type: Object,
+          notify: true,
+        },
+        /**
+        * route data
+        */
+        routeData:{
+          type: Object,
+          notify: true,
+        },
+        /**
+        * Route query
+        */
+        query:{
+          type: Object,
+          notify: true,
+        }
+      },
+
+      _questionChanged: function(qid, type) {
+        this.debounce('changeQuestion', () => {
+          this.$$('iron-localstorage').reload();
+          const editorType = `${type}-editor`;
+
+          if (qid && this.exerciseStore) {
+            if (qid === 'new') {
+              // create new question
+              this.dispatch('addElement', type, null, {});
+              const newQid = this.getState().elements.slice(-1)[0].id;
+              this.set('exerciseStore.elements', this.getState().elements);
+
+              this.set('routeData.qid', newQid);
+            } else {
+              // restore
+              this.fire('toggleSpinner', true);
+              this._clearPage();
+
+              // <replace:start>
+              Polymer.Base.importHref(
+                this.__resolveLocalPath(editorType),
+                () => {
+                  // successful import
+                  this._renderEditor(qid, editorType, this.query.eid);
+                },
+                () => {
+                  // unsuccessful import
+                  this.fire('toggleSpinner', false);
+                  this.fire('fireToast', { text: "We can't find that editor", type: 'error' });
+                  this.fire('changePage', { pageURL: '404' });
+                },
+              false);
+              // <replace:stop>
+            }
+          } else if (qid === '') {
+            this.set('route.path', '404');
+          }
+        });
+      },
+
+      _renderEditor: function(qid, editorType, eid) {
+        let props = null;
+        if (qid) {
+          // restore properties
+          props = this._searchQuestion(qid);
+          if (!props) {
+            this.fire('toggleSpinner', false);
+            this.fire('fireToast', { text: "We can't find that question", type: 'error' });
+            return;
+          }
+        }
+
+        // create
+        const elem = Polymer.Base.create(editorType, { id: qid, exerciseId: eid, restoreState: props });
+        elem.classList.add('flex');
+        this.async(() => {
+          Polymer.dom(this.$.editorContainer).appendChild(elem);
+          this.fire('toggleSpinner', false);
+        }, 1000);
+      },
+
+      _searchQuestion: function(qid) {
+        if (this.exerciseStore) {
+          for (const question of this.exerciseStore.elements) {
+            if (question.id === qid) {
+              return question.props;
+            }
+          }
+        }
+        return null;
+      },
+
+      _clearPage: function() {
+        const oldEditors = Polymer.dom(this.$.editorContainer).childNodes;
+        for (const edit of oldEditors) {
+          Polymer.dom(this.$.editorContainer).removeChild(edit);
+        }
+      }
+
+    });
+  })();
+  </script>
+</dom-module>
+</body></html>

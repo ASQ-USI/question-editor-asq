@@ -1,7 +1,29 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../elements.html">
+<!-- <link rel="import" href="../elements.html"> -->
+<!-- polymer-redux must be the first import -->
+<link rel="import" href="../../bower_components/polymer-redux/polymer-redux.html">
+
+<!-- Iron elements -->
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+
+<!-- App elements -->
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+
+<!-- general bower elements -->
+<link rel="import" href="../../bower_components/asq-spinner/asq-spinner.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+
+<!-- local elements -->
+<!-- <link rel="import" href="../qea-questions-list/qea-questions-list.html">
+<link rel="import" href="../qea-qeditor-page/qea-qeditor-page.html">
+<link rel="import" href="../qea-canvas/qea-canvas.html">
+<link rel="import" href="../qea-landing-page/qea-landing-page.html">
+<link rel="import" href="../qea-toolbar/qea-toolbar.html">
+<link rel="import" href="../qea-common-editor-components/qea-user-response.html">
+<link rel="import" href="../qea-404-page/qea-404-page.html"> -->
 <link rel="import" href="../../behaviors/qea-app-behavior.html">
 
 <dom-module id="qea-main-app">
@@ -57,7 +79,7 @@
     <section id="canvas-container" class="flex layout horizontal">
 
       <!-- be sure to add the "page-name" attribute to all the new pages inserted -->
-      <iron-pages id='pageController' selected="[[routeData.page]]" attr-for-selected="page-name" class="flex layout horizontal" fallback-selection="404">
+      <iron-pages id='pageController' selected="[[page]]" attr-for-selected="page-name" class="flex layout horizontal">
 
         <section class="page page0 layout horizontal flex" page-name='home'>
           <qea-landing-page class="flex"></qea-landing-page>
@@ -107,6 +129,7 @@
       behaviors: [qeaBehaviors.appBehavior],
       observers: [
         // '_importPage(routeData.page)',
+        '_routePageChanged(routeData.page)'
       ],
       listeners: {
         fireToast: '_openToast',
@@ -117,6 +140,12 @@
       },
 
       properties:{
+        page: {
+          type: String,
+          reflectToAttribute: true,
+          observer: '_pageChanged'
+        },
+
         _isDragging: {
           type: Boolean,
           value: false,
@@ -132,6 +161,15 @@
           type: Boolean,
           value: false,
         },
+      },
+
+      created: function(){
+        this.pageMap = {
+          'home' : ['qea-landing-page'],
+          'exercise' : ['qea-canvas', 'qea-questions-list'],
+          'question' : ['qea-qeditor-page'],
+          '404' : ['qea-404-page'],
+        }
       },
 
       ready: function() {
@@ -150,6 +188,38 @@
         } else if (!this.route.path || this.route.path === `${this.mountPath}` ||  this.route.path === `${this.mountPath}/`) {
           this.set('route.path', `${this.mountPath}/home`);
         }
+      },
+
+      _routePageChanged: function(page) {
+        // if the route path doesn't start with our mountpath it's definitely a 404
+        if(this.route.path.substring(0, this.mountPath.length) !== this.mountPath){
+          this.page = '404';
+        }else{
+          //other wise give the page  a shot
+          this.page = page || 'home';
+        }
+        
+      },
+
+      _pageChanged: function(page, oldPage) {
+        if (page != null) {
+          var cb = function(e){
+            if(! e.target) { // we have an error
+              console.log(e)
+            }
+          };
+
+          if(this.pageMap.hasOwnProperty(page)){
+            this.pageMap[page].forEach(elName => {
+              this.importHref(this.resolveUrl('../' + elName + '/' + elName +'.html'),
+                cb, cb, true);
+            })
+          }else{ // page not recognized, fire a 404
+            this.page = '404';
+            this.importHref(this.resolveUrl('../qea-404-page/qea-404-page.html'),
+              cb, cb, true);
+          }
+        }   
       },
 
       _openToast: function(host, { type = 'default', text = '', properties }) {

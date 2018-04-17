@@ -1,1 +1,1426 @@
-<html><head></head><body><div hidden="" by-polymer-bundler=""><script>Polymer.IronSelection=function(a){this.selection=[],this.selectCallback=a},Polymer.IronSelection.prototype={get:function(){return this.multi?this.selection.slice():this.selection[0]},clear:function(a){this.selection.slice().forEach(function(b){(!a||0>a.indexOf(b))&&this.setItemSelected(b,!1)},this)},isSelected:function(a){return 0<=this.selection.indexOf(a)},setItemSelected:function(a,b){if(null!=a&&b!==this.isSelected(a)){if(b)this.selection.push(a);else{var c=this.selection.indexOf(a);0<=c&&this.selection.splice(c,1)}this.selectCallback&&this.selectCallback(a,b)}},select:function(a){this.multi?this.toggle(a):this.get()!==a&&(this.setItemSelected(this.get(),!1),this.setItemSelected(a,!0))},toggle:function(a){this.setItemSelected(a,!this.isSelected(a))}};</script><script>Polymer.IronSelectableBehavior={properties:{attrForSelected:{type:String,value:null},selected:{type:String,notify:!0},selectedItem:{type:Object,readOnly:!0,notify:!0},activateEvent:{type:String,value:'tap',observer:'_activateEventChanged'},selectable:String,selectedClass:{type:String,value:'iron-selected'},selectedAttribute:{type:String,value:null},fallbackSelection:{type:String,value:null},items:{type:Array,readOnly:!0,notify:!0,value:function(){return[]}},_excludedLocalNames:{type:Object,value:function(){return{template:1}}}},observers:['_updateAttrForSelected(attrForSelected)','_updateSelected(selected)','_checkFallback(fallbackSelection)'],created:function(){this._bindFilterItem=this._filterItem.bind(this),this._selection=new Polymer.IronSelection(this._applySelection.bind(this))},attached:function(){this._observer=this._observeItems(this),this._updateItems(),this._shouldUpdateSelection||this._updateSelected(),this._addListener(this.activateEvent)},detached:function(){this._observer&&Polymer.dom(this).unobserveNodes(this._observer),this._removeListener(this.activateEvent)},indexOf:function(a){return this.items.indexOf(a)},select:function(a){this.selected=a},selectPrevious:function(){var a=this.items.length,b=(+this._valueToIndex(this.selected)-1+a)%a;this.selected=this._indexToValue(b)},selectNext:function(){var a=(+this._valueToIndex(this.selected)+1)%this.items.length;this.selected=this._indexToValue(a)},selectIndex:function(a){this.select(this._indexToValue(a))},forceSynchronousItemUpdate:function(){this._updateItems()},get _shouldUpdateSelection(){return null!=this.selected},_checkFallback:function(){this._shouldUpdateSelection&&this._updateSelected()},_addListener:function(a){this.listen(this,a,'_activateHandler')},_removeListener:function(a){this.unlisten(this,a,'_activateHandler')},_activateEventChanged:function(a,b){this._removeListener(b),this._addListener(a)},_updateItems:function(){var a=Polymer.dom(this).queryDistributedElements(this.selectable||'*');a=Array.prototype.filter.call(a,this._bindFilterItem),this._setItems(a)},_updateAttrForSelected:function(){this._shouldUpdateSelection&&(this.selected=this._indexToValue(this.indexOf(this.selectedItem)))},_updateSelected:function(){this._selectSelected(this.selected)},_selectSelected:function(){this._selection.select(this._valueToItem(this.selected)),this.fallbackSelection&&this.items.length&&this._selection.get()===void 0&&(this.selected=this.fallbackSelection)},_filterItem:function(a){return!this._excludedLocalNames[a.localName]},_valueToItem:function(a){return null==a?null:this.items[this._valueToIndex(a)]},_valueToIndex:function(a){if(this.attrForSelected){for(var b,c=0;b=this.items[c];c++)if(this._valueForItem(b)==a)return c;}else return+a},_indexToValue:function(a){if(this.attrForSelected){var b=this.items[a];if(b)return this._valueForItem(b)}else return a},_valueForItem:function(a){var b=a[Polymer.CaseMap.dashToCamelCase(this.attrForSelected)];return b==void 0?a.getAttribute(this.attrForSelected):b},_applySelection:function(a,b){this.selectedClass&&this.toggleClass(this.selectedClass,b,a),this.selectedAttribute&&this.toggleAttribute(this.selectedAttribute,b,a),this._selectionChange(),this.fire('iron-'+(b?'select':'deselect'),{item:a})},_selectionChange:function(){this._setSelectedItem(this._selection.get())},_observeItems:function(a){return Polymer.dom(a).observeNodes(function(a){this._updateItems(),this._shouldUpdateSelection&&this._updateSelected(),this.fire('iron-items-changed',a,{bubbles:!1,cancelable:!1})})},_activateHandler:function(a){for(var b=a.target,c=this.items;b&&b!=this;){var d=c.indexOf(b);if(0<=d){var e=this._indexToValue(d);return void this._itemActivate(e,b)}b=b.parentNode}},_itemActivate:function(a,b){this.fire('iron-activate',{selected:a,item:b},{cancelable:!0}).defaultPrevented||this.select(a)}};</script><script>Polymer.IronMultiSelectableBehaviorImpl={properties:{multi:{type:Boolean,value:!1,observer:'multiChanged'},selectedValues:{type:Array,notify:!0},selectedItems:{type:Array,readOnly:!0,notify:!0}},observers:['_updateSelected(selectedValues.splices)'],select:function(a){this.multi?this.selectedValues?this._toggleSelected(a):this.selectedValues=[a]:this.selected=a},multiChanged:function(a){this._selection.multi=a},get _shouldUpdateSelection(){return null!=this.selected||null!=this.selectedValues&&this.selectedValues.length},_updateAttrForSelected:function(){this.multi?this._shouldUpdateSelection&&(this.selectedValues=this.selectedItems.map(function(a){return this._indexToValue(this.indexOf(a))},this).filter(function(a){return null!=a},this)):Polymer.IronSelectableBehavior._updateAttrForSelected.apply(this)},_updateSelected:function(){this.multi?this._selectMulti(this.selectedValues):this._selectSelected(this.selected)},_selectMulti:function(a){if(a){var b=this._valuesToItems(a);this._selection.clear(b);for(var c=0;c<b.length;c++)this._selection.setItemSelected(b[c],!0);if(this.fallbackSelection&&this.items.length&&!this._selection.get().length){var d=this._valueToItem(this.fallbackSelection);d&&(this.selectedValues=[this.fallbackSelection])}}else this._selection.clear()},_selectionChange:function(){var a=this._selection.get();this.multi?this._setSelectedItems(a):(this._setSelectedItems([a]),this._setSelectedItem(a))},_toggleSelected:function(a){var b=this.selectedValues.indexOf(a);0>b?this.push('selectedValues',a):this.splice('selectedValues',b,1)},_valuesToItems:function(a){return null==a?null:a.map(function(a){return this._valueToItem(a)},this)}},Polymer.IronMultiSelectableBehavior=[Polymer.IronSelectableBehavior,Polymer.IronMultiSelectableBehaviorImpl];</script><script>Polymer.IronMenuBehaviorImpl={properties:{focusedItem:{observer:'_focusedItemChanged',readOnly:!0,type:Object},attrForItemTitle:{type:String},disabled:{type:Boolean,value:!1,observer:'_disabledChanged'}},_SEARCH_RESET_TIMEOUT_MS:1e3,_previousTabIndex:0,hostAttributes:{role:'menu'},observers:['_updateMultiselectable(multi)'],listeners:{focus:'_onFocus',keydown:'_onKeydown',"iron-items-changed":'_onIronItemsChanged'},keyBindings:{up:'_onUpKey',down:'_onDownKey',esc:'_onEscKey',"shift+tab:keydown":'_onShiftTabDown'},attached:function(){this._resetTabindices()},select:function(a){this._defaultFocusAsync&&(this.cancelAsync(this._defaultFocusAsync),this._defaultFocusAsync=null);var b=this._valueToItem(a);b&&b.hasAttribute('disabled')||(this._setFocusedItem(b),Polymer.IronMultiSelectableBehaviorImpl.select.apply(this,arguments))},_resetTabindices:function(){var a=this.multi?this.selectedItems&&this.selectedItems[0]:this.selectedItem;this.items.forEach(function(b){b.setAttribute('tabindex',b===a?'0':'-1')},this)},_updateMultiselectable:function(a){a?this.setAttribute('aria-multiselectable','true'):this.removeAttribute('aria-multiselectable')},_focusWithKeyboardEvent:function(a){this.cancelDebouncer('_clearSearchText');var b=this._searchText||'',c=a.key&&1==a.key.length?a.key:String.fromCharCode(a.keyCode);b+=c.toLocaleLowerCase();for(var d,e=b.length,f=0;d=this.items[f];f++)if(!d.hasAttribute('disabled')){var g=this.attrForItemTitle||'textContent',h=(d[g]||d.getAttribute(g)||'').trim();if(!(h.length<e)&&h.slice(0,e).toLocaleLowerCase()==b){this._setFocusedItem(d);break}}this._searchText=b,this.debounce('_clearSearchText',this._clearSearchText,this._SEARCH_RESET_TIMEOUT_MS)},_clearSearchText:function(){this._searchText=''},_focusPrevious:function(){for(var a,b=this.items.length,c=+this.indexOf(this.focusedItem),d=1;d<b+1;d++)if(a=this.items[(c-d+b)%b],!a.hasAttribute('disabled')){var e=Polymer.dom(a).getOwnerRoot()||document;if(this._setFocusedItem(a),Polymer.dom(e).activeElement==a)return}},_focusNext:function(){for(var a,b=this.items.length,c=+this.indexOf(this.focusedItem),d=1;d<b+1;d++)if(a=this.items[(c+d)%b],!a.hasAttribute('disabled')){var e=Polymer.dom(a).getOwnerRoot()||document;if(this._setFocusedItem(a),Polymer.dom(e).activeElement==a)return}},_applySelection:function(a,b){b?a.setAttribute('aria-selected','true'):a.removeAttribute('aria-selected'),Polymer.IronSelectableBehavior._applySelection.apply(this,arguments)},_focusedItemChanged:function(a,b){b&&b.setAttribute('tabindex','-1'),!a||a.hasAttribute('disabled')||this.disabled||(a.setAttribute('tabindex','0'),a.focus())},_onIronItemsChanged:function(a){a.detail.addedNodes.length&&this._resetTabindices()},_onShiftTabDown:function(){var a=this.getAttribute('tabindex');Polymer.IronMenuBehaviorImpl._shiftTabPressed=!0,this._setFocusedItem(null),this.setAttribute('tabindex','-1'),this.async(function(){this.setAttribute('tabindex',a),Polymer.IronMenuBehaviorImpl._shiftTabPressed=!1},1)},_onFocus:function(a){if(!Polymer.IronMenuBehaviorImpl._shiftTabPressed){var b=Polymer.dom(a).rootTarget;(b===this||'undefined'===typeof b.tabIndex||this.isLightDescendant(b))&&(this._defaultFocusAsync=this.async(function(){var a=this.multi?this.selectedItems&&this.selectedItems[0]:this.selectedItem;this._setFocusedItem(null),a?this._setFocusedItem(a):this.items[0]&&this._focusNext()}))}},_onUpKey:function(a){this._focusPrevious(),a.detail.keyboardEvent.preventDefault()},_onDownKey:function(a){this._focusNext(),a.detail.keyboardEvent.preventDefault()},_onEscKey:function(){this.focusedItem.blur()},_onKeydown:function(a){this.keyboardEventMatchesKeys(a,'up down esc')||this._focusWithKeyboardEvent(a),a.stopPropagation()},_activateHandler:function(a){Polymer.IronSelectableBehavior._activateHandler.call(this,a),a.stopPropagation()},_disabledChanged:function(a){a?(this._previousTabIndex=this.hasAttribute('tabindex')?this.tabIndex:0,this.removeAttribute('tabindex')):!this.hasAttribute('tabindex')&&this.setAttribute('tabindex',this._previousTabIndex)}},Polymer.IronMenuBehaviorImpl._shiftTabPressed=!1,Polymer.IronMenuBehavior=[Polymer.IronMultiSelectableBehavior,Polymer.IronA11yKeysBehavior,Polymer.IronMenuBehaviorImpl];</script><dom-module id="paper-menu-shared-styles" assetpath="../../bower_components/paper-menu/"><template><style>.selectable-content > ::content > .iron-selected{font-weight:bold;@apply (--paper-menu-selected-item);}.selectable-content > ::content > [disabled]{color:var(--paper-menu-disabled-color, --disabled-text-color);}.selectable-content > ::content > *:focus{position:relative;outline:0;@apply (--paper-menu-focused-item);}.selectable-content > ::content > *:focus:after{@apply (--layout-fit);background:currentColor;opacity:var(--dark-divider-opacity);content:'';pointer-events:none;@apply (--paper-menu-focused-item-after);}.selectable-content > ::content > *[colored]:focus:after{opacity:0.26;}</style></template></dom-module><dom-module id="paper-menu" assetpath="../../bower_components/paper-menu/"><template><style include="paper-menu-shared-styles"></style><style>:host{display:block;padding:8px 0;background:var(--paper-menu-background-color, --primary-background-color);color:var(--paper-menu-color, --primary-text-color);@apply (--paper-menu);}</style><div class="selectable-content"><content></content></div></template><script>(function(){Polymer({is:'paper-menu',behaviors:[Polymer.IronMenuBehavior]})})();</script></dom-module><dom-module id="iron-collapse" assetpath="../../bower_components/iron-collapse/"><template><style>:host{display:block;transition-duration:var(--iron-collapse-transition-duration, 300ms);overflow:visible;}:host(.iron-collapse-closed){display:none;}:host(:not(.iron-collapse-opened)){overflow:hidden;}</style><content></content></template></dom-module><script>Polymer({is:'iron-collapse',behaviors:[Polymer.IronResizableBehavior],properties:{horizontal:{type:Boolean,value:!1,observer:'_horizontalChanged'},opened:{type:Boolean,value:!1,notify:!0,observer:'_openedChanged'},transitioning:{type:Boolean,notify:!0,readOnly:!0},noAnimation:{type:Boolean},_desiredSize:{type:String,value:''}},get dimension(){return this.horizontal?'width':'height'},get _dimensionMax(){return this.horizontal?'maxWidth':'maxHeight'},get _dimensionMaxCss(){return this.horizontal?'max-width':'max-height'},hostAttributes:{role:'group',"aria-hidden":'true',"aria-expanded":'false'},listeners:{transitionend:'_onTransitionEnd'},toggle:function(){this.opened=!this.opened},show:function(){this.opened=!0},hide:function(){this.opened=!1},updateSize:function(a,b){a='auto'===a?'':a;var c=b&&!this.noAnimation&&this.isAttached&&this._desiredSize!==a;if(this._desiredSize=a,this._updateTransition(!1),c){var d=this._calcSize();''===a&&(this.style[this._dimensionMax]='',a=this._calcSize()),this.style[this._dimensionMax]=d,this.scrollTop=this.scrollTop,this._updateTransition(!0),c=a!==d}this.style[this._dimensionMax]=a,c||this._transitionEnd()},enableTransition:function(a){Polymer.Base._warn('`enableTransition()` is deprecated, use `noAnimation` instead.'),this.noAnimation=!a},_updateTransition:function(a){this.style.transitionDuration=a&&!this.noAnimation?'':'0s'},_horizontalChanged:function(){this.style.transitionProperty=this._dimensionMaxCss;var a='maxWidth'===this._dimensionMax?'maxHeight':'maxWidth';this.style[a]='',this.updateSize(this.opened?'auto':'0px',!1)},_openedChanged:function(){this.setAttribute('aria-expanded',this.opened),this.setAttribute('aria-hidden',!this.opened),this._setTransitioning(!0),this.toggleClass('iron-collapse-closed',!1),this.toggleClass('iron-collapse-opened',!1),this.updateSize(this.opened?'auto':'0px',!0),this.opened&&this.focus()},_transitionEnd:function(){this.style[this._dimensionMax]=this._desiredSize,this.toggleClass('iron-collapse-closed',!this.opened),this.toggleClass('iron-collapse-opened',this.opened),this._updateTransition(!1),this.notifyResize(),this._setTransitioning(!1)},_onTransitionEnd:function(a){Polymer.dom(a).rootTarget===this&&this._transitionEnd()},_calcSize:function(){return this.getBoundingClientRect()[this.dimension]+'px'}});</script><dom-module id="paper-submenu" assetpath="../../bower_components/paper-menu/"><template><style include="paper-menu-shared-styles"></style><div class="selectable-content" on-tap="_onTap"><content id="trigger" select=".menu-trigger"></content></div><iron-collapse id="collapse" opened="{{opened}}"><content id="content" select=".menu-content"></content></iron-collapse></template><script>(function(){Polymer({is:'paper-submenu',properties:{opened:{type:Boolean,value:!1,notify:!0,observer:'_openedChanged'}},behaviors:[Polymer.IronControlState],listeners:{focus:'_onFocus'},get __parent(){return Polymer.dom(this).parentNode},get __trigger(){return Polymer.dom(this.$.trigger).getDistributedNodes()[0]},get __content(){return Polymer.dom(this.$.content).getDistributedNodes()[0]},attached:function(){this.listen(this.__parent,'iron-activate','_onParentIronActivate')},detached:function(){this.unlisten(this.__parent,'iron-activate','_onParentIronActivate')},open:function(){this.disabled||(this.opened=!0)},close:function(){this.opened=!1},toggle:function(){this.opened?this.close():this.open()},_onTap:function(){this.disabled||this.toggle()},_openedChanged:function(a,b){a?(this.__trigger&&this.__trigger.classList.add('iron-selected'),this.__content&&this.__content.focus(),this.fire('paper-submenu-open')):null!=b&&(this.__trigger&&this.__trigger.classList.remove('iron-selected'),this.fire('paper-submenu-close'))},_onParentIronActivate:function(a){var b=this.__parent;Polymer.dom(a).localTarget!==b||a.detail.item===this||b.multi||this.close()},_disabledChanged:function(a){Polymer.IronControlState._disabledChanged.apply(this,arguments),a&&this.opened&&this.close()},_onFocus:function(){this.__trigger&&this.__trigger.focus()}})})();</script></dom-module><script>Polymer.PaperItemBehaviorImpl={hostAttributes:{role:'option',tabindex:'0'}},Polymer.PaperItemBehavior=[Polymer.IronButtonState,Polymer.IronControlState,Polymer.PaperItemBehaviorImpl];</script><dom-module id="paper-item-shared-styles" assetpath="../../bower_components/paper-item/"><template><style>:host, .paper-item{display:block;position:relative;min-height:var(--paper-item-min-height, 48px);padding:0px 16px;}.paper-item{@apply (--paper-font-subhead);border:none;outline:none;background:white;width:100%;text-align:left;}:host([hidden]), .paper-item[hidden]{display:none !important;}:host(.iron-selected), .paper-item.iron-selected{font-weight:var(--paper-item-selected-weight, bold);@apply (--paper-item-selected);}:host([disabled]), .paper-item[disabled]{color:var(--paper-item-disabled-color, --disabled-text-color);@apply (--paper-item-disabled);}:host(:focus), .paper-item:focus{position:relative;outline:0;@apply (--paper-item-focused);}:host(:focus):before, .paper-item:focus:before{@apply (--layout-fit);background:currentColor;content:'';opacity:var(--dark-divider-opacity);pointer-events:none;@apply (--paper-item-focused-before);}</style></template></dom-module><dom-module id="paper-item" assetpath="../../bower_components/paper-item/"><template><style include="paper-item-shared-styles"></style><style>:host{@apply (--layout-horizontal);@apply (--layout-center);@apply (--paper-font-subhead);@apply (--paper-item);}</style><content></content></template><script>Polymer({is:'paper-item',behaviors:[Polymer.PaperItemBehavior]});</script></dom-module><dom-module id="qea-question-type" assetpath="../qea-question-type/"><template><style>:host{display:block;}.draggableItem{margin:2px 0;width:100%;padding:10px;border-radius:4px;border:1px solid #bbb;box-sizing:border-box;}.isDragging{opacity:0.5;}.menu-trigger{font-size:1.2em;font-weight:bold;}.sublist  paper-item{padding-left:40px;}.menu-trigger:hover{cursor:pointer;}.draggableItem:hover, paper-menu:hover{cursor:move;}paper-menu{--paper-menu-background-color	:transparent;}</style><template is="dom-if" if="{{value.category}}"><paper-submenu label="Properties"><paper-item class="menu-trigger">[[value.category]] ▿</paper-item><paper-menu class="menu-content sublist"><template is="dom-repeat" items="[[value.list]]"><paper-item draggable="true" ondragstart="return false;" on-track="_draggingHandler">[[item.label]]</paper-item></template></paper-menu></paper-submenu></template><template is="dom-if" if="{{!value.category }}"><paper-item draggable="true" ondragstart="return false;" on-track="_draggingHandler">[[value.label]]</paper-item></template></template><script>(function(){'use strict';Polymer({is:'qea-question-type',properties:{value:{type:Object},isDragging:{type:String,value:''},canDrop:{type:Boolean,value:!1}},_draggingHandler:function(a){switch(a.detail.state){case'start':this._startDragging();break;case'track':break;case'end':{const b=a.model.item?a.model.item:this.value;this._stopDragging(a.detail,b);break}default:}},_startDragging:function(){this.isDragging='isDragging',this.fire('dragStart')},_stopDragging:function(a,b){this.fire('dragStop',{questionDetails:b,dragDetails:a}),this.isDragging=''}})})();</script></dom-module></div><dom-module id="qea-questions-list"><template><style>:host{display:block;height:100%;}#scrollable{height:calc(100% - 64px);overflow:auto;}paper-toolbar{--paper-toolbar-background:white;--paper-toolbar-color:black;}paper-menu{--paper-menu-background-color	:transparent;}.draggableItem:hover, paper-menu:hover{cursor:move;}</style><paper-toolbar><span class="title">available questions</span></paper-toolbar><div id="scrollable"><paper-menu class="menu-content"><template is="dom-repeat" items="[[questions]]"><qea-question-type value="[[item]]"></qea-question-type></template></paper-menu></div></template><script>(function(){'use strict';Polymer({is:'qea-questions-list',properties:{questions:{type:Array,value:()=>[{label:'text input',type:'asq-text-input-q'},{label:'multi choice',type:'asq-multi-choice-q'},{label:'highlighter',type:'asq-highlight-q'},{label:'buckets',type:'asq-buckets-q'},{label:'order',type:'asq-order-q'},{label:'css selector',type:'asq-css-select-q'},{label:'javascript functions',type:'asq-js-function-body-q'},{label:'Rating',type:'asq-rating-q'},{label:'SQLite',type:'asq-sqlite-q'}]}}})})();</script></dom-module></body></html>
+<html><head></head><body><div hidden="" by-polymer-bundler=""><!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+--><!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+--><!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+--><script>
+  /** @polymerBehavior Polymer.IronMultiSelectableBehavior */
+  Polymer.IronMultiSelectableBehaviorImpl = {
+    properties: {
+
+      /**
+       * If true, multiple selections are allowed.
+       */
+      multi: {
+        type: Boolean,
+        value: false,
+        observer: 'multiChanged'
+      },
+
+      /**
+       * Gets or sets the selected elements. This is used instead of `selected` when `multi`
+       * is true.
+       */
+      selectedValues: {
+        type: Array,
+        notify: true
+      },
+
+      /**
+       * Returns an array of currently selected items.
+       */
+      selectedItems: {
+        type: Array,
+        readOnly: true,
+        notify: true
+      },
+
+    },
+
+    observers: [
+      '_updateSelected(selectedValues.splices)'
+    ],
+
+    /**
+     * Selects the given value. If the `multi` property is true, then the selected state of the
+     * `value` will be toggled; otherwise the `value` will be selected.
+     *
+     * @method select
+     * @param {string|number} value the value to select.
+     */
+    select: function(value) {
+      if (this.multi) {
+        if (this.selectedValues) {
+          this._toggleSelected(value);
+        } else {
+          this.selectedValues = [value];
+        }
+      } else {
+        this.selected = value;
+      }
+    },
+
+    multiChanged: function(multi) {
+      this._selection.multi = multi;
+    },
+
+    get _shouldUpdateSelection() {
+      return this.selected != null ||
+        (this.selectedValues != null && this.selectedValues.length);
+    },
+
+    _updateAttrForSelected: function() {
+      if (!this.multi) {
+        Polymer.IronSelectableBehavior._updateAttrForSelected.apply(this);
+      } else if (this._shouldUpdateSelection) {
+        this.selectedValues = this.selectedItems.map(function(selectedItem) {
+          return this._indexToValue(this.indexOf(selectedItem));
+        }, this).filter(function(unfilteredValue) {
+          return unfilteredValue != null;
+        }, this);
+      }
+    },
+
+    _updateSelected: function() {
+      if (this.multi) {
+        this._selectMulti(this.selectedValues);
+      } else {
+        this._selectSelected(this.selected);
+      }
+    },
+
+    _selectMulti: function(values) {
+      if (values) {
+        var selectedItems = this._valuesToItems(values);
+        // clear all but the current selected items
+        this._selection.clear(selectedItems);
+        // select only those not selected yet
+        for (var i = 0; i < selectedItems.length; i++) {
+          this._selection.setItemSelected(selectedItems[i], true);
+        }
+        // Check for items, since this array is populated only when attached
+        if (this.fallbackSelection && this.items.length && !this._selection.get().length) {
+          var fallback = this._valueToItem(this.fallbackSelection);
+          if (fallback) {
+            this.selectedValues = [this.fallbackSelection];
+          }
+        }
+      } else {
+        this._selection.clear();
+      }
+    },
+
+    _selectionChange: function() {
+      var s = this._selection.get();
+      if (this.multi) {
+        this._setSelectedItems(s);
+      } else {
+        this._setSelectedItems([s]);
+        this._setSelectedItem(s);
+      }
+    },
+
+    _toggleSelected: function(value) {
+      var i = this.selectedValues.indexOf(value);
+      var unselected = i < 0;
+      if (unselected) {
+        this.push('selectedValues',value);
+      } else {
+        this.splice('selectedValues',i,1);
+      }
+    },
+
+    _valuesToItems: function(values) {
+      return (values == null) ? null : values.map(function(value) {
+        return this._valueToItem(value);
+      }, this);
+    }
+  };
+
+  /** @polymerBehavior */
+  Polymer.IronMultiSelectableBehavior = [
+    Polymer.IronSelectableBehavior,
+    Polymer.IronMultiSelectableBehaviorImpl
+  ];
+
+</script>
+<script>
+
+  /**
+   * `Polymer.IronMenuBehavior` implements accessible menu behavior.
+   *
+   * @demo demo/index.html
+   * @polymerBehavior Polymer.IronMenuBehavior
+   */
+  Polymer.IronMenuBehaviorImpl = {
+
+    properties: {
+
+      /**
+       * Returns the currently focused item.
+       * @type {?Object}
+       */
+      focusedItem: {
+        observer: '_focusedItemChanged',
+        readOnly: true,
+        type: Object
+      },
+
+      /**
+       * The attribute to use on menu items to look up the item title. Typing the first
+       * letter of an item when the menu is open focuses that item. If unset, `textContent`
+       * will be used.
+       */
+      attrForItemTitle: {
+        type: String
+      },
+
+      disabled: {
+        type: Boolean,
+        value: false,
+        observer: '_disabledChanged',
+      },
+    },
+
+    _SEARCH_RESET_TIMEOUT_MS: 1000,
+
+    _previousTabIndex: 0,
+
+    hostAttributes: {
+      'role': 'menu',
+    },
+
+    observers: [
+      '_updateMultiselectable(multi)'
+    ],
+
+    listeners: {
+      'focus': '_onFocus',
+      'keydown': '_onKeydown',
+      'iron-items-changed': '_onIronItemsChanged'
+    },
+
+    keyBindings: {
+      'up': '_onUpKey',
+      'down': '_onDownKey',
+      'esc': '_onEscKey',
+      'shift+tab:keydown': '_onShiftTabDown'
+    },
+
+    attached: function() {
+      this._resetTabindices();
+    },
+
+    /**
+     * Selects the given value. If the `multi` property is true, then the selected state of the
+     * `value` will be toggled; otherwise the `value` will be selected.
+     *
+     * @param {string|number} value the value to select.
+     */
+    select: function(value) {
+      // Cancel automatically focusing a default item if the menu received focus
+      // through a user action selecting a particular item.
+      if (this._defaultFocusAsync) {
+        this.cancelAsync(this._defaultFocusAsync);
+        this._defaultFocusAsync = null;
+      }
+      var item = this._valueToItem(value);
+      if (item && item.hasAttribute('disabled')) return;
+      this._setFocusedItem(item);
+      Polymer.IronMultiSelectableBehaviorImpl.select.apply(this, arguments);
+    },
+
+    /**
+     * Resets all tabindex attributes to the appropriate value based on the
+     * current selection state. The appropriate value is `0` (focusable) for
+     * the default selected item, and `-1` (not keyboard focusable) for all
+     * other items.
+     */
+    _resetTabindices: function() {
+      var selectedItem = this.multi ? (this.selectedItems && this.selectedItems[0]) : this.selectedItem;
+
+      this.items.forEach(function(item) {
+        item.setAttribute('tabindex', item === selectedItem ? '0' : '-1');
+      }, this);
+    },
+
+    /**
+     * Sets appropriate ARIA based on whether or not the menu is meant to be
+     * multi-selectable.
+     *
+     * @param {boolean} multi True if the menu should be multi-selectable.
+     */
+    _updateMultiselectable: function(multi) {
+      if (multi) {
+        this.setAttribute('aria-multiselectable', 'true');
+      } else {
+        this.removeAttribute('aria-multiselectable');
+      }
+    },
+
+    /**
+     * Given a KeyboardEvent, this method will focus the appropriate item in the
+     * menu (if there is a relevant item, and it is possible to focus it).
+     *
+     * @param {KeyboardEvent} event A KeyboardEvent.
+     */
+    _focusWithKeyboardEvent: function(event) {
+      this.cancelDebouncer('_clearSearchText');
+
+      var searchText = this._searchText || '';
+      var key = event.key && event.key.length == 1 ? event.key :
+          String.fromCharCode(event.keyCode);
+      searchText += key.toLocaleLowerCase();
+
+      var searchLength = searchText.length;
+
+      for (var i = 0, item; item = this.items[i]; i++) {
+        if (item.hasAttribute('disabled')) {
+          continue;
+        }
+
+        var attr = this.attrForItemTitle || 'textContent';
+        var title = (item[attr] || item.getAttribute(attr) || '').trim();
+
+        if (title.length < searchLength) {
+          continue;
+        }
+
+        if (title.slice(0, searchLength).toLocaleLowerCase() == searchText) {
+          this._setFocusedItem(item);
+          break;
+        }
+      }
+
+      this._searchText = searchText;
+      this.debounce('_clearSearchText', this._clearSearchText,
+                    this._SEARCH_RESET_TIMEOUT_MS);
+    },
+
+    _clearSearchText: function() {
+      this._searchText = '';
+    },
+
+    /**
+     * Focuses the previous item (relative to the currently focused item) in the
+     * menu, disabled items will be skipped.
+     * Loop until length + 1 to handle case of single item in menu.
+     */
+    _focusPrevious: function() {
+      var length = this.items.length;
+      var curFocusIndex = Number(this.indexOf(this.focusedItem));
+
+      for (var i = 1; i < length + 1; i++) {
+        var item = this.items[(curFocusIndex - i + length) % length];
+        if (!item.hasAttribute('disabled')) {
+          var owner = Polymer.dom(item).getOwnerRoot() || document;
+          this._setFocusedItem(item);
+
+          // Focus might not have worked, if the element was hidden or not
+          // focusable. In that case, try again.
+          if (Polymer.dom(owner).activeElement == item) {
+            return;
+          }
+        }
+      }
+    },
+
+    /**
+     * Focuses the next item (relative to the currently focused item) in the
+     * menu, disabled items will be skipped.
+     * Loop until length + 1 to handle case of single item in menu.
+     */
+    _focusNext: function() {
+      var length = this.items.length;
+      var curFocusIndex = Number(this.indexOf(this.focusedItem));
+
+      for (var i = 1; i < length + 1; i++) {
+        var item = this.items[(curFocusIndex + i) % length];
+        if (!item.hasAttribute('disabled')) {
+          var owner = Polymer.dom(item).getOwnerRoot() || document;
+          this._setFocusedItem(item);
+
+          // Focus might not have worked, if the element was hidden or not
+          // focusable. In that case, try again.
+          if (Polymer.dom(owner).activeElement == item) {
+            return;
+          }
+        }
+      }
+    },
+
+    /**
+     * Mutates items in the menu based on provided selection details, so that
+     * all items correctly reflect selection state.
+     *
+     * @param {Element} item An item in the menu.
+     * @param {boolean} isSelected True if the item should be shown in a
+     * selected state, otherwise false.
+     */
+    _applySelection: function(item, isSelected) {
+      if (isSelected) {
+        item.setAttribute('aria-selected', 'true');
+      } else {
+        item.removeAttribute('aria-selected');
+      }
+      Polymer.IronSelectableBehavior._applySelection.apply(this, arguments);
+    },
+
+    /**
+     * Discretely updates tabindex values among menu items as the focused item
+     * changes.
+     *
+     * @param {Element} focusedItem The element that is currently focused.
+     * @param {?Element} old The last element that was considered focused, if
+     * applicable.
+     */
+    _focusedItemChanged: function(focusedItem, old) {
+      old && old.setAttribute('tabindex', '-1');
+      if (focusedItem && !focusedItem.hasAttribute('disabled') && !this.disabled) {
+        focusedItem.setAttribute('tabindex', '0');
+        focusedItem.focus();
+      }
+    },
+
+    /**
+     * A handler that responds to mutation changes related to the list of items
+     * in the menu.
+     *
+     * @param {CustomEvent} event An event containing mutation records as its
+     * detail.
+     */
+    _onIronItemsChanged: function(event) {
+      if (event.detail.addedNodes.length) {
+        this._resetTabindices();
+      }
+    },
+
+    /**
+     * Handler that is called when a shift+tab keypress is detected by the menu.
+     *
+     * @param {CustomEvent} event A key combination event.
+     */
+    _onShiftTabDown: function(event) {
+      var oldTabIndex = this.getAttribute('tabindex');
+
+      Polymer.IronMenuBehaviorImpl._shiftTabPressed = true;
+
+      this._setFocusedItem(null);
+
+      this.setAttribute('tabindex', '-1');
+
+      this.async(function() {
+        this.setAttribute('tabindex', oldTabIndex);
+        Polymer.IronMenuBehaviorImpl._shiftTabPressed = false;
+        // NOTE(cdata): polymer/polymer#1305
+      }, 1);
+    },
+
+    /**
+     * Handler that is called when the menu receives focus.
+     *
+     * @param {FocusEvent} event A focus event.
+     */
+    _onFocus: function(event) {
+      if (Polymer.IronMenuBehaviorImpl._shiftTabPressed) {
+        // do not focus the menu itself
+        return;
+      }
+
+      // Do not focus the selected tab if the deepest target is part of the
+      // menu element's local DOM and is focusable.
+      var rootTarget = /** @type {?HTMLElement} */(
+          Polymer.dom(event).rootTarget);
+      if (rootTarget !== this && typeof rootTarget.tabIndex !== "undefined" && !this.isLightDescendant(rootTarget)) {
+        return;
+      }
+
+      // clear the cached focus item
+      this._defaultFocusAsync = this.async(function() {
+        // focus the selected item when the menu receives focus, or the first item
+        // if no item is selected
+        var selectedItem = this.multi ? (this.selectedItems && this.selectedItems[0]) : this.selectedItem;
+
+        this._setFocusedItem(null);
+
+        if (selectedItem) {
+          this._setFocusedItem(selectedItem);
+        } else if (this.items[0]) {
+          // We find the first none-disabled item (if one exists)
+          this._focusNext();
+        }
+      });
+    },
+
+    /**
+     * Handler that is called when the up key is pressed.
+     *
+     * @param {CustomEvent} event A key combination event.
+     */
+    _onUpKey: function(event) {
+      // up and down arrows moves the focus
+      this._focusPrevious();
+      event.detail.keyboardEvent.preventDefault();
+    },
+
+    /**
+     * Handler that is called when the down key is pressed.
+     *
+     * @param {CustomEvent} event A key combination event.
+     */
+    _onDownKey: function(event) {
+      this._focusNext();
+      event.detail.keyboardEvent.preventDefault();
+    },
+
+    /**
+     * Handler that is called when the esc key is pressed.
+     *
+     * @param {CustomEvent} event A key combination event.
+     */
+    _onEscKey: function(event) {
+      // esc blurs the control
+      this.focusedItem.blur();
+    },
+
+    /**
+     * Handler that is called when a keydown event is detected.
+     *
+     * @param {KeyboardEvent} event A keyboard event.
+     */
+    _onKeydown: function(event) {
+      if (!this.keyboardEventMatchesKeys(event, 'up down esc')) {
+        // all other keys focus the menu item starting with that character
+        this._focusWithKeyboardEvent(event);
+      }
+      event.stopPropagation();
+    },
+
+    // override _activateHandler
+    _activateHandler: function(event) {
+      Polymer.IronSelectableBehavior._activateHandler.call(this, event);
+      event.stopPropagation();
+    },
+
+    /**
+     * Updates this element's tab index when it's enabled/disabled.
+     * @param {boolean} disabled
+     */
+    _disabledChanged: function(disabled) {
+      if (disabled) {
+        this._previousTabIndex = this.hasAttribute('tabindex') ? this.tabIndex : 0;
+        this.removeAttribute('tabindex');  // No tabindex means not tab-able or select-able.
+      } else if (!this.hasAttribute('tabindex')) {
+        this.setAttribute('tabindex', this._previousTabIndex);
+      }
+    }
+  };
+
+  Polymer.IronMenuBehaviorImpl._shiftTabPressed = false;
+
+  /** @polymerBehavior Polymer.IronMenuBehavior */
+  Polymer.IronMenuBehavior = [
+    Polymer.IronMultiSelectableBehavior,
+    Polymer.IronA11yKeysBehavior,
+    Polymer.IronMenuBehaviorImpl
+  ];
+
+</script>
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+--><dom-module id="paper-menu-shared-styles" assetpath="../../bower_components/paper-menu/">
+  <template>
+    <style>.selectable-content > ::content > .iron-selected{font-weight:bold;@apply (--paper-menu-selected-item);}.selectable-content > ::content > [disabled]{color:var(--paper-menu-disabled-color, --disabled-text-color);}.selectable-content > ::content > *:focus{position:relative;outline:0;@apply (--paper-menu-focused-item);}.selectable-content > ::content > *:focus:after{@apply (--layout-fit);background:currentColor;opacity:var(--dark-divider-opacity);content:'';pointer-events:none;@apply (--paper-menu-focused-item-after);}.selectable-content > ::content > *[colored]:focus:after{opacity:0.26;}</style>
+  </template>
+</dom-module>
+<!--
+Material design: [Menus](https://www.google.com/design/spec/components/menus.html)
+
+`<paper-menu>` implements an accessible menu control with Material Design styling. The focused item
+is highlighted, and the selected item has bolded text.
+
+    <paper-menu>
+      <paper-item>Item 1</paper-item>
+      <paper-item>Item 2</paper-item>
+    </paper-menu>
+
+An initial selection can be specified with the `selected` attribute.
+
+    <paper-menu selected="0">
+      <paper-item>Item 1</paper-item>
+      <paper-item>Item 2</paper-item>
+    </paper-menu>
+
+Make a multi-select menu with the `multi` attribute. Items in a multi-select menu can be deselected,
+and multiple items can be selected.
+
+    <paper-menu multi>
+      <paper-item>Item 1</paper-item>
+      <paper-item>Item 2</paper-item>
+    </paper-menu>
+
+### Styling
+
+The following custom properties and mixins are available for styling:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--paper-menu-background-color`   | Menu background color                                            | `--primary-background-color`
+`--paper-menu-color`              | Menu foreground color                                            | `--primary-text-color`
+`--paper-menu-disabled-color`     | Foreground color for a disabled item                             | `--disabled-text-color`
+`--paper-menu`                    | Mixin applied to the menu                                        | `{}`
+`--paper-menu-selected-item`      | Mixin applied to the selected item                               | `{}`
+`--paper-menu-focused-item`       | Mixin applied to the focused item                                | `{}`
+`--paper-menu-focused-item-after` | Mixin applied to the ::after pseudo-element for the focused item | `{}`
+
+### Accessibility
+
+`<paper-menu>` has `role="menu"` by default. A multi-select menu will also have
+`aria-multiselectable` set. It implements key bindings to navigate through the menu with the up and
+down arrow keys, esc to exit the menu, and enter to activate a menu item. Typing the first letter
+of a menu item will also focus it.
+
+@group Paper Elements
+@element paper-menu
+@hero hero.svg
+@demo demo/index.html
+-->
+
+<dom-module id="paper-menu" assetpath="../../bower_components/paper-menu/">
+  <template>
+    <style include="paper-menu-shared-styles"></style>
+    <style>:host{display:block;padding:8px 0;background:var(--paper-menu-background-color, --primary-background-color);color:var(--paper-menu-color, --primary-text-color);@apply (--paper-menu);}</style>
+
+    <div class="selectable-content">
+      <content></content>
+    </div>
+  </template>
+
+  <script>
+    (function() {
+      Polymer({
+        is: 'paper-menu',
+
+        behaviors: [
+          Polymer.IronMenuBehavior
+        ]
+      });
+    })();
+  </script>
+</dom-module>
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+--><!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+--><!--
+`iron-collapse` creates a collapsible block of content.  By default, the content
+will be collapsed.  Use `opened` or `toggle()` to show/hide the content.
+
+    <button on-click="toggle">toggle collapse</button>
+
+    <iron-collapse id="collapse">
+      <div>Content goes here...</div>
+    </iron-collapse>
+
+    ...
+
+    toggle: function() {
+      this.$.collapse.toggle();
+    }
+
+`iron-collapse` adjusts the max-height/max-width of the collapsible element to show/hide
+the content.  So avoid putting padding/margin/border on the collapsible directly,
+and instead put a div inside and style that.
+
+    <style>
+      .collapse-content {
+        padding: 15px;
+        border: 1px solid #dedede;
+      }
+    </style>
+
+    <iron-collapse>
+      <div class="collapse-content">
+        <div>Content goes here...</div>
+      </div>
+    </iron-collapse>
+
+### Styling
+
+The following custom properties and mixins are available for styling:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--iron-collapse-transition-duration` | Animation transition duration | `300ms`
+
+@group Iron Elements
+@hero hero.svg
+@demo demo/index.html
+@element iron-collapse
+-->
+
+<dom-module id="iron-collapse" assetpath="../../bower_components/iron-collapse/">
+
+  <template>
+
+    <style>:host{display:block;transition-duration:var(--iron-collapse-transition-duration, 300ms);overflow:visible;}:host(.iron-collapse-closed){display:none;}:host(:not(.iron-collapse-opened)){overflow:hidden;}</style>
+
+    <content></content>
+
+  </template>
+
+</dom-module>
+
+<script>
+
+  Polymer({
+
+    is: 'iron-collapse',
+
+    behaviors: [
+      Polymer.IronResizableBehavior
+    ],
+
+    properties: {
+
+      /**
+       * If true, the orientation is horizontal; otherwise is vertical.
+       *
+       * @attribute horizontal
+       */
+      horizontal: {
+        type: Boolean,
+        value: false,
+        observer: '_horizontalChanged'
+      },
+
+      /**
+       * Set opened to true to show the collapse element and to false to hide it.
+       *
+       * @attribute opened
+       */
+      opened: {
+        type: Boolean,
+        value: false,
+        notify: true,
+        observer: '_openedChanged'
+      },
+
+      /**
+       * When true, the element is transitioning its opened state. When false,
+       * the element has finished opening/closing.
+       *
+       * @attribute transitioning
+       */
+      transitioning: {
+        type: Boolean,
+        notify: true,
+        readOnly: true
+      },
+
+      /**
+       * Set noAnimation to true to disable animations.
+       *
+       * @attribute noAnimation
+       */
+      noAnimation: {
+        type: Boolean
+      },
+
+      /**
+       * Stores the desired size of the collapse body.
+       * @private
+       */
+      _desiredSize: {
+        type: String,
+        value: ''
+      }
+    },
+
+    get dimension() {
+      return this.horizontal ? 'width' : 'height';
+    },
+
+    /**
+     * `maxWidth` or `maxHeight`.
+     * @private
+     */
+    get _dimensionMax() {
+      return this.horizontal ? 'maxWidth' : 'maxHeight';
+    },
+
+    /**
+     * `max-width` or `max-height`.
+     * @private
+     */
+    get _dimensionMaxCss() {
+      return this.horizontal ? 'max-width' : 'max-height';
+    },
+
+    hostAttributes: {
+      role: 'group',
+      'aria-hidden': 'true',
+      'aria-expanded': 'false'
+    },
+
+    listeners: {
+      transitionend: '_onTransitionEnd'
+    },
+
+    /**
+     * Toggle the opened state.
+     *
+     * @method toggle
+     */
+    toggle: function() {
+      this.opened = !this.opened;
+    },
+
+    show: function() {
+      this.opened = true;
+    },
+
+    hide: function() {
+      this.opened = false;
+    },
+
+    /**
+     * Updates the size of the element.
+     * @param {string} size The new value for `maxWidth`/`maxHeight` as css property value, usually `auto` or `0px`.
+     * @param {boolean=} animated if `true` updates the size with an animation, otherwise without.
+     */
+    updateSize: function(size, animated) {
+      // Consider 'auto' as '', to take full size.
+      size = size === 'auto' ? '' : size;
+
+      var willAnimate = animated && !this.noAnimation &&
+                        this.isAttached && this._desiredSize !== size;
+
+      this._desiredSize = size;
+
+      this._updateTransition(false);
+      // If we can animate, must do some prep work.
+      if (willAnimate) {
+        // Animation will start at the current size.
+        var startSize = this._calcSize();
+        // For `auto` we must calculate what is the final size for the animation.
+        // After the transition is done, _transitionEnd will set the size back to `auto`.
+        if (size === '') {
+          this.style[this._dimensionMax] = '';
+          size = this._calcSize();
+        }
+        // Go to startSize without animation.
+        this.style[this._dimensionMax] = startSize;
+        // Force layout to ensure transition will go. Set scrollTop to itself
+        // so that compilers won't remove it.
+        this.scrollTop = this.scrollTop;
+        // Enable animation.
+        this._updateTransition(true);
+        // If final size is the same as startSize it will not animate.
+        willAnimate = (size !== startSize);
+      }
+      // Set the final size.
+      this.style[this._dimensionMax] = size;
+      // If it won't animate, call transitionEnd to set correct classes.
+      if (!willAnimate) {
+        this._transitionEnd();
+      }
+    },
+
+    /**
+     * enableTransition() is deprecated, but left over so it doesn't break existing code.
+     * Please use `noAnimation` property instead.
+     *
+     * @method enableTransition
+     * @deprecated since version 1.0.4
+     */
+    enableTransition: function(enabled) {
+      Polymer.Base._warn('`enableTransition()` is deprecated, use `noAnimation` instead.');
+      this.noAnimation = !enabled;
+    },
+
+    _updateTransition: function(enabled) {
+      this.style.transitionDuration = (enabled && !this.noAnimation) ? '' : '0s';
+    },
+
+    _horizontalChanged: function() {
+      this.style.transitionProperty = this._dimensionMaxCss;
+      var otherDimension = this._dimensionMax === 'maxWidth' ? 'maxHeight' : 'maxWidth';
+      this.style[otherDimension] = '';
+      this.updateSize(this.opened ? 'auto' : '0px', false);
+    },
+
+    _openedChanged: function() {
+      this.setAttribute('aria-expanded', this.opened);
+      this.setAttribute('aria-hidden', !this.opened);
+
+      this._setTransitioning(true);
+      this.toggleClass('iron-collapse-closed', false);
+      this.toggleClass('iron-collapse-opened', false);
+      this.updateSize(this.opened ? 'auto' : '0px', true);
+
+      // Focus the current collapse.
+      if (this.opened) {
+        this.focus();
+      }
+    },
+
+    _transitionEnd: function() {
+      this.style[this._dimensionMax] = this._desiredSize;
+      this.toggleClass('iron-collapse-closed', !this.opened);
+      this.toggleClass('iron-collapse-opened', this.opened);
+      this._updateTransition(false);
+      this.notifyResize();
+      this._setTransitioning(false);
+    },
+
+    _onTransitionEnd: function(event) {
+      if (Polymer.dom(event).rootTarget === this) {
+        this._transitionEnd();
+      }
+    },
+
+    _calcSize: function() {
+      return this.getBoundingClientRect()[this.dimension] + 'px';
+    }
+
+  });
+
+</script>
+<!--
+`<paper-submenu>` is a nested menu inside of a parent `<paper-menu>`. It
+consists of a trigger that expands or collapses another `<paper-menu>`:
+
+    <paper-menu>
+      <paper-submenu>
+        <paper-item class="menu-trigger">Topics</paper-item>
+        <paper-menu class="menu-content">
+          <paper-item>Topic 1</paper-item>
+          <paper-item>Topic 2</paper-item>
+          <paper-item>Topic 3</paper-item>
+        </paper-menu>
+      </paper-submenu>
+      <paper-submenu>
+        <paper-item class="menu-trigger">Faves</paper-item>
+        <paper-menu class="menu-content">
+          <paper-item>Fave 1</paper-item>
+          <paper-item>Fave 2</paper-item>
+        </paper-menu>
+      </paper-submenu>
+      <paper-submenu disabled>
+        <paper-item class="menu-trigger">Unavailable</paper-item>
+        <paper-menu class="menu-content">
+          <paper-item>Disabled 1</paper-item>
+          <paper-item>Disabled 2</paper-item>
+        </paper-menu>
+      </paper-submenu>
+    </paper-menu>
+
+Just like in `<paper-menu>`, the focused item is highlighted, and the selected
+item has bolded text. Please see the `<paper-menu>` docs for which attributes
+(such as `multi` and `selected`), and styling options are available for the
+`menu-content` menu.
+
+@group Paper Elements
+@element paper-submenu
+@hero hero.svg
+@demo demo/index.html
+-->
+
+<dom-module id="paper-submenu" assetpath="../../bower_components/paper-menu/">
+  <template>
+    <style include="paper-menu-shared-styles"></style>
+
+    <div class="selectable-content" on-tap="_onTap">
+      <content id="trigger" select=".menu-trigger"></content>
+    </div>
+    <iron-collapse id="collapse" opened="{{opened}}">
+      <content id="content" select=".menu-content"></content>
+    </iron-collapse>
+  </template>
+
+  <script>
+
+  (function() {
+
+    Polymer({
+
+      is: 'paper-submenu',
+
+      properties: {
+        /**
+         * Fired when the submenu is opened.
+         *
+         * @event paper-submenu-open
+         */
+
+        /**
+         * Fired when the submenu is closed.
+         *
+         * @event paper-submenu-close
+         */
+
+        /**
+         * Set opened to true to show the collapse element and to false to hide it.
+         *
+         * @attribute opened
+         */
+        opened: {
+          type: Boolean,
+          value: false,
+          notify: true,
+          observer: '_openedChanged'
+        }
+      },
+
+      behaviors: [
+        Polymer.IronControlState
+      ],
+
+      listeners: {
+        'focus': '_onFocus'
+      },
+
+      get __parent() {
+        return Polymer.dom(this).parentNode;
+      },
+
+      get __trigger() {
+        return Polymer.dom(this.$.trigger).getDistributedNodes()[0];
+      },
+
+      get __content() {
+        return Polymer.dom(this.$.content).getDistributedNodes()[0];
+      },
+
+      attached: function() {
+        this.listen(this.__parent, 'iron-activate', '_onParentIronActivate');
+      },
+
+      detached: function() {
+        this.unlisten(this.__parent, 'iron-activate', '_onParentIronActivate');
+      },
+
+      /**
+       * Expand the submenu content.
+       */
+      open: function() {
+        if (!this.disabled) {
+          this.opened = true;
+        }
+      },
+
+      /**
+       * Collapse the submenu content.
+       */
+      close: function() {
+        this.opened = false;
+      },
+
+      /**
+       * Toggle the submenu.
+       */
+      toggle: function() {
+        if (this.opened) {
+          this.close();
+        } else {
+          this.open();
+        }
+      },
+
+      /**
+       * A handler that is called when the trigger is tapped.
+       */
+      _onTap: function(e) {
+        if (!this.disabled) {
+          this.toggle();
+        }
+      },
+
+      /**
+       * Toggles the submenu content when the trigger is tapped.
+       */
+      _openedChanged: function(opened, oldOpened) {
+        if (opened) {
+          this.__trigger && this.__trigger.classList.add('iron-selected');
+          this.__content && this.__content.focus();
+          this.fire('paper-submenu-open');
+        } else if (oldOpened != null) {
+          this.__trigger && this.__trigger.classList.remove('iron-selected');
+          this.fire('paper-submenu-close');
+        }
+      },
+
+      /**
+       * A handler that is called when `iron-activate` is fired.
+       *
+       * @param {CustomEvent} event An `iron-activate` event.
+       */
+      _onParentIronActivate: function(event) {
+        var parent = this.__parent;
+        if (Polymer.dom(event).localTarget === parent) {
+          // The activated item can either be this submenu, in which case it
+          // should be expanded, or any of the other sibling submenus, in which
+          // case this submenu should be collapsed.
+          if (event.detail.item !== this && !parent.multi) {
+            this.close();
+          }
+        }
+      },
+
+      /**
+       * If the dropdown is open when disabled becomes true, close the
+       * dropdown.
+       *
+       * @param {boolean} disabled True if disabled, otherwise false.
+       */
+      _disabledChanged: function(disabled) {
+        Polymer.IronControlState._disabledChanged.apply(this, arguments);
+        if (disabled && this.opened) {
+          this.close();
+        }
+      },
+
+      /**
+       * Handler that is called when the menu receives focus.
+       *
+       * @param {FocusEvent} event A focus event.
+       */
+      _onFocus: function(event) {
+        this.__trigger && this.__trigger.focus();
+      }
+
+    });
+
+  })();
+</script>
+</dom-module>
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+--><!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+--><!--
+`PaperItemBehavior` is a convenience behavior shared by <paper-item> and
+<paper-icon-item> that manages the shared control states and attributes of
+the items.
+-->
+
+<script>
+  /** @polymerBehavior Polymer.PaperItemBehavior */
+  Polymer.PaperItemBehaviorImpl = {
+    hostAttributes: {
+      role: 'option',
+      tabindex: '0'
+    }
+  };
+
+  /** @polymerBehavior */
+  Polymer.PaperItemBehavior = [
+    Polymer.IronButtonState,
+    Polymer.IronControlState,
+    Polymer.PaperItemBehaviorImpl
+  ];
+</script>
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+--><dom-module id="paper-item-shared-styles" assetpath="../../bower_components/paper-item/">
+  <template>
+    <style>:host, .paper-item{display:block;position:relative;min-height:var(--paper-item-min-height, 48px);padding:0px 16px;}.paper-item{@apply (--paper-font-subhead);border:none;outline:none;background:white;width:100%;text-align:left;}:host([hidden]), .paper-item[hidden]{display:none !important;}:host(.iron-selected), .paper-item.iron-selected{font-weight:var(--paper-item-selected-weight, bold);@apply (--paper-item-selected);}:host([disabled]), .paper-item[disabled]{color:var(--paper-item-disabled-color, --disabled-text-color);@apply (--paper-item-disabled);}:host(:focus), .paper-item:focus{position:relative;outline:0;@apply (--paper-item-focused);}:host(:focus):before, .paper-item:focus:before{@apply (--layout-fit);background:currentColor;content:'';opacity:var(--dark-divider-opacity);pointer-events:none;@apply (--paper-item-focused-before);}</style>
+  </template>
+</dom-module>
+<!--
+Material design: [Lists](https://www.google.com/design/spec/components/lists.html)
+
+`<paper-item>` is an interactive list item. By default, it is a horizontal flexbox.
+
+    <paper-item>Item</paper-item>
+
+Use this element with `<paper-item-body>` to make Material Design styled two-line and three-line
+items.
+
+    <paper-item>
+      <paper-item-body two-line>
+        <div>Show your status</div>
+        <div secondary>Your status is visible to everyone</div>
+      </paper-item-body>
+      <iron-icon icon="warning"></iron-icon>
+    </paper-item>
+
+To use `paper-item` as a link, wrap it in an anchor tag. Since `paper-item` will
+already receive focus, you may want to prevent the anchor tag from receiving
+focus as well by setting its tabindex to -1.
+
+    <a href="https://www.polymer-project.org/" tabindex="-1">
+      <paper-item raised>Polymer Project</paper-item>
+    </a>
+
+If you are concerned about performance and want to use `paper-item` in a `paper-listbox`
+with many items, you can just use a native `button` with the `paper-item` class
+applied (provided you have correctly included the shared styles):
+
+    <style is="custom-style" include="paper-item-shared-styles"></style>
+
+    <paper-listbox>
+      <button class="paper-item" role="option">Inbox</button>
+      <button class="paper-item" role="option">Starred</button>
+      <button class="paper-item" role="option">Sent mail</button>
+    </paper-listbox>
+
+### Styling
+
+The following custom properties and mixins are available for styling:
+
+Custom property               | Description                                  | Default
+------------------------------|----------------------------------------------|----------
+`--paper-item-min-height`     | Minimum height of the item                   | `48px`
+`--paper-item`                | Mixin applied to the item                    | `{}`
+`--paper-item-selected-weight`| The font weight of a selected item           | `bold`
+`--paper-item-selected`       | Mixin applied to selected paper-items        | `{}`
+`--paper-item-disabled-color` | The color for disabled paper-items           | `--disabled-text-color`
+`--paper-item-disabled`       | Mixin applied to disabled paper-items        | `{}`
+`--paper-item-focused`        | Mixin applied to focused paper-items         | `{}`
+`--paper-item-focused-before` | Mixin applied to :before focused paper-items | `{}`
+
+### Accessibility
+
+This element has `role="listitem"` by default. Depending on usage, it may be more appropriate to set
+`role="menuitem"`, `role="menuitemcheckbox"` or `role="menuitemradio"`.
+
+    <paper-item role="menuitemcheckbox">
+      <paper-item-body>
+        Show your status
+      </paper-item-body>
+      <paper-checkbox></paper-checkbox>
+    </paper-item>
+
+@group Paper Elements
+@element paper-item
+@demo demo/index.html
+-->
+
+<dom-module id="paper-item" assetpath="../../bower_components/paper-item/">
+  <template>
+    <style include="paper-item-shared-styles"></style>
+    <style>:host{@apply (--layout-horizontal);@apply (--layout-center);@apply (--paper-font-subhead);@apply (--paper-item);}</style>
+
+    <content></content>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'paper-item',
+
+      behaviors: [
+        Polymer.PaperItemBehavior
+      ]
+    });
+  </script>
+</dom-module>
+<dom-module id="qea-question-type" assetpath="../qea-question-type/">
+  <template>
+    <style>:host{display:block;}.draggableItem{margin:2px 0;width:100%;padding:10px;border-radius:4px;border:1px solid #bbb;box-sizing:border-box;}.isDragging{opacity:0.5;}.menu-trigger{font-size:1.2em;font-weight:bold;}.sublist  paper-item{padding-left:40px;}.menu-trigger:hover{cursor:pointer;}.draggableItem:hover, paper-menu:hover{cursor:move;}paper-menu{--paper-menu-background-color	:transparent;}</style>
+
+    <!-- template for category element -->
+    <template is="dom-if" if="{{value.category}}">
+      <paper-submenu label="Properties">
+         <paper-item class="menu-trigger"> [[value.category]] ▿</paper-item>
+         <paper-menu class="menu-content sublist">
+            <template is="dom-repeat" items="[[value.list]]">
+              <paper-item draggable="true" ondragstart="return false;" on-track="_draggingHandler">[[item.label]]</paper-item>
+            </template>
+          </paper-menu>
+       </paper-submenu>
+    </template>
+
+    <!-- template for single element -->
+    <template is="dom-if" if="{{!value.category }}">
+        <paper-item draggable="true" ondragstart="return false;" on-track="_draggingHandler">[[value.label]]</paper-item>
+    </template>
+
+
+
+  </template>
+  <script>
+  (function () {
+    'use strict';
+
+    Polymer({
+
+
+      is: 'qea-question-type',
+
+      properties: {
+        value: {
+          type: Object,
+        },
+        isDragging: {
+          type: String,
+          value: '',
+        },
+        canDrop: {
+          type: Boolean,
+          value: false,
+        },
+      },
+
+      _draggingHandler: function(e) {
+        switch (e.detail.state) {
+          case 'start':
+            this._startDragging();
+            break;
+          case 'track':
+            // this._currentlyDragging(e.detail);
+            break;
+          case 'end': {
+            const detail = e.model.item ? e.model.item : this.value;
+            this._stopDragging(e.detail, detail);
+            break;
+          }
+          default:
+        }
+      },
+
+      _startDragging: function() {
+        this.isDragging = 'isDragging';
+        this.fire('dragStart');
+      },
+
+      // _currentlyDragging(dragDetail) {
+      // }
+
+      _stopDragging: function(dragDetail, detail) {
+        const elemDet = { questionDetails: detail, dragDetails: dragDetail };
+        this.fire('dragStop', elemDet);
+        this.isDragging = '';
+      }
+
+    });
+  })();
+
+  </script>
+</dom-module>
+</div><dom-module id="qea-questions-list">
+  <template>
+    <style>:host{display:block;height:100%;}#scrollable{height:calc(100% - 64px);overflow:auto;}paper-toolbar{--paper-toolbar-background:white;--paper-toolbar-color:black;}paper-menu{--paper-menu-background-color	:transparent;}.draggableItem:hover, paper-menu:hover{cursor:move;}</style>
+
+    <paper-toolbar>
+      <span class="title">available questions</span>
+    </paper-toolbar>
+    <div id="scrollable">
+      <paper-menu class="menu-content ">
+        <template is="dom-repeat" items="[[questions]]">
+            <qea-question-type value="[[item]]"></qea-question-type>
+        </template>
+      </paper-menu>
+    </div>
+
+
+  </template>
+  <script>
+  (function () {
+    'use strict';
+
+    Polymer({
+
+      is: 'qea-questions-list',
+
+      properties: {
+        questions: {
+          type: Array,
+          value: () => [
+              // ex of sub menu
+              // {category: 'sub item', list: [
+              //   {label: "asq-text-input-q"},
+              //   {label: "asq-multi-choice-q"}
+              // ]},
+              { label: 'text input',
+                type: 'asq-text-input-q',
+              },
+              { label: 'multi choice',
+                type: 'asq-multi-choice-q',
+              },
+              { label: 'highlighter',
+                type: 'asq-highlight-q',
+              },
+              { label: 'buckets',
+                type: 'asq-buckets-q',
+              },
+              { label: 'order',
+                type: 'asq-order-q',
+              },
+              { label: 'css selector',
+                type: 'asq-css-select-q',
+              },
+              { label: 'javascript functions',
+                type: 'asq-js-function-body-q',
+              },
+              { label: 'Rating',
+                type: 'asq-rating-q',
+              },
+              { label: 'SQLite',
+                type: 'asq-sqlite-q',
+              },
+          ],
+        },
+      }
+    });
+  })();
+
+  </script>
+</dom-module>
+</body></html>

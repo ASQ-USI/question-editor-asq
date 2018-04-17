@@ -261,7 +261,7 @@
         return new Promise((resolve, reject) => {
           Polymer.Base.importHref((href), (e) => {
             resolve(e.target);
-          }, reject, true);
+          }, reject, false);
         });
       }
 

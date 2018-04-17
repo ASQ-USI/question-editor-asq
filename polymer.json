@@ -39,6 +39,7 @@
   {
     "preset": "es6-bundled",
     "js": {"minify": false},
+    "html": {"minify": false},
     "addServiceWorker": false
   },
   {
