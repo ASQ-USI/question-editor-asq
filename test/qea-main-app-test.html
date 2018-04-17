@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../bower_components/web-component-tester/browser.js"></script>
-    <script src="../../.transpiled/scripts/redux.min.js"></script>
+    <script src="../dist/scripts/redux.min.js"></script>
 
     <!-- import the element to test -->
-    <link rel="import" href="../../.transpiled/elements/elements.html">
+    <link rel="import" href="../elements/elements.html">
 
   </head>
   <body>
@@ -20,7 +20,7 @@
     <script>
       suite('<qea-main-app>', function() {
         var myEl;
-        
+
         setup(function(done) {
           var hasEditors = false;
           // If we move to the next test without tinyMCE having finished initilization
