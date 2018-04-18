@@ -17,165 +17,158 @@
   <template>
     <style include="qea-three-column-layout"></style>
     <style>
-      .multiChoiceOption{
-        display: block;
-        padding: 5px;
-        margin: 5px 0;
-      }
-    </style>
-    <qea-user-response></qea-user-response>
+    .multiChoiceOption{
+      display: block;
+      padding: 5px;
+      margin: 5px 0;
+    }
+  </style>
+  <qea-user-response></qea-user-response>
 
-    <!-- leftPanel -->
-    <div id="leftPanel">
+  <!-- leftPanel -->
+  <div id="leftPanel">
 
 
-      <!-- title property-->
-      <qea-property-editor id="stemEditor"
-        name='title'
-        label="question Title"
-        type='string'
-        widget-type='text-code'
-        default='Title'
-        value={{qTitleVal}}>
-      </qea-property-editor>
+    <!-- title property-->
+    <qea-property-editor id="stemEditor"
+    name='title'
+    label="question Title"
+    type='string'
+    widget-type='text-code'
+    default='Title'
+    value={{qTitleVal}}>
+  </qea-property-editor>
 
-      <div class="sectionTitle"> option list </div>
-      <qea-items-list
-        new-item-label="Insert an option"
-        sortable
-        restore="[[_optionsSetter]]"
-        value="{{_optionsValue}}">
-      </qea-items-list>
+  <div class="sectionTitle"> option list </div>
+  <qea-items-list
+  new-item-label="Insert an option"
+  sortable
+  restore="[[_optionsSetter]]"
+  value="{{_optionsValue}}">
+</qea-items-list>
 
-      <div class="sectionTitle">
-        question properties
-      </div>
-      <!-- list of question properties -->
-      <qea-property-editor-repeater id="qeaRepeatValues"
-        property-array={{questionProps]]
-        values={{qeaRepeatValues}}
-        is-advanced-user=[[viewAdvanced]]>
-      </qea-property-editor-repeater>
+<div class="sectionTitle">
+  question properties
+</div>
+<!-- list of question properties -->
+<qea-property-editor-repeater id="qeaRepeatValues"
+property-array={{questionProps]]
+values={{qeaRepeatValues}}
+is-advanced-user=[[viewAdvanced]]>
+</qea-property-editor-repeater>
 
-      <div id="advanced" on-tap="_showAdvanced">
-        show all
-      </div>
+<div id="advanced" on-tap="_showAdvanced">
+  show all
+</div>
 
-    </div>
+</div>
 
-    <!-- Main Area -->
-    <div id="mainArea">
-      <div class="explanation">
-        To modify the elements in this area, change the values in the left column
-      </div>
+<!-- Main Area -->
+<div id="mainArea">
+  <div class="explanation">
+    To modify the elements in this area, change the values in the left column
+  </div>
 
-      <asq-multi-choice-q id='multiQuestion'
-        multi=[[qeaRepeatValues.multi]]
-        disabled=[[qeaRepeatValues.disabled]]
-        value={{qeaRepeatValues.value}}
-        selected-class=[[qeaRepeatValues.selectedClass]]
-        selected=[[qeaRepeatValues.selected]]
-        selectable=[[qeaRepeatValues.selectable]]>
+  <asq-multi-choice-q id='multiQuestion'
+  multi=[[qeaRepeatValues.multi]]
+  disabled=[[qeaRepeatValues.disabled]]
+  value={{qeaRepeatValues.value}}
+  selected-class=[[qeaRepeatValues.selectedClass]]
+  selected=[[qeaRepeatValues.selected]]
+  selectable=[[qeaRepeatValues.selectable]]>
 
-        <asq-stem><span id="stemContent" inner-h-t-m-l={{qTitleVal}}></span></asq-stem>
+  <asq-stem><span id="stemContent" inner-h-t-m-l={{qTitleVal}}></span></asq-stem>
 
-        <template is="dom-repeat" items="[[_optionsValue]]">
-          <asq-option name='[[item.label]]' class="multiChoiceOption">[[item.label]]</asq-option>
-        </template>
-
-        <asq-solution hidden>[[solution]]</asq-solution>
-      </asq-multi-choice-q>
-
-      <div class="controlPanel">
-        <paper-button raised on-tap="_cancel">cancel</paper-button>
-        <paper-button raised id="solutionBtn" on-tap='_solutionBtnTapped' noink>Set solution</paper-button>
-        <paper-button raised on-tap='_saveQuestionTapped'>save</paper-button>
-      </div>
-    </div>
-
-    <!-- Right Panel -->
-    <div id="rightPanel">
-
-    </div>
-
+  <template is="dom-repeat" items="[[_optionsValue]]">
+    <asq-option name='[[item.label]]' class="multiChoiceOption">[[item.label]]</asq-option>
   </template>
-  <script>
+
+  <asq-solution hidden>[[solution]]</asq-solution>
+</asq-multi-choice-q>
+
+<div class="controlPanel">
+  <paper-button raised on-tap="_cancel">cancel</paper-button>
+  <paper-button raised id="solutionBtn" on-tap='_solutionBtnTapped' noink>Set solution</paper-button>
+  <paper-button raised on-tap='_saveQuestionTapped'>save</paper-button>
+</div>
+</div>
+
+<!-- Right Panel -->
+<div id="rightPanel">
+
+</div>
+
+</template>
+<script>
   (function () {
     'use strict';
 
     const questionProperties = [
-      {
-        name: 'multi',
-        label: 'multiple answer',
-        type: 'boolean',
-        description: 'Decide the mode, single or multi.',
-        default: 'false',
-      },
-      {
-        name: 'disabled',
-        type: 'boolean',
-        description: `Disable or enable the element.
-                      Changes will be also propagated to inner propagated elements.`,
-        default: 'false',
-      },
-      {
-        name: 'selectable',
-        label: 'Specify selectable elements',
-        type: 'string',
-        description: `This is a CSS selector sting.  If this is set,
-                      only items that matches the CSS selector are selectable.`,
-        isAdvancedProperty: 'true',
-      },
-      {
-        name: 'selected',
-        type: 'string',
-        description: `Gets or sets the selected element.
-                      The default is to use the index of the item.`,
-        isAdvancedProperty: 'true',
-      },
-      {
-        name: 'selectedClass',
-        type: 'String',
-        description: 'The class to set on elements when selected.',
-        default: 'asq-selected',
-        isAdvancedProperty: 'true',
-      },
+    {
+      name: 'multi',
+      label: 'multiple answer',
+      type: 'boolean',
+      description: 'Decide the mode, single or multi.',
+      default: 'false',
+    },
+    {
+      name: 'disabled',
+      type: 'boolean',
+      description: `Disable or enable the element.
+      Changes will be also propagated to inner propagated elements.`,
+      default: 'false',
+    },
+    {
+      name: 'selectable',
+      label: 'Specify selectable elements',
+      type: 'string',
+      description: `This is a CSS selector sting.  If this is set,
+      only items that matches the CSS selector are selectable.`,
+      isAdvancedProperty: 'true',
+    },
+    {
+      name: 'selected',
+      type: 'string',
+      description: `Gets or sets the selected element.
+      The default is to use the index of the item.`,
+      isAdvancedProperty: 'true',
+    },
+    {
+      name: 'selectedClass',
+      type: 'String',
+      description: 'The class to set on elements when selected.',
+      default: 'asq-selected',
+      isAdvancedProperty: 'true',
+    },
     ];
-    class asqMultiChoiceQEditor {
 
-      get behaviors() {
-        return [
-          qeaBehaviors.actionsBehavior,
-          qeaBehaviors.reduxStore,
-          qeaBehaviors.generalEditorsBehavior,
-        ];
-      }
+    Polymer({
 
-      beforeRegister() {
-        this.is = 'asq-multi-choice-q-editor';
-        this.properties = {
-          questionProps: {
-            type: Array,
-            value: questionProperties,
-          },
-          _optionsValue: {
-            type: Array,
-            value: () => [],
-          },
-          qTitleVal: String,
-          qSolVal: String,
-          _optionsSetter: Array,
-        };
-      }
+      is: 'asq-multi-choice-q-editor',
+      behaviors: [qeaBehaviors.actionsBehavior, qeaBehaviors.reduxStore, qeaBehaviors.generalEditorsBehavior],
+      properties: {
+        questionProps: {
+          type: Array,
+          value: questionProperties,
+        },
+        _optionsValue: {
+          type: Array,
+          value: () => [],
+        },
+        solution: String,
+        qTitleVal: String,
+        qSolVal: String,
+        _optionsSetter: Array
+      },
 
-      ready() {
+      ready: function() {
         Polymer.dom.flush();
         const el = Polymer.Base.create('qea-advanced-editors', {});
         Polymer.dom(this.$.leftPanel).appendChild(el);
-      }
+      },
 
 
-      _getFormattedCode() {
+      _getFormattedCode: function() {
         let options = '';
         let opt;
         for (opt of this._optionsValue) {
@@ -184,37 +177,37 @@
         }
         const code = `
         <style>
-          .multiChoiceOption{
-            display: block;
-            padding: 5px;
-            margin: 5px 0;
-          }
+        .multiChoiceOption{
+          display: block;
+          padding: 5px;
+          margin: 5px 0;
+        }
         </style>
         \t<asq-multi-choice-q id='multiQuestion'
-          \t${this.qeaRepeatValues.multi === 'true' ? 'multi' : ''}
-          \t${this.qeaRepeatValues.disabled === 'true' ? 'disabled' : ''}
-          \tvalue='${JSON.stringify(this.$.multiQuestion.value)}'
-          \tselected-Class='${this.qeaRepeatValues.selectedClassc || ''}'
-          \tselected='${this.qeaRepeatValues.selected || ''}'
-          \tselectable='${this.qeaRepeatValues.selectable || ''}'>
+        \t${this.qeaRepeatValues.multi === 'true' ? 'multi' : ''}
+        \t${this.qeaRepeatValues.disabled === 'true' ? 'disabled' : ''}
+        \tvalue='${JSON.stringify(this.$.multiQuestion.value)}'
+        \tselected-Class='${this.qeaRepeatValues.selectedClassc || ''}'
+        \tselected='${this.qeaRepeatValues.selected || ''}'
+        \tselectable='${this.qeaRepeatValues.selectable || ''}'>
 
-          \t\t<asq-stem>${this.qTitleVal}</asq-stem>
+        \t\t<asq-stem>${this.qTitleVal}</asq-stem>
 
-          ${options}
-          \t\t<asq-solution hidden>${this.questionSolution}</asq-solution>
+        ${options}
+        \t\t<asq-solution hidden>${this.questionSolution}</asq-solution>
         \t</asq-multi-choice-q>`;
         return code;
-      }
+      },
 
-      _solutionBtnTapped() {
+      _solutionBtnTapped: function() {
         this._setSolution(JSON.stringify(this.$.multiQuestion.value));
-      }
+      },
 
-      _saveQuestionTapped() {
+      _saveQuestionTapped: function() {
         this._saveQuestion(['qTitleVal', '_optionsValue']);
-      }
+      },
 
-      _restoreQuestionState(state = {}) {
+      _restoreQuestionState: function(state = {}) {
         const allRepeaters = Polymer.dom(this.root).querySelectorAll('qea-property-editor-repeater');
         let prop;
         for (prop of Object.keys(state)) {
@@ -224,20 +217,18 @@
             this[prop] = state[prop];
           }
         }
-        // need to wait the rendering
-        Polymer.dom.flush();
-        for (const repeater of allRepeaters) {
-          if (state[repeater.id]) {
-            const qProps = Polymer.dom(repeater.root).querySelectorAll('qea-property-editor');
-            for (const spProp of qProps) {
-              spProp.value = state[repeater.id][spProp.name];
-            }
+      // need to wait the rendering
+      Polymer.dom.flush();
+      for (const repeater of allRepeaters) {
+        if (state[repeater.id]) {
+          const qProps = Polymer.dom(repeater.root).querySelectorAll('qea-property-editor');
+          for (const spProp of qProps) {
+            spProp.value = state[repeater.id][spProp.name];
           }
         }
       }
-
-    }
-    Polymer(asqMultiChoiceQEditor);
+    },
+  });
   })();
-  </script>
+</script>
 </dom-module>
