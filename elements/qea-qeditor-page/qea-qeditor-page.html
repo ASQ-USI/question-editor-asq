@@ -81,6 +81,7 @@
       },
 
       _questionChanged: function(qid, type) {
+        console.log('changing question!')
         this.debounce('changeQuestion', () => {
           this.$$('iron-localstorage').reload();
           const editorType = `${type}-editor`;
@@ -121,6 +122,8 @@
       },
 
       _renderEditor: function(qid, editorType, eid) {
+        console.log('im rendering the editor!')
+
         let props = null;
         if (qid) {
           // restore properties

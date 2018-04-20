@@ -120,7 +120,7 @@
     <!-- <hr> -->
     <br><br><br><br>
 
-    <asq-highlight-q id="asqHighlight" theme="{{theme}}" mode="{{syntaxMode}}" font-size="{{fontSize}}">
+    <asq-highlight-q id="asqHighlight" theme="{{theme}}" mode="{{syntaxMode}}" font-size="{{fontSize}}" ace-value="{{aceValue}}">
       <asq-stem id="leStem"></asq-stem>
       <template is="dom-repeat" items="{{tasks}}" as="t" index-as="idx">
         <asq-hl-color-task color="{{t.color}}" idx$="{{idx}}" color-name="{{t.colorName}}">{{t.html}}<paper-icon-button icon="close" on-click="removeTask" data-for-idx$="{{idx}}"></paper-icon-button></asq-hl-color-task>
@@ -341,6 +341,12 @@
       is: 'asq-highlight-q-editor',
 
       properties: {
+        aceValue: {
+          type: String,
+          value: '',
+          notify: true,
+        },
+
         stem: {
           type: String,
           value: '',
@@ -420,6 +426,18 @@
         setTimeout(function(){
           this._setMode('edit_text');
           this.initialized = true;
+
+          if(this._needToDrawSolutionWhenAttached === true){
+            let sol;
+            try {
+              sol = JSON.parse(this.state.questionSolution)
+            } catch(e) {
+              sol = {};
+              console.log(e);
+            }
+            this.asqHighlight.$.aceHighlightManager.drawSolution(sol)
+            this._needToDrawSolutionWhenAttached = false;
+          }
         }.bind(this), 1);
       },
 
@@ -536,7 +554,8 @@
         this.questionSolution = solution;
 
         // this._setSolution(solution);
-        this._saveQuestion(['stem'])
+        this.aceValue = this.asqHighlight.$.codeEditor.editor.session.getValue();
+        this._saveQuestion(['stem', 'aceValue', 'tasks'])
       },
 
       _isEditLabelActive: function (mode) {
@@ -546,6 +565,29 @@
       _isHighlightLabelActive: function (mode) {
         return (mode == 'highlight') ? 'active' : ''
       },
+
+      _restoreQuestionState: function(state = {}) {
+        console.log(state)
+        this.stemTextareaValue = state.stem || '';
+        this.tasks = state.tasks || [];
+        this.aceValue = state.aceValue || '';
+        if(state && state.hasOwnProperty('questionSolution')){
+          let sol;
+            try {
+              sol = JSON.parse(state.questionSolution)
+            } catch(e) {
+              sol = {};
+              console.log(e);
+            }
+            if(this.initialized){
+              this.asqHighlight.$.aceHighlightManager.drawSolution(sol)
+            }else{
+              this._needToDrawSolutionWhenAttached = true;
+            }
+        }
+
+
+      }
 
 
     });

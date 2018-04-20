@@ -25,6 +25,13 @@
 <link rel="import" href="../qea-common-editor-components/qea-user-response.html">
 <link rel="import" href="../qea-404-page/qea-404-page.html"> -->
 <link rel="import" href="../../behaviors/qea-app-behavior.html">
+<link rel="import" href="../qea-toolbar/qea-toolbar.html">
+<link rel="import" href="../qea-common-editor-components/qea-user-response.html">
+<link rel="import" href="../qea-landing-page/qea-landing-page.html">
+<link rel="import" href="../qea-canvas/qea-canvas.html">
+<link rel="import" href="../qea-questions-list/qea-questions-list.html">
+<link rel="import" href="../qea-qeditor-page/qea-qeditor-page.html">
+<link rel="import" href="../qea-404-page/qea-404-page.html">
 
 <dom-module id="qea-main-app">
   <template>
@@ -198,7 +205,7 @@
           //other wise give the page  a shot
           this.page = page || 'home';
         }
-        
+
       },
 
       _pageChanged: function(page, oldPage) {
@@ -219,7 +226,7 @@
             this.importHref(this.resolveUrl('../qea-404-page/qea-404-page.html'),
               cb, cb, true);
           }
-        }   
+        }
       },
 
       _openToast: function(host, { type = 'default', text = '', properties }) {
