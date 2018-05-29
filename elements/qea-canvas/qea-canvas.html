@@ -210,6 +210,18 @@
         this.$.codeEditor.openCodeDialog(code);
       },
 
+      returnCode: function() {
+        const elements = Polymer.dom(this.root).querySelectorAll('qea-selector-highlighter');
+        let code = '<asq-exercise>\n';
+        for (const elem of elements) {
+          code += elem.getCode();
+        }
+        code += '\n</asq-exercise>';
+        code = code.replace(/^\s*[\r\n]/gm, '');
+        code = code.replace(/^ +/gm, '');
+        return code;
+      },
+
       _loadExercise: function(eid) {
         this.debounce('doSomething', () => {
           this.$$('iron-localstorage').reload();

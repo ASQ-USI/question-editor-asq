@@ -80,7 +80,7 @@
       <asq-spinner id='spinner'></asq-spinner>
     </div>
 
-    <qea-toolbar current-Page="[[routeData.page]]"></qea-toolbar>
+    <qea-toolbar current-Page="[[routeData.page]]" user="[[user]]"></qea-toolbar>
 
 
     <section id="canvas-container" class="flex layout horizontal">
@@ -115,6 +115,8 @@
     </section>
 
     <qea-user-response id="notify"></qea-user-response>
+
+    <paper-toast id="userError" text="ERROR: Error hydrating app! (No user fetchable)"></paper-toast>
 
     <!-- router -->
     <app-location route="{{route}}" ></app-location>
@@ -168,6 +170,11 @@
           type: Boolean,
           value: false,
         },
+
+        user: {
+          type: Object,
+
+        },
       },
 
       created: function(){
@@ -179,21 +186,33 @@
         }
       },
 
-      ready: function() {
+      ready: async function() {
         window.QEA = {
           isElectron: this.isElectron,
           basePath: window.location.href,
         };
+
+        this._hydrate();
       },
 
       attached: function() {
-        console.log(this.route.path);
-        console.log(window.questionEditorASQ)
-
         if (navigator.userAgent.indexOf('Electron') !== -1) {
           this.set('route.path', `${this.mountPath}/home`);
         } else if (!this.route.path || this.route.path === `${this.mountPath}` ||  this.route.path === `${this.mountPath}/`) {
           this.set('route.path', `${this.mountPath}/home`);
+        }
+      },
+
+      _hydrate: async function() {
+        try {
+          const res = await fetch('/loggedUser', {
+            method: 'GET',
+            credentials: "same-origin"
+          });
+          this.user = await res.json();
+        } catch(e) {
+          console.log("Error: ", e);
+          this.$$.userError.open();
         }
       },
 
@@ -205,7 +224,6 @@
           //other wise give the page  a shot
           this.page = page || 'home';
         }
-
       },
 
       _pageChanged: function(page, oldPage) {

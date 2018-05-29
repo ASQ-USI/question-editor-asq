@@ -3,6 +3,8 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
 
 <dom-module id="qea-toolbar">
   <template>
@@ -11,6 +13,7 @@
         display: block;
       }
       paper-toolbar{
+        display: flex;
         --paper-toolbar-background: white;
         --paper-toolbar-color: black;
         --paper-toolbar-title: {
@@ -43,19 +46,55 @@
         left: 2px;
       }
 
+      #email-form {
+        text-align: center;
+      }
+      #email-input {
+        width: 40vw;
+      }
+
+      #stretcher {
+        flex: 1;
+      }
+
     </style>
-    <paper-toolbar justify='start' >
-      <span class="title"><img id="asqLogo" src="assets/svg/asq-logo.svg" alt="ASQ logo"> uEditor<span id="alpha">alpha</span></span>
+    <paper-toolbar justify='start'>
+
+      <span class="title">
+        <img id="asqLogo" src="assets/svg/asq-logo.svg" alt="ASQ logo"> uEditor
+        <span id="alpha">alpha</span>
+      </span>
 
       <template is="dom-if" if="[[_isVisible]]">
-        <paper-icon-button icon="add-box" id="addText"
-          class="tollbarIcons" on-tap='_insertText'>
+
+        <paper-icon-button icon="add-box" id="addText" class="tollbarIcons" on-tap='_insertText'>
         </paper-icon-button>
-        <paper-icon-button icon="code" id="showCode"
-          class="tollbarIcons" on-tap='_showCode'>
+        <paper-icon-button icon="code" id="showCode" class="tollbarIcons" on-tap='_showCode'>
         </paper-icon-button>
+        <paper-icon-button icon="backup" id="publishExercise" class="tollbarIcons" on-tap='_publishExercise'>
+        </paper-icon-button>
+
+        <div id="stretcher"></div>
+
+        <template is="dom-if" if="[[_userExists(user)]]">
+          <div id="user-info">
+              <iron-icon icon="icons:account-circle"></iron-icon>
+              <span id="userName">
+                [[user.username]]
+              </span>
+          </div>
+        </template>
+
+        <template is="dom-if" if="[[_userDoesNotExist(user)]]">
+          <div id="user-info">
+            <p>You are not logged in, you may want to <a href="/login">login</a> or <a href="/signup">signup</a>!</p>
+          </div>
+        </template>
+
         <paper-tooltip for='addText' animation-delay='200'>insert text area</paper-tooltip>
         <paper-tooltip for='showCode' animation-delay='200'>show generated code</paper-tooltip>
+        <paper-tooltip for='publishExercise' animation-delay='200'>publish new exercise</paper-tooltip>
+
 
 
         <!-- <paper-icon-button icon="undo" id="undo" class="tollbarIcons" disabled></paper-icon-button>
@@ -71,6 +110,27 @@
 
     </paper-toolbar>
 
+    <paper-dialog id="mail-dialog">
+      <h2>Email required!</h2>
+      <paper-dialog-scrollable>
+        <p>Since you are not logged in, an email is required to publish a new exercise.<br/>
+        You will receive a link that allows you to modify and/or delete the exercise you created.</p>
+        <iron-form>
+          <form id="email-form">
+            <label for="email-input">email: </label>
+            <input id="email-input" type="text" name="name" value="">
+            <paper-button raised on-tap="_submitEmail" dialog-dismiss>Confirm</paper-button>
+          </form>
+        </iron-form>
+        <hr>
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Close</paper-button>
+      </div>
+    </paper-dialog>
+
+    <paper-toast id="userError" text="ERROR: Error publishing exercise! (User error)"></paper-toast>
+
   </template>
   <script>
   (function () {
@@ -79,6 +139,9 @@
     Polymer({
       is: 'qea-toolbar',
       properties: {
+        user: {
+          type: Object
+        },
         currentPage: {
           observer: '_showChecker',
           type: String,
@@ -101,14 +164,60 @@
       },
 
       _insertText: function() {
-        const canvas = Polymer.dom(this.parentNode.root).querySelector('qea-canvas');
+        const canvas = Polymer.dom(this.parentNode).querySelector('qea-canvas');
         canvas.insertTextArea();
       },
 
       _showCode: function() {
-        const canvas = Polymer.dom(this.parentNode.root).querySelector('qea-canvas');
+        const canvas = Polymer.dom(this.parentNode).querySelector('qea-canvas');
         canvas.showCode();
+      },
+
+      _submitEmail: function() {
+        const email = this.$$('#email-input').value();
+        console.log(email);
+        //use asq machinery to register user with this email
+      },
+
+      _userExists: function(user){
+        return user && user.hasOwnProperty('username');
+      },
+
+      _userDoesNotExist: function(user){
+        return user === null || typeof user === undefined || !user.hasOwnProperty('username');
+      },
+
+      _publishExercise: async function() {
+        const canvas = Polymer.dom(this.parentNode).querySelector('qea-canvas');
+        let code = canvas.returnCode();
+
+        let data = {
+          exercise : code,
+          now: true
+        };
+
+        try {
+          if(this.user === null || typeof this.user === undefined || !this.user.hasOwnProperty('username')) {
+            const dialog = this.$$('#mail-dialog');
+            dialog.toggle();
+          } else {
+            let upload = await fetch(`/${this.user.username}/presentations`, {
+              method: 'POST',
+              body: JSON.stringify(data),
+              headers: new Headers({ 'Content-Type': 'application/json' }),
+              credentials: "same-origin"
+            });
+            let uploadJson = await upload.json();
+            if(uploadJson.status == 'success') {
+              window.location.replace(uploadJson.redirect);
+            }
+          }
+        } catch(e) {
+          console.log("Error:", e);
+          this.$$.userError.open();
+        }
       }
+
     });
   })();
   </script>
