@@ -36,6 +36,55 @@
       #remove{
         color: #f44336
       }
+
+      .tiles-container {
+        height: 100%;
+        @apply(--layout-vertical);
+      }
+
+      .tiles-row {
+        @apply(--layout-horizontal);
+        @apply(--layout-around-justified);
+        /*@apply(--layout-center);*/
+        @apply(--layout-flex);
+        padding: 1.5vh 0;
+      }
+
+      .tile {
+        @apply(--layout-flex);
+        @apply(--layout-vertical);
+        @apply(--layout-justified);
+        @apply(--layout-center);
+        text-align: center;
+        padding: 10px;
+        margin: 2vh 4vw;
+        box-shadow: 0 6px 12px rgba(0,0,0,0.3),
+        0 0 4px 4px transparent,
+        inset 0 0 10px rgba(0,0,0,0.1);
+        transition: box-shadow 100ms ease-in;
+        cursor: pointer;
+      }
+
+      .tile:first-child{
+        margin-left: 8vh;
+      }
+
+      .tile:last-child{
+        margin-right: 8vh;
+      }
+
+      .tile:hover{
+        box-shadow: 0 6px 12px rgba(0,0,0,0.3),
+                0 0 4px 4px #7CB342,
+                inset 0 0 10px rgba(0,0,0,0.1);
+      }
+
+      .tile img {
+        max-height: calc(100% - 50px);
+        max-width: calc(100% - 50px);
+      }
+
+
     </style>
     <app-location route="{{route}}" ></app-location>
     <qea-user-response id="notify"></qea-user-response>
@@ -58,7 +107,62 @@
           </div>
         </paper-card>
       </template>
-      <paper-fab id="fabButton" icon="add" on-tap="_newExercise"></paper-fab>
+
+
+
+      <div class="tiles-container">
+
+        <div class="tiles-row">
+          <div data-qtype="asq-text-input-q" class="tile" on-tap="_getEditor">
+            <img src="../../question-screens/asq-text-input-q-viewer.png"/>
+            <h2>Text input</h2>
+          </div>
+
+          <div data-qtype="asq-multi-choice-q" class="tile" on-tap="_getEditor">
+            <img src="../../question-screens/asq-multi-choice-q-viewer.png"/>
+            <h2>Multichoice</h2>
+          </div>
+
+          <div data-qtype="asq-highlight-q" class="tile" on-tap="_getEditor">
+            <img src="../../question-screens/asq-highlight-q-viewer.png"/>
+            <h2>Highlight the Text</h2>
+          </div>
+        </div>
+
+        <div class="tiles-row">
+          <div data-qtype="asq-buckets-q" class="tile" on-tap="_getEditor">
+            <img src="../../question-screens/asq-buckets-q-viewer.png"/>
+            <h2>Classify</h2>
+          </div>
+
+          <div data-qtype="asq-order-q" class="tile" on-tap="_getEditor">
+            <img src="../../question-screens/asq-order-q-viewer.png"/>
+            <h2>Order</h2>
+          </div>
+
+          <div data-qtype="asq-css-select-q" class="tile" on-tap="_getEditor">
+            <img src="../../question-screens/asq-css-select-q-viewer.png"/>
+            <h2>CSS Select</h2>
+          </div>
+        </div>
+
+        <div class="tiles-row">
+          <div data-qtype="asq-js-function-body-q" class="tile" on-tap="_getEditor">
+            <img src="../../question-screens/asq-js-function-body-q-viewer.png"/>
+            <h2>JavaScript function</h2>
+          </div>
+          <div data-qtype="asq-rating-q" class="tile" on-tap="_getEditor">
+            <img src="../../question-screens/asq-rating-q-viewer.png"/>
+            <h2>Rating</h2>
+          </div>
+          <div data-qtype="asq-sqlite-q" class="tile" on-tap="_getEditor">
+            <img src="../../question-screens/asq-sqlite-q-viewer.png"/>
+            <h2>SQLite</h2>
+          </div>
+        </div>
+      </div>
+
+      <!-- <paper-fab id="fabButton" icon="add" on-tap="_newExercise"></paper-fab> -->
     </div>
 
   </template>
@@ -97,6 +201,19 @@
         }
       },
 
+      // go to question editor
+      _getEditor: function(el) {
+        let questionType = el.target.dataset.qtype;
+        if(questionType == undefined || questionType == '') {
+          questionType = el.target.parentNode.dataset.qtype;
+        }
+        this.fire('changePage',
+          { pageURL: '/question/new/edit',
+            qParams: { type: questionType, eid: this.exerciseId },
+          }
+        );
+      },
+
       _checkStore: function(store = {}) {
         if (store && store.elements) {
           return (store.elements.length > 0);
@@ -105,11 +222,11 @@
       },
 
       _restore: function() {
-        this.fire('changePage', { pageURL: `/exercise/${this.exerciseStore.eid}` });
+        this.fire('changePage', { pageURL: `/exercise/${ this.exerciseId }` });
       },
 
       _remove: function() {
-        this.exerciseStore = null;
+        this.exerciseStore = {};
       }
     });
 
