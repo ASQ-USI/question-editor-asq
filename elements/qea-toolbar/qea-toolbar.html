@@ -5,6 +5,7 @@
 <link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
 
 <dom-module id="qea-toolbar">
   <template>
@@ -53,8 +54,18 @@
         width: 40vw;
       }
 
-      #stretcher {
-        flex: 1;
+      #user-info {
+        position: fixed;
+        right: 30px;
+      }
+
+      .error-form {
+        color: red;
+      }
+
+      .errorToast {
+       --paper-toast-background-color: red;
+       --paper-toast-color: white;
       }
 
     </style>
@@ -73,8 +84,6 @@
         </paper-icon-button>
         <paper-icon-button icon="backup" id="publishExercise" class="tollbarIcons" on-tap='_publishExercise'>
         </paper-icon-button>
-
-        <div id="stretcher"></div>
 
         <template is="dom-if" if="[[_userExists(user)]]">
           <div id="user-info">
@@ -115,21 +124,32 @@
       <paper-dialog-scrollable>
         <p>Since you are not logged in, an email is required to publish a new exercise.<br/>
         You will receive a link that allows you to modify and/or delete the exercise you created.</p>
-        <iron-form>
+        <!-- <iron-form>
           <form id="email-form">
             <label for="email-input">email: </label>
-            <input id="email-input" type="text" name="name" value="">
-            <paper-button raised on-tap="_submitEmail" dialog-dismiss>Confirm</paper-button>
+            <input required id="email-input" type="text" name="name" value="">
+          </form>
+        </iron-form> -->
+
+        <iron-form id="emailForm">
+          <form id="email-form">
+            <paper-input id="email-input" type="text" name="email-input" required label="email" value=""></paper-input>
+            <br>
           </form>
         </iron-form>
-        <hr>
+
       </paper-dialog-scrollable>
+
       <div class="buttons">
-        <paper-button dialog-dismiss>Close</paper-button>
+        <p id="errorMessage" class="error-form"></p>
+        <paper-button raised on-tap="_formError">Submit</paper-button>
+        <paper-button raised on-tap="_resetForm">Reset</paper-button>
+        <paper-button raised dialog-dismiss>Close</paper-button>
       </div>
     </paper-dialog>
 
-    <paper-toast id="userError" text="ERROR: Error publishing exercise! (User error)"></paper-toast>
+    <paper-toast id="userError" class="errorToast" text="ERROR: Error publishing exercise!"></paper-toast>
+    <paper-toast id="uploadError" class="errorToast" text="ERROR: Error uploading exercise!"></paper-toast>
 
   </template>
   <script>
@@ -163,6 +183,21 @@
         }
       },
 
+      _formError: function() {
+        const input = this.$$('#email-input').value;
+        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if(re.test(String(input).toLowerCase())) {
+          this._submitEmail(input);
+        } else {
+          this.$$('#errorMessage').innerHTML = "ERROR: The email address you entered is not valid!";
+        }
+      },
+
+      _resetForm: function() {
+        const input = this.$$('#email-input');
+        input.value = "";
+      },
+
       _insertText: function() {
         const canvas = Polymer.dom(this.parentNode).querySelector('qea-canvas');
         canvas.insertTextArea();
@@ -173,9 +208,9 @@
         canvas.showCode();
       },
 
-      _submitEmail: function() {
-        const email = this.$$('#email-input').value();
-        console.log(email);
+      _submitEmail: function(email) {
+        this.$$("#mail-dialog").toggle();
+        console.log("Correct: ", email);
         //use asq machinery to register user with this email
       },
 
@@ -210,11 +245,13 @@
             let uploadJson = await upload.json();
             if(uploadJson.status == 'success') {
               window.location.replace(uploadJson.redirect);
+            } else {
+              this.$$('#uploadError').open();
             }
           }
         } catch(e) {
           console.log("Error:", e);
-          this.$$.userError.open();
+          this.$$('#userError').open();
         }
       }
 
