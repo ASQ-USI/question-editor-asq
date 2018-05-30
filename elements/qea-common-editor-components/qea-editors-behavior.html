@@ -195,7 +195,8 @@ qeaBehaviors.generalEditorsBehavior = {
     if (this.exerciseId) {
       this.fire('changePage', { pageURL: `/exercise/${this.exerciseId}` });
     } else {
-      this.fire('changePage', { pageURL: '/home' });
+      // this.fire('changePage', { pageURL: '/home' });
+      this.fire('changePage', { pageURL: '/exercise/new' });
     }
   },
 
