@@ -72,8 +72,8 @@
     <paper-toolbar justify='start'>
 
       <span class="title">
-        <img id="asqLogo" src="assets/svg/asq-logo.svg" alt="ASQ logo"> uEditor
-        <span id="alpha">alpha</span>
+        <img id="asqLogo" src="assets/svg/asq-logo.svg" alt="ASQ logo">
+        <!-- <span id="alpha">alpha</span> -->
       </span>
 
       <template is="dom-if" if="[[_isVisible]]">
@@ -150,6 +150,7 @@
 
     <paper-toast id="userError" class="errorToast" text="ERROR: Error publishing exercise!"></paper-toast>
     <paper-toast id="uploadError" class="errorToast" text="ERROR: Error uploading exercise!"></paper-toast>
+    <paper-toast id="registerError" class="errorToast" text="ERROR: Error during registration!"></paper-toast>
 
   </template>
   <script>
@@ -208,10 +209,36 @@
         canvas.showCode();
       },
 
-      _submitEmail: function(email) {
+      _submitEmail: async function(email) {
         this.$$("#mail-dialog").toggle();
-        console.log("Correct: ", email);
-        //use asq machinery to register user with this email
+
+        const canvas = Polymer.dom(this.parentNode).querySelector('qea-canvas');
+        let code = canvas.returnCode();
+
+        let data = {
+          exercise : code,
+          now: true
+        };
+
+        let user = {
+          email,
+          now: true
+        };
+
+        try {
+          let registerWithEmail = await fetch(`/signup`, {
+            method: 'POST',
+            body: JSON.stringify(user),
+            headers: new Headers({ 'Content-Type': 'application/json' }),
+            credentials: "same-origin"
+          });
+          let registrationSuccess = await registerWithEmail.json();
+          console.log(registrationSuccess['username;']);
+          this._uploadExercise(data, registrationSuccess['username']);
+        } catch(e) {
+            console.log("Error:", e);
+            this.$$('#registerError').open();
+        }
       },
 
       _userExists: function(user){
@@ -236,22 +263,26 @@
             const dialog = this.$$('#mail-dialog');
             dialog.toggle();
           } else {
-            let upload = await fetch(`/${this.user.username}/presentations`, {
-              method: 'POST',
-              body: JSON.stringify(data),
-              headers: new Headers({ 'Content-Type': 'application/json' }),
-              credentials: "same-origin"
-            });
-            let uploadJson = await upload.json();
-            if(uploadJson.status == 'success') {
-              window.location.replace(uploadJson.redirect);
-            } else {
-              this.$$('#uploadError').open();
-            }
+            this._uploadExercise(data, this.user.username);
           }
         } catch(e) {
           console.log("Error:", e);
           this.$$('#userError').open();
+        }
+      },
+
+      _uploadExercise: async function(data, username) {
+        let upload = await fetch(`/${username}/presentations`, {
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers: new Headers({ 'Content-Type': 'application/json' }),
+          credentials: "same-origin"
+        });
+        let uploadJson = await upload.json();
+        if(uploadJson.status == 'success') {
+          window.location.replace(uploadJson.redirect);
+        } else {
+          this.$$('#uploadError').open();
         }
       }
 

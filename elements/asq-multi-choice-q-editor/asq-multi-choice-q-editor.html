@@ -73,9 +73,12 @@ is-advanced-user=[[viewAdvanced]]>
   multi=[[qeaRepeatValues.multi]]
   disabled=[[qeaRepeatValues.disabled]]
   value={{qeaRepeatValues.value}}
-  selected-class=[[qeaRepeatValues.selectedClass]]
-  selected=[[qeaRepeatValues.selected]]
-  selectable=[[qeaRepeatValues.selectable]]>
+  selected=[[qeaRepeatValues.selected]]>
+
+  <!-- selected-class=[[qeaRepeatValues.selectedClass]]
+  selectable=[[qeaRepeatValues.selectable]] -->
+  <!-- \tselected-Class='${this.qeaRepeatValues.selectedClassc || ''}'
+  \tselectable='${this.qeaRepeatValues.selectable || ''}' -->
 
   <asq-stem><span id="stemContent" inner-h-t-m-l={{qTitleVal}}></span></asq-stem>
 
@@ -175,6 +178,7 @@ is-advanced-user=[[viewAdvanced]]>
           options += `\t\t<asq-option name="${opt.label}"`;
           options += ` class="multiChoiceOption">${opt.label}</asq-option>\n`;
         }
+
         const code = `
         <style>
         .multiChoiceOption{
@@ -184,12 +188,10 @@ is-advanced-user=[[viewAdvanced]]>
         }
         </style>
         \t<asq-multi-choice-q id='multiQuestion'
-        \t${this.qeaRepeatValues.multi === 'true' ? 'multi' : ''}
-        \t${this.qeaRepeatValues.disabled === 'true' ? 'disabled' : ''}
+        \t${this.qeaRepeatValues.multi === true ? 'multi' : ''}
+        \t${this.qeaRepeatValues.disabled === true ? 'disabled' : ''}
         \tvalue='${JSON.stringify(this.$.multiQuestion.value)}'
-        \tselected-Class='${this.qeaRepeatValues.selectedClassc || ''}'
-        \tselected='${this.qeaRepeatValues.selected || ''}'
-        \tselectable='${this.qeaRepeatValues.selectable || ''}'>
+        \tselected='${this.qeaRepeatValues.selected || ''}'>
 
         \t\t<asq-stem>${this.qTitleVal}</asq-stem>
 
