@@ -1,0 +1,231 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html"><link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html"><link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html"><link rel="import" href="../../bower_components/qea-property-editor/qea-property-editor-repeater.html"><link rel="import" href="../../bower_components/asq-buckets-q/asq-buckets-q.html"><link rel="import" href="../../bower_components/qea-property-editor/qea-property-editor.html"><link rel="import" href="../../bower_components/asq-stem/asq-stem.html"><link rel="import" href="../../bower_components/qea-property-editor/qea-advanced-editors.html"><link rel="import" href="../../bower_components/asq-solution/asq-solution.html"><link rel="import" href="../qea-common-editor-components/qea-items-list.html"><link rel="import" href="../qea-common-editor-components/qea-three-column-layout.html"><link rel="import" href="../qea-common-editor-components/qea-three-column-layout.html"><link rel="import" href="../qea-common-editor-components/qea-editors-behavior.html"><link rel="import" href="../qea-common-editor-components/qea-user-response.html"><link rel="import" href="../../behaviors/qea-redux-store.html"><link rel="import" href="../../behaviors/qea-actions-behavior.html"></head><body><dom-module id="asq-buckets-q-editor"><template><style include="iron-flex"></style><style include="qea-three-column-layout">:host{}div[labels], div[buckets]{@apply (--layout-horizontal);@apply (--layout-center-justified);@apply (--layout-wrap);}div[buckets]>div{@apply (--layout-vertical);min-width:150px;min-height:150px;border:1px solid gray;margin:1px;text-align:center;border-radius:5px;}div[labels]> div{margin:2px;padding:8px;border:1px solid grey;border-radius:5px;}div.label.dragging{opacity:0.6;}</style><qea-user-response></qea-user-response><div id="leftPanel"><qea-advanced-editors></qea-advanced-editors><qea-property-editor id="stemEditor" name="title" label="Stem" type="string" widget-type="text-code" default="Stem" value="{{qTitleVal}}"></qea-property-editor><div class="sectionTitle">bucket list</div><qea-items-list new-item-label="Insert new buckets" sortable="" restore="[[_bucketsListRestore]]" value="{{_bucketsListValue}}"></qea-items-list><div class="sectionTitle">label list</div><qea-items-list sortable="" new-item-label="Insert new labels" restore="[[_labelsListRestore]]" value="{{_labelsListValue}}"></qea-items-list><div class="sectionTitle">Question properties</div><qea-property-editor-repeater id="qeaRepeatValues" property-array="[[questionProps]]" values="{{qeaRepeatValues}}" is-advanced-user="[[viewAdvanced]]"></qea-property-editor-repeater><div id="advanced" on-tap="_showAdvanced">show all</div></div><div id="mainArea"><div class="explanation">To modify the elements in this area, change the values in the left column</div><asq-buckets-q id="asqBuckets" role="viewer" disabled="[[qeaRepeatValues.disabled]]" mode="[[qeaRepeatValues.mode]]" attr-for-matched="[[qeaRepeatValues.attrForMatched]]" x-matchable="div[buckets]" y-matchable="div[labels]"><asq-stem><span inner-h-t-m-l="[[qTitleVal]]"></span></asq-stem><div buckets=""><template is="dom-repeat" items="[[_bucketsListValue]]"><div s-name$="[[item.label]]" bucket=""><b>[[item.label]]</b></div></template></div><div labels="" id="labels"><template is="dom-repeat" items="[[_labelsListValue]]"><div s-name$="[[item.label]]" label="" class="label-primary">[[item.label]]</div></template></div><asq-solution hidden="">[[questionSolution]]</asq-solution></asq-buckets-q><div class="controlPanel"><paper-button raised="" on-tap="_cancel">cancel</paper-button><paper-button raised="" id="solutionBtn" on-tap="_solutionBtnTapped" noink="">set solution</paper-button><paper-button raised="" on-tap="_saveQuestionTapped">save</paper-button></div></div><div id="rightPanel"></div></template><script>
+(function () {
+  'use strict';
+
+  var questionProperties = [{
+    name: 'disabled',
+    label: 'drag & drop disabled',
+    type: 'boolean', // < Boolean | Number | String | Enum  >
+    description: 'disable the ability to drag labels',
+    default: 'false'
+  }, {
+    name: 'mode',
+    label: 'Sets relationship',
+    type: 'string', // < Boolean | Number | String | Enum  >
+    description: 'The mode is to define the relationship between two sets.\n                      It can be 1-1, m-m, a-m, m-b or a-b. a and b are any\n                      postive integer number.',
+    default: 'm-m',
+    isAdvancedProperty: 'false;'
+  }, {
+    name: 'attrForMatched',
+    type: 'string', // < Boolean | Number | String | Enum  >
+    description: 'The attribute value of an element for matched.',
+    default: 's-name',
+    isAdvancedProperty: 'true'
+  }];
+
+  var asqBucketsQEditor = function () {
+    function asqBucketsQEditor() {
+      babelHelpers.classCallCheck(this, asqBucketsQEditor);
+    }
+
+    babelHelpers.createClass(asqBucketsQEditor, [{
+      key: 'beforeRegister',
+      value: function beforeRegister() {
+        this.is = 'asq-buckets-q-editor';
+        this.observers = ['_updateLabelsandBackets(_labelsListValue.splices)'];
+        this.properties = {
+          questionProps: {
+            type: Array,
+            value: questionProperties
+          },
+          _bucketsListValue: {
+            type: Array,
+            value: function value() {
+              return [];
+            }
+          },
+          _labelsListValue: {
+            type: Array,
+            value: function value() {
+              return [];
+            }
+          }
+        };
+      }
+    }, {
+      key: '_getFormattedCode',
+      value: function _getFormattedCode() {
+        var buckets = '';
+        var labels = '';
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+          for (var _iterator = this._bucketsListValue[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var bucket = _step.value;
+
+            buckets += '\t\t\t<div s-name="' + bucket.label + '" bucket><b>' + bucket.label + '</b></div>\n';
+          }
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+              _iterator.return();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
+        }
+
+        var _iteratorNormalCompletion2 = true;
+        var _didIteratorError2 = false;
+        var _iteratorError2 = undefined;
+
+        try {
+          for (var _iterator2 = this._labelsListValue[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+            var label = _step2.value;
+
+            labels += '\t\t\t<div s-name="' + label.label + '" label class="label-primary">' + label.label + '</div>\n';
+          }
+        } catch (err) {
+          _didIteratorError2 = true;
+          _iteratorError2 = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion2 && _iterator2.return) {
+              _iterator2.return();
+            }
+          } finally {
+            if (_didIteratorError2) {
+              throw _iteratorError2;
+            }
+          }
+        }
+
+        var code = '\n        <style>\n        div[labels], div[buckets]{\n          display: flex;\n        }\n        div[buckets]>div{\n          @apply(--layout-vertical);\n          min-width: 150px;\n          min-height: 150px;\n          border: 1px solid gray;\n          margin: 1px;\n          text-align: center;\n          border-radius: 5px;\n        }\n\n        div[labels]> div{\n          margin: 2px;\n          padding: 8px;\n          border: 1px solid grey;\n          border-radius: 5px;\n        }\n        </style>\n\n        \t<asq-buckets-q id="asqBuckets"\n        \t ' + (this.qeaRepeatValues.disabled ? 'disabled= ' + this.qeaRepeatValues.disabled : '') + '\n        \t mode="' + (this.qeaRepeatValues.mode || '') + '"\n        \t attr-for-matched="' + (this.qeaRepeatValues.attrForMatched || '') + '">\n          \t\t<asq-stem>' + (this.qTitleVal || '') + '</asq-stem>\n          \t\t<div buckets >\n                ' + buckets + '\n          \t\t</div>\n          \t\t<div labels >\n                ' + labels + '\n          \t\t</div>\n          \t\t<asq-solution hidden>' + (this.questionSolution || '') + '</asq-solution>\n        \t</asq-buckets-q>';
+        return code;
+      }
+    }, {
+      key: '_solutionBtnTapped',
+      value: function _solutionBtnTapped() {
+        this._setSolution(this.$.asqBuckets.value);
+      }
+    }, {
+      key: '_saveQuestionTapped',
+      value: function _saveQuestionTapped() {
+        this._saveQuestion(['_bucketsListValue', '_labelsListValue']);
+      }
+    }, {
+      key: '_updateLabelsandBackets',
+      value: function _updateLabelsandBackets() {
+        Polymer.dom.flush();
+        var viewer = Polymer.dom(this.$.asqBuckets.root).querySelector('asq-buckets-q-viewer');
+        viewer._updateItems(); // eslint-disable-line no-underscore-dangle
+      }
+    }, {
+      key: '_restoreQuestionState',
+      value: function _restoreQuestionState() {
+        var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+        var allRepeaters = Polymer.dom(this.root).querySelectorAll('qea-property-editor-repeater');
+        var prop = void 0;
+        var _iteratorNormalCompletion3 = true;
+        var _didIteratorError3 = false;
+        var _iteratorError3 = undefined;
+
+        try {
+          for (var _iterator3 = Object.keys(state)[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+            prop = _step3.value;
+
+            if (prop === '_bucketsListValue') {
+              this._bucketsListRestore = state[prop];
+            } else if (prop === '_labelsListValue') {
+              this._labelsListRestore = state[prop];
+            } else {
+              this[prop] = state[prop];
+            }
+          }
+          // need to wait the rendering
+        } catch (err) {
+          _didIteratorError3 = true;
+          _iteratorError3 = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion3 && _iterator3.return) {
+              _iterator3.return();
+            }
+          } finally {
+            if (_didIteratorError3) {
+              throw _iteratorError3;
+            }
+          }
+        }
+
+        Polymer.dom.flush();
+        var _iteratorNormalCompletion4 = true;
+        var _didIteratorError4 = false;
+        var _iteratorError4 = undefined;
+
+        try {
+          for (var _iterator4 = allRepeaters[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+            var repeater = _step4.value;
+
+            if (state[repeater.id]) {
+              var qProps = Polymer.dom(repeater.root).querySelectorAll('qea-property-editor');
+              var _iteratorNormalCompletion5 = true;
+              var _didIteratorError5 = false;
+              var _iteratorError5 = undefined;
+
+              try {
+                for (var _iterator5 = qProps[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+                  var spProp = _step5.value;
+
+                  spProp.value = state[repeater.id][spProp.name];
+                }
+              } catch (err) {
+                _didIteratorError5 = true;
+                _iteratorError5 = err;
+              } finally {
+                try {
+                  if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                    _iterator5.return();
+                  }
+                } finally {
+                  if (_didIteratorError5) {
+                    throw _iteratorError5;
+                  }
+                }
+              }
+            }
+          }
+        } catch (err) {
+          _didIteratorError4 = true;
+          _iteratorError4 = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion4 && _iterator4.return) {
+              _iterator4.return();
+            }
+          } finally {
+            if (_didIteratorError4) {
+              throw _iteratorError4;
+            }
+          }
+        }
+      }
+    }, {
+      key: 'behaviors',
+      get: function get() {
+        return [qeaBehaviors.actionsBehavior, qeaBehaviors.reduxStore, qeaBehaviors.generalEditorsBehavior];
+      }
+    }]);
+    return asqBucketsQEditor;
+  }();
+
+  Polymer(asqBucketsQEditor);
+})();</script></dom-module></body></html>

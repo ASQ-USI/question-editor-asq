@@ -1,0 +1,204 @@
+<html><head><script>
+/* eslint-disable object-shorthand */
+
+/**
+This behavior will help you in the creation of a custom editor for an ASQ question type.
+
+*/
+
+window.qeaBehaviors = window.qeaBehaviors || {};
+/**
+ * `qeaBehaviors.appBehavior` implements general editing functionality.
+ *
+ * @polymerBehavior qeaBehaviors.generalEditorsBehavior
+ */
+qeaBehaviors.generalEditorsBehavior = {
+  properties: {
+    /**
+    * The id of the question. DON'T MODIFY
+    * It will be automatically set
+    */
+    id: String,
+    /**
+    * The id of the exercise that contains this question. DON'T MODIFY
+    * It will be automatically set
+    */
+    exerciseId: String,
+    /**
+    * Object useful to store the result of a qea-property-editor-repeater.
+    * if you add more qea-property-editor-repeater be sure to assign an id to them,
+    * equal to the name of the property that you are using to store the value
+    * @type {{<propName>: <propVAlue> ...}}
+    */
+    qeaRepeatValues: {
+      type: Object,
+      value: () => { return {}; },
+    },
+    /**
+    * Toggle the view of advanced question.
+    * Bind to is-Advanced-User inside a qea-property-editor-repeater or a qea-property-editor element
+    */
+    viewAdvanced: {
+      type: String,
+      value: 'false',
+    },
+    /**
+    * Object containing the last state. DON'T MODIFY.
+    * It will be automatically set only when you are editing an already existing question.
+    * It useful to have an observer on this property, to call the _restoreQuestionState function
+    */
+    restoreState: {
+      type: Object,
+      observer: '_restoreQuestionState',
+    },
+    /**
+    * Property containing the solution of the question
+    */
+    questionSolution: String,
+  },
+
+  /**
+  * Toggle the visibility of advanced questions
+  */
+  _showAdvanced: function () {
+    this.viewAdvanced = this.viewAdvanced === 'true' ? 'false' : 'true';
+    if (this.$.advanced) {
+      this.$.advanced.textContent = this.viewAdvanced === 'true' ? 'hide advanced' : 'show all';
+    }
+  },
+
+  /**
+  * Function responsible to restore all the values
+  * @param {Object} state last state of the question editor.
+  */
+  _restoreQuestionState: function (state = {}) {
+    const allRepeaters = Polymer.dom(this.root).querySelectorAll('qea-property-editor-repeater');
+    let prop;
+    for (prop of Object.keys(state)) {
+      this[prop] = state[prop];
+    }
+    // need to wait the rendering
+    Polymer.dom.flush();
+    let repeater;
+    for (repeater of allRepeaters) {
+      if (state[repeater.id]) {
+        const qProps = Polymer.dom(repeater.root).querySelectorAll('qea-property-editor');
+        for (const spProp of qProps) {
+          spProp.value = state[repeater.id][spProp.name];
+        }
+      }
+    }
+  },
+
+  /**
+  * Function responsible to generate an object containing all the properties
+  * needed to save the current state of the question editor
+  * @param {Array<String>=} propertyToInclude array containing all the custom properties to be savd
+  * @return {Object} An object who has as keys the properties you have passed and some default ones
+  */
+  _getQuestionState: function (propertyToInclude) {
+    let props = propertyToInclude || [];
+    props.push('exerciseId');
+    props.push('viewAdvanced');
+    props.push('qeaRepeatValues');
+    if (this.questionSolution) { props.push('questionSolution'); }
+    props = Array.from(new Set(props));
+    const state = {};
+    for (const prop of props) {
+      state[prop] = this[prop];
+    }
+    return state;
+  },
+
+  /**
+  * Function responsible to communicate with the redux store and change the page.
+  * @param {String} solution The soluton for the question Default value of questionSolution,
+  * @param {Array<String>=} propertyToInclude array containing all the custom properties to be savd
+  */
+  _saveQuestion: function (propertiesToSave, solution = this.questionSolution) { // eslint-disable-line consistent-return
+    const toast = Polymer.dom(this.root).querySelector('qea-user-response');
+    if (!solution && solution !== false || solution === '') {
+      toast.notifyConfirm('Warning', `<p>you haven't provided a solution for this question.</p>
+        <p>Do you want to continue anyway?</p>`)
+        .then((resp) => {
+          if (resp) {
+            const code = this._getFormattedCode();
+            const state = this._getQuestionState(propertiesToSave);
+            if (this.id) {
+              this.dispatch('editElement', this.id, code, state);
+            } else {
+              this.dispatch('addElement', this.tagName.toLowerCase(), code, state);
+            }
+            this._previousPage();
+            return true;
+          }
+          return false;
+        });
+    } else {
+      const code = this._getFormattedCode();
+      const state = this._getQuestionState(propertiesToSave);
+      if (this.id) {
+        this.dispatch('editElement', this.id, code, state);
+      } else {
+        this.dispatch('addElement',
+          this.tagName.toLowerCase().substring(0, this.tagName.length - 7), code, state);
+      }
+      this._previousPage();
+      return true;
+    }
+  },
+
+  /**
+  * function responsible to return a string representing the HTML code of the question generated;
+  * since each editor is specific for a question, you'll need to override this function in every editor
+  * @return {Strng}
+  */
+  _getFormattedCode: function () {
+    return '';
+  },
+
+  /**
+  * function responsible to help the user in the insertion of a solution for the question.
+  * This function needs to be called before _saveQuestion.
+  * @param {String} slValue solution value.
+  * @return {Boolean} true if solution set without problem false otherwise
+  */
+  _setSolution: function (slValue) {
+    const toast = Polymer.dom(this.root).querySelector('qea-user-response');
+    if (!slValue && slValue !== false || slValue === '') {
+      toast.notifyError('Error', "you haven't provided a solution for this question");
+      return;
+    }
+    this.questionSolution = '';
+    toast.notifyConfirm('Is the solution correct?', `Solution:  ${slValue}`)
+      .then((resp) => {
+        if (resp) {
+          this.questionSolution = slValue;
+        }
+      });
+  },
+
+  /**
+  * function use to abort the editing of a question and move back to the canvas page
+  */
+  _cancel: function () {
+    const toast = Polymer.dom(this.root).querySelector('qea-user-response');
+    toast.notifyConfirm('Do you really want to exit?', 'all the chenges will be lost')
+      .then((resp) => {
+        if (resp) {
+          this._previousPage();
+        }
+      });
+  },
+
+  _previousPage() {
+    if (this.exerciseId) {
+      this.fire('changePage', { pageURL: `/exercise/${this.exerciseId}` });
+    } else {
+      this.fire('changePage', { pageURL: '/home' });
+    }
+  },
+
+};
+</script>
+</head><body></body></html>

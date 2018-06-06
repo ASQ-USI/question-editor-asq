@@ -1,0 +1,105 @@
+{
+  "entrypoint": "index.html",
+  "shell": "elements/qea-main-app/qea-main-app.html",
+  "fragments": [
+    "elements/qea-qeditor-page/qea-qeditor-page.html",
+    "elements/qea-questions-list/qea-questions-list.html",
+    "elements/qea-canvas/qea-canvas.html",
+    "elements/qea-landing-page/qea-landing-page.html",
+    "elements/qea-toolbar/qea-toolbar.html",
+    "elements/qea-common-editor-components/qea-user-response.html",
+    "elements/qea-404-page/qea-404-page.html"
+  ],
+  "sources": [
+    "elements/**/*",
+    "scripts/*",
+    "styles/*",
+    "behaviors/*",
+    "bower.json",
+    "index.html",
+    "elements/qea-main-app/qea-main-app.html",
+    "elements/qea-qeditor-page/qea-qeditor-page.html",
+    "elements/qea-questions-list/qea-questions-list.html",
+    "elements/qea-canvas/qea-canvas.html",
+    "elements/qea-landing-page/qea-landing-page.html",
+    "elements/qea-toolbar/qea-toolbar.html",
+    "elements/qea-common-editor-components/qea-user-response.html",
+    "elements/qea-404-page/qea-404-page.html"
+  ],
+  "extraDependencies": [
+    "bower_components/webcomponentsjs/*.js",
+    "bower_components/webcomponentsjs/webcomponents-lite.js",
+    "bower_components/ace-element/src-min-noconflict/mode-xml.js",
+    "bower_components/ace-element/src-min-noconflict/theme-chrome.js",
+    "bower_components/tinymce/*",
+    "bower_components/tinymce/**/*",
+    "bower_components/tinymce/**/**/*",
+    "manifest.json",
+    "node_modules/redux/dist/redux.min.js"
+  ],
+  "builds": [
+    {
+      "name": "bundled",
+      "js": {
+        "minify": false,
+        "compile": true
+      },
+      "css": {
+        "minify": true
+      },
+      "html": {
+        "minify": true
+      },
+      "bundle": true,
+      "addServiceWorker": false,
+      "addPushManifest": false,
+      "preset": "es5-bundled"
+    },
+    {
+      "name": "es6-bundled",
+      "browserCapabilities": [
+        "es2015"
+      ],
+      "js": {
+        "minify": false,
+        "compile": false
+      },
+      "css": {
+        "minify": true
+      },
+      "html": {
+        "minify": false
+      },
+      "bundle": true,
+      "addServiceWorker": false,
+      "addPushManifest": false,
+      "preset": "es6-bundled"
+    },
+    {
+      "name": "es6-unbundled",
+      "browserCapabilities": [
+        "es2015",
+        "push"
+      ],
+      "js": {
+        "minify": false,
+        "compile": false
+      },
+      "css": {
+        "minify": true
+      },
+      "html": {
+        "minify": true
+      },
+      "bundle": false,
+      "addServiceWorker": false,
+      "addPushManifest": true,
+      "preset": "es6-unbundled"
+    }
+  ],
+  "lint": {
+    "rules": [
+      "polymer-1"
+    ]
+  }
+}

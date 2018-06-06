@@ -1,0 +1,142 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html"><link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html"><link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html"><link rel="import" href="../../bower_components/polymer-redux/polymer-redux.html"><link rel="import" href="../../bower_components/iron-pages/iron-pages.html"><link rel="import" href="../../bower_components/app-route/app-route.html"><link rel="import" href="../../bower_components/app-route/app-location.html"><link rel="import" href="../../bower_components/asq-spinner/asq-spinner.html"><link rel="import" href="../../bower_components/paper-fab/paper-fab.html"><link rel="import" href="../../behaviors/qea-app-behavior.html"></head><body><dom-module id="qea-main-app"><template><style include="iron-flex iron-positioning">:host{display:block;@apply (--layout-fit);@apply (--layout-vertical);}#nav-container{background:#fafafa;border-left:1px solid #999;width:300px;}.tollbarIcon{margin:0 10px;color:grey;}#spinner{--asq-spinner-letter-height:46px;--asq-spinner-letter-width:46px;--iron-icon-fill-color:white;position:absolute;top:50%;left:50%;transform:translate(-50%, -50%);}.spinnerLayer{display:none;}.spinnerLayer-active{cursor:progress;display:block;position:fixed;width:100%;height:100%;left:0;background:rgba(51,51,51,0.5);top:0;z-index:10000;}</style><div class="spinnerLayer" id="spinnerLayer"><asq-spinner id="spinner"></asq-spinner></div><qea-toolbar current-page="[[routeData.page]]"></qea-toolbar><section id="canvas-container" class="flex layout horizontal"><iron-pages id="pageController" selected="[[page]]" attr-for-selected="page-name" class="flex layout horizontal"><section class="page page0 layout horizontal flex" page-name="home"><qea-landing-page class="flex"></qea-landing-page></section><section class="page flex layout horizontal page1" page-name="exercise"><qea-canvas id="qeaCanvas" class="flex layout horizontal" dropped-elem="[[_dropped]]" route="{{subroute}}" is-dragging="[[_isDragging]]"></qea-canvas><nav id="nav-container"><qea-questions-list id="questions-list"></qea-questions-list></nav></section><section class="page flex layout horizontal page3" id="questionEditorPage" page-name="question"><qea-qeditor-page class="flex layout horizontal" route="{{subroute}}"></qea-qeditor-page></section><section class="page flex layout horizontal page4" page-name="404"><qea-404-page></qea-404-page></section></iron-pages></section><qea-user-response id="notify"></qea-user-response><app-location route="{{route}}"></app-location><app-route route="{{route}}" pattern="[[mountPath]]/:page" data="{{routeData}}" tail="{{subroute}}"></app-route></template><script>
+  (function () {
+    'use strict';
+
+    Polymer({
+      is: 'qea-main-app',
+      behaviors: [qeaBehaviors.appBehavior],
+      observers: [
+        // '_importPage(routeData.page)',
+        '_routePageChanged(routeData.page)'
+      ],
+      listeners: {
+        fireToast: '_openToast',
+        changePage: '_changePage',
+        dragStart: '_dragStart',
+        dragStop: '_dragStop',
+        toggleSpinner: '_toggleSpinner',
+      },
+
+      properties:{
+        page: {
+          type: String,
+          reflectToAttribute: true,
+          observer: '_pageChanged'
+        },
+
+        _isDragging: {
+          type: Boolean,
+          value: false,
+        },
+        _dropped: {
+          type: Object,
+        },
+        mountPath: {
+          type: String,
+          value: '/now',
+        },
+        isElectron: {
+          type: Boolean,
+          value: false,
+        },
+      },
+
+      created: function(){
+        this.pageMap = {
+          'home' : ['qea-landing-page'],
+          'exercise' : ['qea-canvas', 'qea-questions-list'],
+          'question' : ['qea-qeditor-page'],
+          '404' : ['qea-404-page'],
+        }
+      },
+
+      ready: function() {
+        window.QEA = {
+          isElectron: this.isElectron,
+          basePath: window.location.href,
+        };
+      },
+
+      attached: function() {
+        console.log(this.route.path);
+        console.log(window.questionEditorASQ)
+
+        if (navigator.userAgent.indexOf('Electron') !== -1) {
+          this.set('route.path', `${this.mountPath}/home`);
+        } else if (!this.route.path || this.route.path === `${this.mountPath}` ||  this.route.path === `${this.mountPath}/`) {
+          this.set('route.path', `${this.mountPath}/home`);
+        }
+      },
+
+      _routePageChanged: function(page) {
+        // if the route path doesn't start with our mountpath it's definitely a 404
+        if(this.route.path.substring(0, this.mountPath.length) !== this.mountPath){
+          this.page = '404';
+        }else{
+          //other wise give the page  a shot
+          this.page = page || 'home';
+        }
+        
+      },
+
+      _pageChanged: function(page, oldPage) {
+        if (page != null) {
+          var cb = function(e){
+            if(! e.target) { // we have an error
+              console.log(e)
+            }
+          };
+
+          if(this.pageMap.hasOwnProperty(page)){
+            this.pageMap[page].forEach(elName => {
+              this.importHref(this.resolveUrl('../' + elName + '/' + elName +'.html'),
+                cb, cb, true);
+            })
+          }else{ // page not recognized, fire a 404
+            this.page = '404';
+            this.importHref(this.resolveUrl('../qea-404-page/qea-404-page.html'),
+              cb, cb, true);
+          }
+        }   
+      },
+
+      _openToast: function(host, { type = 'default', text = '', properties }) {
+        if (type === 'error') {
+          this.$.notify.notifyError('', text, properties);
+        } else {
+          this.$.notify.notify('', text, properties);
+        }
+      },
+
+      _dragStart: function() {
+        // receive the event from question-type when drag start
+        this._isDragging = true;
+      },
+
+      _dragStop: function(host, droppedElem) {
+        // receive the event from question-type when drag stop
+        this._isDragging = false;
+        if (droppedElem) {
+          // render the dropped element
+          this._dropped = droppedElem;
+        }
+      },
+
+      // the async function is used to prevent errors caused by concurrent changes of the route
+      _changePage: function(host, { pageURL, qParams = {} }) {
+        this.async(() => {
+          if (pageURL) {
+            this.set('route.__queryParams', qParams);
+            this.set('route.path', `${this.mountPath}${pageURL}`);
+          }
+        }, 1);
+      },
+
+      _toggleSpinner: function(host, active = false) {
+        this.toggleClass('spinnerLayer-active', active, this.$.spinnerLayer);
+        this.toggleAttribute('active', active, this.$.spinner);
+      }
+    })
+  })();
+
+  </script></dom-module></body></html>

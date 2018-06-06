@@ -1,0 +1,94 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../qea-question-type/qea-question-type.html">
+
+<dom-module id="qea-questions-list">
+  <template>
+    <style>
+      :host {
+        display: block;
+        height: 100%;
+      }
+      #scrollable{
+        height: calc(100% - 64px);
+        overflow: auto;
+      }
+      paper-toolbar{
+        --paper-toolbar-background: white;
+        --paper-toolbar-color: black;
+      }
+      paper-menu {
+        --paper-menu-background-color	: transparent;
+      }
+      .draggableItem:hover, paper-menu:hover{
+        cursor: move;
+      }
+
+    </style>
+
+    <paper-toolbar>
+      <span class="title">Question types:</span>
+    </paper-toolbar>
+    <div id="scrollable">
+      <paper-menu class="menu-content ">
+        <template is="dom-repeat" items="[[questions]]">
+            <qea-question-type value=[[item]]></qea-question-type>
+        </template>
+      </paper-menu>
+    </div>
+
+
+  </template>
+  <script>
+  (function () {
+    'use strict';
+
+    Polymer({
+
+      is: 'qea-questions-list',
+
+      properties: {
+        questions: {
+          type: Array,
+          value: () => [
+              // ex of sub menu
+              // {category: 'sub item', list: [
+              //   {label: "asq-text-input-q"},
+              //   {label: "asq-multi-choice-q"}
+              // ]},
+              { label: 'text input',
+                type: 'asq-text-input-q',
+              },
+              { label: 'multi choice',
+                type: 'asq-multi-choice-q',
+              },
+              { label: 'highlighter',
+                type: 'asq-highlight-q',
+              },
+              { label: 'buckets',
+                type: 'asq-buckets-q',
+              },
+              { label: 'order',
+                type: 'asq-order-q',
+              },
+              { label: 'css selector',
+                type: 'asq-css-select-q',
+              },
+              { label: 'javascript functions',
+                type: 'asq-js-function-body-q',
+              },
+              { label: 'Rating',
+                type: 'asq-rating-q',
+              },
+              { label: 'SQLite',
+                type: 'asq-sqlite-q',
+              },
+          ],
+        },
+      }
+    });
+  })();
+
+  </script>
+</dom-module>

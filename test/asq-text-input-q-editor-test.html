@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script src="../scripts/corejs.shim.min.js"></script>
+    <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../bower_components/web-component-tester/browser.js"></script>
+    <script src="../node_modules/redux/dist/redux.min.js"></script>
+    <link rel="import" href="../bower_components/polymer-redux/polymer-redux.html">
+
+    <!-- import the element to test -->
+    <link rel="import" href="../elements/asq-text-input-q-editor/asq-text-input-q-editor.html">
+  </head>
+  <body>
+    <!-- use the document as a place to set up your fixtures -->
+    <test-fixture id="asq-text-input-q-editor-fixture">
+      <template>
+        <asq-text-input-q-editor>
+        </asq-text-input-q-editor>
+      </template>
+    </test-fixture>
+    <script>
+      suite('<asq-text-input-q-editor>', function() {
+        var myEl;
+        setup(function(done) {
+          // If we move to the next test without tinyMCE having finished initilization
+          // we get errors. Make sure we initilize then.
+          tinyMCE.on("AddEditor", function(evt){
+            evt.editor.on("init", function(){
+              done();
+            })
+          })
+          myEl = fixture('asq-text-input-q-editor-fixture');
+        });
+
+        teardown(function(){
+          tinyMCE.off("AddEditor")
+        })
+        test('user should be able to change the stem', function(done) {
+          Polymer.Base.async(function(){
+
+            myEl.$.stemEditor.value = 'this is a test value'
+            flush(function functionName() {
+              assert.equal(myEl.$$('asq-stem').innerText.trim(), 'this is a test value');
+              done();
+            })
+          }, 1000 )
+
+        });
+
+        test('user should be able to save question', function() {
+          Polymer.Base.async(function(){
+
+            var a = Polymer.dom(myEl.root).querySelectorAll('paper-button');
+            var saveBt = null
+            for (var i = 0; i < a.length; i++) {
+              if (a[i].textContent == 'save') {
+                saveBt = a[i];
+                break;
+              }
+            }
+            assert.notEqual(saveBt, null, 'no save button found');
+            assert.notEqual(myEl._saveQuestion, undefined, 'no _saveQuestion function found');
+          }, 1000 )
+
+        });
+
+        test('user should be able to set a solution', function() {
+          Polymer.Base.async(function(){
+            var a = Polymer.dom(myEl.root).querySelectorAll('paper-button');
+            var solutionBtn = null
+            for (var i = 0; i < a.length; i++) {
+              if (a[i].textContent == 'set solution') {
+                solutionBtn = a[i];
+                break;
+              }
+            }
+            assert.notEqual(solutionBtn, null, 'no set solution button found');
+            assert.notEqual(myEl._setSolution, undefined, 'no _setSolutions function found');
+          }, 400 )
+        });
+
+        test('_getFormattedCode returns a string containing the html that represents the question', function () {
+          var code = myEl._getFormattedCode();
+          assert.notEqual(code.indexOf('asq-text-input-q'), -1);
+          assert.notEqual(code.indexOf('/asq-text-input-q'), -1);
+
+        })
+
+        test('user should be able to edit stem starting from the latest value inserted', function(done) {
+          var defaultContent, newContent;
+          Polymer.Base.async(function(){
+            flush(function functionName() {
+              myEl.$$('#stemEditor').$$('paper-button').click()
+              defaultContent = myEl.$$('qea-advanced-editors').$$('polymer-tinymce').getContent();
+              myEl.$$('qea-advanced-editors')._selectPage('','test');
+              Polymer.dom(myEl.$$('qea-advanced-editors').root).querySelectorAll('paper-button')[1].click()
+
+              Polymer.Base.async(function(){
+                myEl.$$('#stemEditor').$$('paper-button').click()
+                newContent = myEl.$$('qea-advanced-editors').$$('polymer-tinymce').getContent();
+                Polymer.dom(myEl.$$('qea-advanced-editors').root).querySelectorAll('paper-button')[1].click()
+                assert.notEqual(defaultContent, newContent)
+                done()
+              }, 200);
+
+
+              // done();
+            })
+          }, 500 )
+
+        });
+      });
+    </script>
+  </body>
+</html>

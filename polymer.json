@@ -1,0 +1,50 @@
+{
+  "entrypoint": "index.html",
+  "shell": "elements/qea-main-app/qea-main-app.html",
+  "sources": [
+   "elements/**/*",
+   "scripts/*",
+   "styles/*",
+   "behaviors/*",
+   "bower.json"
+  ],
+  "fragments": [
+    "elements/qea-qeditor-page/qea-qeditor-page.html",
+    "elements/qea-questions-list/qea-questions-list.html",
+    "elements/qea-canvas/qea-canvas.html",
+    "elements/qea-landing-page/qea-landing-page.html",
+    "elements/qea-toolbar/qea-toolbar.html",
+    "elements/qea-common-editor-components/qea-user-response.html",
+    "elements/qea-404-page/qea-404-page.html"
+  ],
+  "extraDependencies": [
+    "bower_components/webcomponentsjs/webcomponents-lite.js",
+    "bower_components/ace-element/src-min-noconflict/mode-xml.js",
+    "bower_components/ace-element/src-min-noconflict/theme-chrome.js",
+    "bower_components/tinymce/*",
+    "bower_components/tinymce/**/*",
+    "bower_components/tinymce/**/**/*",
+    "manifest.json",
+    "node_modules/redux/dist/redux.min.js"
+  ],
+  "lint": {
+    "rules": ["polymer-1"]
+  },
+  "builds": [{
+    "preset": "es5-bundled",
+    "name" : "bundled",
+    "js": {"minify": false},
+    "addServiceWorker": false
+  },
+  {
+    "preset": "es6-bundled",
+    "js": {"minify": false},
+    "html": {"minify": false},
+    "addServiceWorker": false
+  },
+  {
+    "preset": "es6-unbundled",
+    "js": {"minify": false},
+    "addServiceWorker": false
+  }]
+}

@@ -1,12 +1,13 @@
 {
   "name": "question-editor-asq",
   "version": "0.0.1",
-  "description": "question editor for ASQ wab app",
+  "description": "question editor for ASQ web app",
   "main": "electron.js",
   "scripts": {
-    "test": "gulp transpile && wct app/test",
-    "test-ci": "gulp transpile && wct app/test --skip-plugin local --plugin sauce;",
-    "start": "gulp serve"
+    "test": "gulp transpile && wct test",
+    "test-ci": "gulp transpile && wct test --skip-plugin local --plugin sauce;",
+    "start": "gulp serve",
+    "electron" : "electron ."
   },
   "repository": {
     "type": "git",
@@ -20,6 +21,7 @@
     "browser-sync": "^2.12.5",
     "del": "^2.2.0",
     "dotenv": "^2.0.0",
+    "electron": "1.8.4",
     "eslint": "^2.9.0",
     "eslint-config-airbnb-base": "^2.0.0",
     "eslint-plugin-html": "^1.4.0",

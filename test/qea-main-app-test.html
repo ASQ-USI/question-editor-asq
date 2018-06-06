@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../bower_components/web-component-tester/browser.js"></script>
+    <script src="../node_modules/redux/dist/redux.min.js"></script>
+
+    <!-- import the element to test -->
+    <link rel="import" href="../elements/qea-main-app/qea-main-app.html">
+
+  </head>
+  <body>
+    <!-- use the document as a place to set up your fixtures -->
+    <test-fixture id="qea-main-app-fixture">
+      <template>
+        <qea-main-app ></qea-main-app>
+      </template>
+    </test-fixture>
+    <script>
+      suite('<qea-main-app>', function() {
+        var myEl;
+
+        setup(function(done) {
+          var hasEditors = false;
+          // If we move to the next test without tinyMCE having finished initilization
+          // we get errors. Make sure we initilize then.
+          tinyMCE.on("AddEditor", function(evt){
+            hasEditors = true;
+            evt.editor.on("init", function(){
+              done();
+            })
+          })
+          myEl = fixture('qea-main-app-fixture');
+
+          Polymer.Base.async(function(){
+            if(! hasEditors){
+              done();
+            }
+          }, 500)
+
+        });
+
+        teardown(function(){
+          tinyMCE.off("AddEditor")
+        })
+
+        test('changePage event change page URL', function(done) {
+          Polymer.Base.async( function () {
+              assert.notEqual(window.location.pathname, '/home')
+              myEl.fire('changePage', {pageURL: '/home'})
+              Polymer.Base.async(
+                function () {
+                  assert.equal(window.location.pathname,'/home')
+                  done()
+                }, 500
+              )
+          }, 500)
+        });
+
+        test('changePage event shows the right page', function(done) {
+          Polymer.Base.async(function () {
+            myEl.fire('changePage', {pageURL: '/home'})
+            Polymer.Base.async(
+              function () {
+                assert.equal(myEl.$$('iron-pages').selected,'home')
+                done()
+              }, 500
+            )
+          }, 500)
+        });
+
+        test('Unknown URL brings to 404 page', function(done) {
+          Polymer.Base.async(function () {
+            myEl.fire('changePage', {pageURL: '/wrongURL'})
+            Polymer.Base.async(
+              function () {
+                assert.equal(myEl.$$('iron-pages').selected,'404')
+                done()
+              }, 500
+            )
+          }, 500)
+        });
+
+        test('dragStop event correctly handles the dropped element informations', function() {
+          assert.equal(myEl._dropped, undefined);
+          assert.equal(myEl._isDragging, false);
+          myEl.fire('dragStop', { questionDetails: {}, dragDetails: {}})
+          assert.equal(myEl._isDragging, false);
+          assert.notEqual(myEl._dropped, undefined);
+          assert.notEqual(myEl._dropped.questionDetails, undefined);
+          assert.notEqual(myEl._dropped.dragDetails, undefined);
+        });
+
+        test('dragStart event correctly set _isDragging property', function () {
+          assert.equal(myEl._isDragging, false);
+          myEl.fire('dragStart', { });
+          assert.equal(myEl._isDragging, true);
+        })
+      });
+    </script>
+  </body>
+</html>

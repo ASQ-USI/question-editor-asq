@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../bower_components/web-component-tester/browser.js"></script>
+
+    <!-- import the element to test -->
+    <link rel="import" href="../elements/qea-toolbar/qea-toolbar.html">
+  </head>
+  <body>
+    <!-- use the document as a place to set up your fixtures -->
+    <test-fixture id="qea-toolbar-fixture">
+      <template>
+        <qea-toolbar></qea-toolbar>
+      </template>
+    </test-fixture>
+    <script>
+      suite('<qea-toolbar>', function() {
+        var myEl;
+        setup(function() {
+          myEl = fixture('qea-toolbar-fixture');
+        });
+        test('currentPage property changes the content of the toolbar', function(done) {
+          myEl.currentPage = 'landingPage';
+          assert.equal(Polymer.dom(myEl.root).querySelectorAll('paper-icon-button').length, 0);
+          myEl.currentPage = 'exercise';
+
+          flush(function () {
+            assert(Polymer.dom(myEl.root).querySelectorAll('paper-icon-button').length > 0);
+            done()
+          })
+
+        });
+      });
+    </script>
+  </body>
+</html>

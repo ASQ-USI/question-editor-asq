@@ -45,7 +45,7 @@ gulp.task('serve', ['transpile'], () => {
     },
     notify: false,
   });
-  gulp.watch('app/**/*.{html, js}', ['transpile', reload]);
+  gulp.watch('./**/*.{html, js}', ['transpile', reload]);
 });
 
 // create a web server with live reload and linting
@@ -60,15 +60,18 @@ gulp.task('serve:lint', ['transpile', 'lint'], () => {
     },
     notify: false,
   });
-  gulp.watch('app/**/*.{html, js}', ['transpile', 'lint', reload]);
+  gulp.watch('./**/*.{html, js}', ['transpile', 'lint', reload]);
 });
 
 // tranpile javascript
 gulp.task('transpile', ['copyFiles'], () => {
-  gulp.src('app/index.html')
+  gulp.src('index.html')
     .pipe(gulp.dest('./.transpiled'));
 
-  return gulp.src(['app/**/*.html', '!app/bower_components/**/*', '!app/index.html'])
+  gulp.src('./dust/asq.dust')
+    .pipe(gulp.dest('./.transpiled/dust'));
+
+  return gulp.src(['./**/*.html', '!./bower_components/**/*', '!./index.html'])
     .pipe(gulpif(!ISDISTMODE, plumber()))
     .pipe(crisper({
       scriptInHead: false, // true is default
@@ -88,7 +91,7 @@ gulp.task('transpile', ['copyFiles'], () => {
 
 // lint using AirBnB's rules
 gulp.task('lint', () => {
-  const src = ['app/**/*.{html,js}', '!app/test/**/*'];
+  const src = ['./**/*.{html,js}', '!./test/**/*'];
   if (ISDISTMODE) {
     src.push('gulpfile.js');
   }
@@ -136,13 +139,13 @@ gulp.task('copyFiles', ['copyAssets'], () => {
     ).pipe(gulp.dest('./dist/bower_components/'));
   }
   // copy styles
-  gulp.src('app/styles/**/*')
+  gulp.src('./styles/**/*')
     .pipe(gulp.dest(`${destination}/styles/`));
   // copy script
   gulp.src('node_modules/redux/dist/redux.min.js')
     .pipe(gulp.dest(`${destination}/scripts/`));
   // copy images
-  return gulp.src('app/images/**/*')
+  return gulp.src('./images/**/*')
     .pipe(gulp.dest(`${destination}/images/`));
 });
 
@@ -158,20 +161,20 @@ gulp.task('copyAssets', () => {
          'this._renderEditor(qid, editorType, this.query.eid);'))
       .pipe(gulp.dest('./dist/elements/'));
 
-    gulp.src('app/elements/**/assets/**/*')
+    gulp.src('./elements/**/assets/**/*')
       .pipe(rename((path) => {
         path.dirname = path.dirname.match(/\/assets.*/)[0] || 'assets';
       }))
       .pipe(gulp.dest(`${destination}/`));
   } else {
-    gulp.src('app/elements/**/assets/**/*')
+    gulp.src('./elements/**/assets/**/*')
       .pipe(gulp.dest(`${destination}/elements/`));
   }
-  gulp.src('app/scripts/**/*')
+  gulp.src('./scripts/**/*')
     .pipe(gulp.dest('dist/scripts/'))
     .pipe(gulp.dest('.transpiled/scripts/'));
   // copy images
-  return gulp.src('app/images/**/*')
+  return gulp.src('./images/**/*')
     .pipe(gulp.dest(`${destination}/images/`));
 });
 

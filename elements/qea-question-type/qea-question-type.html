@@ -1,0 +1,122 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-submenu.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+
+<dom-module id="qea-question-type">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      .draggableItem{
+        margin: 2px 0;
+        width: 100%;
+        padding: 10px;
+        border-radius: 4px;
+        border: 1px solid #bbb;
+        /*background: white;*/
+        box-sizing: border-box;
+      }
+      .isDragging{
+        opacity: 0.5;
+      }
+      .menu-trigger{
+        font-size: 1.2em;
+        font-weight: bold;
+      }
+
+      .sublist  paper-item {
+        padding-left: 40px;
+      }
+      .menu-trigger:hover{
+        cursor:pointer;
+      }
+      .draggableItem:hover, paper-menu:hover{
+        cursor: move;
+      }
+      paper-menu {
+        --paper-menu-background-color	: transparent;
+      }
+
+    </style>
+
+    <!-- template for category element -->
+    <template is="dom-if" if="{{value.category}}">
+      <paper-submenu label="Properties">
+         <paper-item class="menu-trigger"> [[value.category]] &#9663</paper-item>
+         <paper-menu class="menu-content sublist">
+            <template is="dom-repeat" items="[[value.list]]">
+              <paper-item draggable='true' ondragstart="return false;" on-track="_draggingHandler">[[item.label]]</paper-item>
+            </template>
+          </paper-menu>
+       </paper-submenu>
+    </template>
+
+    <!-- template for single element -->
+    <template is="dom-if" if="{{!value.category }}">
+        <paper-item draggable='true' ondragstart="return false;" on-track="_draggingHandler">[[value.label]]</paper-item>
+    </template>
+
+
+
+  </template>
+  <script>
+  (function () {
+    'use strict';
+
+    Polymer({
+
+
+      is: 'qea-question-type',
+
+      properties: {
+        value: {
+          type: Object,
+        },
+        isDragging: {
+          type: String,
+          value: '',
+        },
+        canDrop: {
+          type: Boolean,
+          value: false,
+        },
+      },
+
+      _draggingHandler: function(e) {
+        switch (e.detail.state) {
+          case 'start':
+            this._startDragging();
+            break;
+          case 'track':
+            // this._currentlyDragging(e.detail);
+            break;
+          case 'end': {
+            const detail = e.model.item ? e.model.item : this.value;
+            this._stopDragging(e.detail, detail);
+            break;
+          }
+          default:
+        }
+      },
+
+      _startDragging: function() {
+        this.isDragging = 'isDragging';
+        this.fire('dragStart');
+      },
+
+      // _currentlyDragging(dragDetail) {
+      // }
+
+      _stopDragging: function(dragDetail, detail) {
+        const elemDet = { questionDetails: detail, dragDetails: dragDetail };
+        this.fire('dragStop', elemDet);
+        this.isDragging = '';
+      }
+
+    });
+  })();
+
+  </script>
+</dom-module>

@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script src="../scripts/corejs.shim.min.js"></script>
+    <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../bower_components/web-component-tester/browser.js"></script>
+
+    <!-- import the element to test -->
+    <link rel="import" href="../elements/qea-common-editor-components/qea-items-list.html">
+
+  </head>
+  <body>
+    <!-- use the document as a place to set up your fixtures -->
+    <test-fixture id="qea-items-list-fixture">
+      <template>
+        <qea-items-list >
+        </qea-items-list>
+      </template>
+    </test-fixture>
+    <script>
+      suite('<qea-items-list>', function() {
+        var myEl;
+
+        setup(function() {
+          myEl = fixture('qea-items-list-fixture');
+        });
+
+        test('set label', function(done) {
+          myEl.newItemLabel = 'test label';
+          flush(function () {
+            assert.equal(myEl.$.addInput.label, 'test label');
+            done();
+          })
+        });
+
+        test('have sort icon when required', function(done) {
+          assert.equal(Polymer.dom(myEl.root).querySelectorAll('paper-icon-button.move').length, 0)
+          myEl.sortable = true;
+          myEl.$.addInput.value = 'item';
+          myEl.$.addIcon.click();
+
+          flush(function () {
+            assert.equal(Polymer.dom(myEl.root).querySelectorAll('paper-icon-button.move').length, 1)
+            done();
+          });
+        });
+
+        test('value array represents the elements created', function(done) {
+          assert.equal(myEl.value.length, 0);
+          myEl.$.addInput.value = 'item1';
+          myEl.$.addIcon.click();
+          myEl.$.addInput.value = 'item2';
+          myEl.$.addIcon.click();
+          flush(function () {
+            assert.equal(myEl.value.length, 2);
+            assert.equal(myEl.value[0].label , 'item1');
+            assert.equal(myEl.value[1].label , 'item2');
+            done();
+          });
+        });
+
+        test('setting restore produces the items required', function (done) {
+          assert.equal(Polymer.dom(myEl.root).querySelectorAll('paper-icon-button.remove').length, 0);
+          myEl.restore = [{id: 0, label: "item1"}, {id: 1, label: "item2"}];
+          flush(function () {
+            assert.equal(Polymer.dom(myEl.root).querySelectorAll('paper-icon-button.remove').length, 2);
+            done();
+          });
+        })
+
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,53 @@
+<script>
+  window.qeaBehaviors = window.qeaBehaviors || {};
+  /**
+   * `qeaBehaviors.actionsBehavior` implements behaviors about adding/moving and editing elements.
+   *
+   * @polymerBehavior qeaBehaviors.actionsBehavior
+   */
+  qeaBehaviors.actionsBehavior = {
+    actions: {
+      addElement: (type, html, properties) => {
+        const idGenerator = () => {
+          const s4 = () => {
+            return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+          };
+          return `${s4() + s4()}-${s4()}-${s4()}-${s4()}-${s4() + s4() + s4()}`;
+        };
+        return {
+          type: 'ADD_ELEMENT',
+          elementId: idGenerator(),
+          elementType: type,
+          elementHtml: html,
+          elementProps: properties,
+        };
+      },
+      removeElement: (id) => {
+        return {
+          type: 'REMOVE_ELEMENT',
+          elementId: id,
+        };
+      },
+      // type is optional
+      editElement: (id, html, properties, type) => {
+        return {
+          type: 'EDIT_ELEMENT',
+          elementId: id,
+          elementType: type,
+          elementHtml: html,
+          elementProps: properties,
+        };
+      },
+      moveElement: (id, newIndex) => {
+        return {
+          type: 'MOVE_ELEMENT',
+          elementId: id,
+          newIndex: newIndex, // eslint-disable-line object-shorthand
+        };
+      },
+      resetState: (state = null) => {
+        return { type: 'RESET_STATE', state };
+      },
+    },
+  };
+</script>
